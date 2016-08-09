@@ -99,6 +99,96 @@ def set_val_sd_id():
     db.session.commit()
 
 #########################################################
+# Functions related to loading projects owned by users.
+#########################################################
+
+def load_projects():
+    """Load items from u.project into database."""
+
+    print "\n****Loading Projects****\n"
+
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate items owned.
+    Project.query.delete()
+
+    # Read u.project file and insert data
+    for row in open("seed_data/u.project"):
+        row = row.rstrip()
+        project_id, title, user_id, instr_url, description = row.split(",")
+        print row
+
+        project = Project(project_id=project_id,
+                          title=title,
+                          user_id=user_id,
+                          instr_url=instr_url,
+                          description=description)
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(project)
+
+    # Once we're done, we should commit our work
+    db.session.commit()
+
+
+def set_val_project_id():
+    """Set value for the next project_id after seeding database. Otherwise,
+    we'll always start over at id 1!
+    """
+
+    # Get the Max user_id in the database
+    result = db.session.query(func.max(Project.project_id)).one()
+    max_id = int(result[0])
+
+    # Set the value for the next user_id to be max_id + 1
+    query = "SELECT setval('projects_project_id_seq', :new_id)"
+    db.session.execute(query, {'new_id': max_id + 1})
+    db.session.commit()
+
+################################################################################
+# Functions related to loading information about supplies contained in projects.
+################################################################################
+
+def load_projectsupplydetails():
+    """Load items from u.projectsupplydetail into database."""
+
+    print "\n****Loading Details About Supplies in Projects****\n"
+
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate items owned.
+    ProjectSupplyDetail.query.delete()
+
+    # Read u.projectsupplydetail file and insert data
+    for row in open("seed_data/u.projectsupplydetail"):
+        row = row.rstrip()
+        ps_id, project_id, sd_id = row.split(",")
+
+        projectsupplydetail = ProjectSupplyDetail(ps_id=ps_id,
+                                                  project_id=project_id,
+                                                  sd_id=sd_id)
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(projectsupplydetail)
+
+    # Once we're done, we should commit our work
+    db.session.commit()
+
+
+def set_val_ps_id():
+    """Set value for the next item_id after seeding database. Otherwise,
+    we'll always start over at id 1!
+    """
+
+    # Get the Max user_id in the database
+    result = db.session.query(func.max(ProjectSupplyDetail.ps_id)).one()
+    max_id = int(result[0])
+
+    # Set the value for the next user_id to be max_id + 1
+    query = "SELECT setval('project_supply_details_ps_id_seq', :new_id)"
+    db.session.execute(query, {'new_id': max_id + 1})
+    db.session.commit()
+
+
+#########################################################
 # Functions related to loading items owned by users.
 #########################################################
 
@@ -151,9 +241,15 @@ if __name__ == "__main__":
     # Import different types of data
     load_users()
     load_supplydetails()
+    load_projects()
+    load_projectsupplydetails()
     load_items()
-    # load_projects()
-    # load_projectsupplydetails()
+
+    # Set the value of the autoincrementing primary key in each table to
+    # the number immediately following the greatest existing id, so we don't
+    # start overwriting data.
     set_val_user_id()
     set_val_sd_id()
     set_val_item_id()
+    set_val_project_id()
+    set_val_ps_id()

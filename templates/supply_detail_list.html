@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Yay crafty things!
+{% endblock %}
+
+{% block body %}
+
+<h1> Supply Details </h1>
+
+    {% for supply_detail in supply_details %}
+    <h2> {{ supply_detail.brand }}, {{ supply_detail.supply_type }} </h2>
+    <ul>
+        <li> Color: {{ supply_detail.color }} </li>
+        <li> Units: {{ supply_detail.units }} </li>
+    </ul>
+    {% endfor %}
+
+{% endblock %}

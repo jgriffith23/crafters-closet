@@ -25,7 +25,7 @@ class User(db.Model):
     # only be able to have one username per email address.
     email = db.Column(db.String(64), nullable=False, unique=True)
     username = db.Column(db.String(64), nullable=False, unique=True)
-    password = db.Column(db.String(64), nullable=False)
+    password = db.Column(db.String(64), nullable=True)
 
     def __repr__(self):
         """Provide a human-readable representation of an instance of the
