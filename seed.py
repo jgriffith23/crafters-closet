@@ -15,7 +15,7 @@ from server import app
 def load_users():
     """Load users from u.user into database."""
 
-    print "\nLoading Users\n"
+    print "\n****Loading Users****\n"
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
@@ -59,7 +59,7 @@ def set_val_user_id():
 def load_supplydetails():
     """Load supply details from u.supplydetail into database."""
 
-    print "\nLoading SupplyDetails\n"
+    print "\n****Loading SupplyDetails****\n"
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate supply information.
@@ -68,34 +68,79 @@ def load_supplydetails():
     # Read u.supplydetail file and insert data
     for row in open("seed_data/u.supplydetail"):
         row = row.rstrip()
-        ps_id, project_id, sd_id = row.split(",")
+        sd_id, supply_type, brand, color, units, url = row.split(",")
 
-        supplydetail = SupplyDetail(ps_id=ps_id,
-                                    project_id=project_id,
-                                    sd_id=username)
+        supplydetail = SupplyDetail(sd_id=sd_id,
+                                    supply_type=supply_type,
+                                    brand=brand,
+                                    color=color,
+                                    units=units,
+                                    purchase_url=url)
 
         # We need to add to the session or it won't ever be stored
-        db.session.add(user)
+        db.session.add(supplydetail)
 
     # Once we're done, we should commit our work
     db.session.commit()
 
 
-def set_val_user_id():
-    """Set value for the next user_id after seeding database. Otherwise,
-    we'll always start over at id 1!=
+def set_val_sd_id():
+    """Set value for the next sd_id after seeding database. Otherwise,
+    we'll always start over at id 1!
     """
 
     # Get the Max user_id in the database
-    result = db.session.query(func.max(User.user_id)).one()
+    result = db.session.query(func.max(SupplyDetail.sd_id)).one()
     max_id = int(result[0])
 
     # Set the value for the next user_id to be max_id + 1
-    query = "SELECT setval('users_user_id_seq', :new_id)"
+    query = "SELECT setval('supply_details_sd_id_seq', :new_id)"
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
 
+#########################################################
+# Functions related to loading items owned by users.
+#########################################################
 
+def load_items():
+    """Load items from u.item into database."""
+
+    print "\n****Loading Items****\n"
+
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate items owned.
+    Item.query.delete()
+
+    # Read u.supplydetail file and insert data
+    for row in open("seed_data/u.item"):
+        row = row.rstrip()
+        item_id, user_id, sd_id, qty = row.split(",")
+
+        item = Item(item_id=item_id,
+                    user_id=user_id,
+                    sd_id=sd_id,
+                    qty=qty)
+
+        # We need to add to the session or it won't ever be stored
+        db.session.add(item)
+
+    # Once we're done, we should commit our work
+    db.session.commit()
+
+
+def set_val_item_id():
+    """Set value for the next item_id after seeding database. Otherwise,
+    we'll always start over at id 1!
+    """
+
+    # Get the Max user_id in the database
+    result = db.session.query(func.max(Item.item_id)).one()
+    max_id = int(result[0])
+
+    # Set the value for the next user_id to be max_id + 1
+    query = "SELECT setval('items_item_id_seq', :new_id)"
+    db.session.execute(query, {'new_id': max_id + 1})
+    db.session.commit()
 
 if __name__ == "__main__":
     connect_to_db(app)
@@ -105,8 +150,10 @@ if __name__ == "__main__":
 
     # Import different types of data
     load_users()
-    # load_items()
+    load_supplydetails()
+    load_items()
     # load_projects()
-    # load_supplydetails()
     # load_projectsupplydetails()
     set_val_user_id()
+    set_val_sd_id()
+    set_val_item_id()
