@@ -6,26 +6,30 @@ Home
 {% endblock %}
 
 {% block body %}
-Hey this is a homepage.
 
-<h1> Users </h1>
-    <p><a href="/users">View all users</a></p>
+<h1>Welcome to Crafter's Closet!</h1>
 
-<h1> Details About Supplies </h1>
-    <p><a href="/all-supply-details">View all supply details</a><p>
+{% if "user_id" in session %}
+<h3>You are logged in as {{ user.username }}.</h3>
 
-{% if "user_id" not in session %}
+<a href="/dashboard/<int:user.user_id>">Go to your dashboard.</a>
+
+<form action="/logout">
+<input type="submit" value="Logout">
+</form>
+
+{% else %}
+
+<!-- <h1> Users </h1>
+    <p><a href="/users">View all users</a></p> -->
+
+<!-- <h1> Details About Supplies </h1>
+    <p><a href="/all-supply-details">View all supply details</a><p> -->
 
 <p><a href="/register">Register to log your craft supplies!</a></p>
 
 <p><a href="/login">Login if you already have an account.</a></p>
 
-{% endif %}
-
-{% if "user_id" in session %}
-<form action="/logout">
-<input type="submit" value="Logout">
-</form>
 {% endif %}
 
 {% endblock %}

@@ -106,9 +106,9 @@ class Project(db.Model):
     # because that table doesn't represent "real" data!
 
     # Supplies don't care about projects, but projects do care about supplies.
-    supply_detail = db.relationship("SupplyDetail",
-                                    secondary="project_supply_details",
-                                    backref=db.backref("projects"))
+    supply_details = db.relationship("SupplyDetail",
+                                     secondary="project_supply_details",
+                                     backref=db.backref("projects"))
 
     def __repr__(self):
 
@@ -170,12 +170,102 @@ class Item(db.Model):
     user = db.relationship("User",
                            backref="items")
 
-    supply_detail = db.relationship("SupplyDetail",
-                                    backref="items")
+    supply_details = db.relationship("SupplyDetail",
+                                     backref="items")
 
     def __repr__(self):
         return "<Item user_id=%s, sd_id=%s, qty=%s>" % \
             (self.user_id, self.sd_id, self.qty)
+
+
+##########################################################
+# Function to add controlled sample data
+##########################################################
+def example_data():
+    """Create example data for the test database."""
+
+    # Two test users. IDs should be 1 and 2.
+
+    # This user will own the terra cotta bowl project, but won't have the brown paint
+    # to make it.
+    tu1 = User(email="ihave@projects.net",
+               username="ihaveprojects",
+               password="tobehashed")
+
+    # This user will own the blue clay bowl project and will have all needed supplies.
+    tu2 = User(email="ihave@suppliesandprojects.com",
+               username="ihaveprojectsnsupplies",
+               password="notsogood")
+
+    # Some test supply details. IDs should be 1, 2, 3, 4.
+    sd1 = SupplyDetail(supply_type="oven-bake clay",
+                       brand="Sculpey",
+                       color="Terra Cotta",
+                       units="oz",
+                       purchase_url="http://www.michaels.com/original-sculpey-oven-bake-clay-1.75lb/M10083451.html")
+    
+    sd2 = SupplyDetail(supply_type="oven-bake clay",
+                       brand="Sculpey",
+                       color="White",
+                       units="oz",
+                       purchase_url="http://www.michaels.com/original-sculpey-oven-bake-clay-1.75lb/M10083451.html")
+
+    sd3 = SupplyDetail(supply_type="acrylic paint",
+                       brand="Americana",
+                       color="Bittersweet Chocolate",
+                       units="oz",
+                       purchase_url="http://www.michaels.com/americana-acrylic-paint-2-oz/M10132000.html")
+
+    sd4 = SupplyDetail(supply_type="acrylic paint",
+                       brand="Americana",
+                       color="Calypso Blue",
+                       units="oz",
+                       purchase_url="http://www.michaels.com/americana-acrylic-paint-2-oz/M10132000.html")
+
+    # Some test projects. IDs should be 1 and 2
+    p1 = Project(title="Terra Cotta Bowl",
+                 user_id=1,
+                 description="An oven-baked clay bowl. I'll give it dark brown accents!")
+
+    p2 = Project(title="Blue Clay Bowl",
+                 user_id=2,
+                 description="Shape some white Sculpey clay into a bowl, bake it, and paint it blue.")
+
+    # Some test entries for project_supply_details. IDs should be 1, 2, 3, 4
+    psd1 = ProjectSupplyDetail(project_id=1,
+                               sd_id=1)
+
+    psd2 = ProjectSupplyDetail(project_id=1,
+                               sd_id=3)
+
+    psd3 = ProjectSupplyDetail(project_id=2,
+                               sd_id=2)
+
+    psd4 = ProjectSupplyDetail(project_id=2,
+                               sd_id=4)
+
+    # Some test items.
+    # ihaveprojects has terra cotta clay
+    i1 = Item(user_id=1,
+              sd_id=1,
+              qty=10)
+
+    # ihaveprojectsnsupplies has white clay and blue paint
+    i2 = Item(user_id=2,
+              sd_id=2,
+              qty=10)
+
+    i3 = Item(user_id=1,
+              sd_id=4,
+              qty=5)
+
+    db.session.add_all(tu1, tu2,
+                       sd1, sd2, sd3, sd4,
+                       p1, p2,
+                       psd1, psd2, psd3, psd4,
+                       i1, i2, i3)
+
+    db.session.commit()
 
 
 ##########################################################

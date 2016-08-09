@@ -1,17 +1,31 @@
 
 {% extends 'base.html' %}
 
-{% block title %} {{ user.email }} {% endblock %}
+{% block subtitle %} Dashboard {% endblock %}
 
 {% block body %}
 
-<h2>{{ user.email }} ({{ user.user_id }})</h2>
+<h1>{{ user.username }}'s Dashboard)</h1>
 
-<ul>
-    <li>
-        UN: {{ user.username }} 
-        Supplies: {{ supplies }}       
-    </li>
-</ul>
+<table>
+        <thead>
+        <tr>
+            <th>Craft Supply</th>
+            <th>Color</th>
+            <th>Quantity Owned</th>
+            <th>Purchase URL</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for supply_type, brand, color, units, purchase_url, qty in inventory %}
+        <tr>
+            <td>{{ brand }} {{ supply_type.title() }}</td>
+            <td>{{ color.title() }}</td>
+            <td>{{ qty }} {{ units }}</td>
+            <td><a href="{{ purchase_url }}">Link</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+</table>
 
 {% endblock %}

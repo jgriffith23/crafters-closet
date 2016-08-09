@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, request, flash, session, url
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db
-from model import User, SupplyDetail
+from model import User, SupplyDetail, Project, ProjectSupplyDetail, Item
 
 app = Flask(__name__)
 
@@ -31,6 +31,7 @@ def index():
 def show_all_supply_details():
     """Show a list of all general supply info currently in the database."""
 
+    # Fetch all supply details
     supply_details = SupplyDetail.query.all()
 
     return render_template("supply_detail_list.html", supply_details=supply_details)
@@ -43,8 +44,11 @@ def show_all_supply_details():
 @app.route("/users")
 def show_users():
     """Show a list of users."""
+
+    # Fetch all users.
     users = User.query.all()
 
+    # Show the user list.
     return render_template("user_list.html", users=users)
 
 
@@ -56,12 +60,22 @@ def show_dashboard(user_id):
     print "\n\nSession:", session, "\n\n"
     print "---------------------------------------"
 
-    user = User.query.filter(User.user_id == user_id).first()
-    #supplies = SupplyDetail.query.filter(SupplyDetail.user_id == user_id).all()
+    # Get the user's id from the session, if possible.
+    user_id = session.get("user_id")
 
-    supplies = ["yarn", "clay", "other crafty crap"]
+    if user_id:
+        # Get the current user
+        user = User.query.get(user_id)
 
-    return render_template("dashboard.html", user=user, supplies=supplies)
+        # Get the current user's inventory details.
+        inventory = db.session.query(SupplyDetail.supply_type,
+                                     SupplyDetail.brand,
+                                     SupplyDetail.color,
+                                     SupplyDetail.units,
+                                     SupplyDetail.purchase_url,
+                                     Item.qty).outerjoin(Item).filter_by(user_id=user_id).all()
+
+        return render_template("dashboard.html", user=user, inventory=inventory)
 
 
 ####################################################
