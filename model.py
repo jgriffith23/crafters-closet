@@ -25,7 +25,6 @@ class User(db.Model):
     # only be able to have one username per email address.
     email = db.Column(db.String(64), nullable=False, unique=True)
     username = db.Column(db.String(64), nullable=False, unique=True)
-
     password = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
@@ -169,7 +168,7 @@ class Item(db.Model):
     # Define those relationships here, because this is a middle table.
     user = db.relationship("User",
                            backref="items")
-    
+
     supply_detail = db.relationship("SupplyDetail",
                                     backref="items")
 
