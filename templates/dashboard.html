@@ -1,0 +1,17 @@
+
+{% extends 'base.html' %}
+
+{% block title %} {{ user.email }} {% endblock %}
+
+{% block body %}
+
+<h2>{{ user.email }} ({{ user.user_id }})</h2>
+
+<ul>
+    <li>
+        UN: {{ user.username }} 
+        Supplies: {{ supplies }}       
+    </li>
+</ul>
+
+{% endblock %}

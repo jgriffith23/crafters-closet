@@ -22,8 +22,9 @@ class User(db.Model):
 
     # Since other users will be able to see which user created a project,
     # emails won't double as usernames, for privacy purposes. A user should
-    # only be able to have one username per email address.
-    email = db.Column(db.String(64), nullable=False, unique=True)
+    # be allowed to have multiple usernames attached to one email, if they
+    # want.
+    email = db.Column(db.String(64), nullable=False)
     username = db.Column(db.String(64), nullable=False, unique=True)
     password = db.Column(db.String(64), nullable=True)
 

@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
 <head>
-    <title>{% block title %} TITLE GOES HERE {% endblock %}</title>
+    <title>{% block title %} Crafter's Closet {% endblock %}
+           {% block subtitle %} SUBTITLE HERE {% endblock %}
+    </title>
 </head>
 <body>
 
@@ -19,4 +21,10 @@
     {% block body %}CONTENT GOES HERE{% endblock %}
 
 </body>
+
+    <!-- Add a footer containing a link to the homepage. -->
+    <br>
+    <hr>
+    <footer><a href="/">Crafter's Closet Home</a></footer>
+
 </html>
