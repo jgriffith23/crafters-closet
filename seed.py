@@ -2,7 +2,7 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
 from sqlalchemy import func
-from model import User, SupplyDetail, Project, ProjectSupplyDetail, Item
+from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 from model import connect_to_db, db
 from server import app
@@ -52,6 +52,7 @@ def set_val_user_id():
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
 
+
 #########################################################
 # Functions related to loading supply details.
 #########################################################
@@ -97,6 +98,7 @@ def set_val_sd_id():
     query = "SELECT setval('supply_details_sd_id_seq', :new_id)"
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
+
 
 #########################################################
 # Functions related to loading projects owned by users.
@@ -144,30 +146,32 @@ def set_val_project_id():
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
 
+
 ################################################################################
 # Functions related to loading information about supplies contained in projects.
 ################################################################################
 
-def load_projectsupplydetails():
+def load_projectsupplies():
     """Load items from u.projectsupplydetail into database."""
 
     print "\n****Loading Details About Supplies in Projects****\n"
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate items owned.
-    ProjectSupplyDetail.query.delete()
+    ProjectSupply.query.delete()
 
     # Read u.projectsupplydetail file and insert data
-    for row in open("seed_data/u.projectsupplydetail"):
+    for row in open("seed_data/u.projectsupply"):
         row = row.rstrip()
-        ps_id, project_id, sd_id = row.split(",")
+        ps_id, project_id, sd_id, supply_qty = row.split(",")
 
-        projectsupplydetail = ProjectSupplyDetail(ps_id=ps_id,
-                                                  project_id=project_id,
-                                                  sd_id=sd_id)
+        projectsupply = ProjectSupply(ps_id=ps_id,
+                                      project_id=project_id,
+                                      sd_id=sd_id,
+                                      supply_qty=supply_qty)
 
         # We need to add to the session or it won't ever be stored
-        db.session.add(projectsupplydetail)
+        db.session.add(projectsupply)
 
     # Once we're done, we should commit our work
     db.session.commit()
@@ -179,11 +183,11 @@ def set_val_ps_id():
     """
 
     # Get the Max user_id in the database
-    result = db.session.query(func.max(ProjectSupplyDetail.ps_id)).one()
+    result = db.session.query(func.max(ProjectSupply.ps_id)).one()
     max_id = int(result[0])
 
     # Set the value for the next user_id to be max_id + 1
-    query = "SELECT setval('project_supply_details_ps_id_seq', :new_id)"
+    query = "SELECT setval('project_supplies_ps_id_seq', :new_id)"
     db.session.execute(query, {'new_id': max_id + 1})
     db.session.commit()
 
@@ -242,7 +246,7 @@ if __name__ == "__main__":
     load_users()
     load_supplydetails()
     load_projects()
-    load_projectsupplydetails()
+    load_projectsupplies()
     load_items()
 
     # Set the value of the autoincrementing primary key in each table to

@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, request, flash, session, url
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db
-from model import User, SupplyDetail, Project, ProjectSupplyDetail, Item
+from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 app = Flask(__name__)
 

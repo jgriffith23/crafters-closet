@@ -3,13 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 # Create an object representing the idea of the Crafter's Closet database.
 db = SQLAlchemy()
 
-#######################################################
-# Table Model Classes
-#######################################################
+##############################################################
+# Primary table models. Users, supplies, and projects.
+##############################################################
 
 # The users and supplies tables will have no foreign keys, so create
 # those first.
-
 
 class User(db.Model):
     """A model that represents a user."""
@@ -105,10 +104,10 @@ class Project(db.Model):
     # and supply_details table. Can't define this on ProjectSupplyDetail
     # because that table doesn't represent "real" data!
 
-    # Supplies don't care about projects, but projects do care about supplies.
-    supply_details = db.relationship("SupplyDetail",
-                                     secondary="project_supply_details",
-                                     backref=db.backref("projects"))
+    # # Supplies don't care about projects, but projects do care about supplies.
+    # supply_details = db.relationship("SupplyDetail",
+    #                                  secondary="project_supply_details",
+    #                                  backref=db.backref("projects"))
 
     def __repr__(self):
 
@@ -116,13 +115,18 @@ class Project(db.Model):
             (self.title, self.instr_url, self.description)
 
 
-class ProjectSupplyDetail(db.Model):
+######################################################################
+# Models for middle tables relating projects/users, projects/supplies
+######################################################################
+
+
+class ProjectSupply(db.Model):
     """ A model that represents the relationship between a project and a
     set of supply information. A project can have many supplies, and a supply
     may be in many projects."""
 
     # Set the table name for this model.
-    __tablename__ = "project_supply_details"
+    __tablename__ = "project_supplies"
 
     # Create the columns in the project_supplies table.
     ps_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -137,8 +141,22 @@ class ProjectSupplyDetail(db.Model):
                       db.ForeignKey("supply_details.sd_id"),
                       nullable=False)
 
+    # Quantity column, to store how much of a supply is needed for a project
+    supply_qty = db.Column(db.Integer,
+                           nullable=False)
+
+    # Define relationships between projects, supply details, and the supplies
+    # in a project. A supply detail describes the nature of the supply in a
+    # project, and the project supply table says how many supplies of that nature
+    # are owned.
+    project = db.relationship("Project",
+                              backref="project_supplies")
+
+    supply_details = db.relationship("SupplyDetail",
+                                     backref="project_supplies")
+
     def __repr__(self):
-        return "<ProjectSupplyDetail project_id=%s, sd_id=%s>" % \
+        return "<ProjectSupply project_id=%s, sd_id=%s>" % \
             (self.project_id, self.sd_id)
 
 
@@ -162,11 +180,12 @@ class Item(db.Model):
                       db.ForeignKey("supply_details.sd_id"),
                       nullable=False)
 
-    qty = db.Column(db.String(8), nullable=False)
+    # Quantity column, to store how much of a supply a user owns.
+    qty = db.Column(db.Integer, nullable=False)
 
-    # There's no relationship between users and supply details, but there is a
-    # relationship between both of those things and the items a user owns.
-    # Define those relationships here, because this is a middle table.
+    # Define relationship between users, supply details, and the items a user
+    # owns.  A supply detail describes the nature of the item owned, and the items
+    # table says how many supplies of that nature are owned.
     user = db.relationship("User",
                            backref="items")
 
@@ -233,16 +252,20 @@ def example_data():
 
     # Some test entries for project_supply_details. IDs should be 1, 2, 3, 4
     psd1 = ProjectSupplyDetail(project_id=1,
-                               sd_id=1)
+                               sd_id=1,
+                               supply_qty=5)
 
     psd2 = ProjectSupplyDetail(project_id=1,
-                               sd_id=3)
+                               sd_id=3,
+                               supply_qty=2)
 
     psd3 = ProjectSupplyDetail(project_id=2,
-                               sd_id=2)
+                               sd_id=2,
+                               supply_qty=10)
 
     psd4 = ProjectSupplyDetail(project_id=2,
-                               sd_id=4)
+                               sd_id=4,
+                               supply_qty=1)
 
     # Some test items.
     # ihaveprojects has terra cotta clay
