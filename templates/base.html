@@ -1,30 +1,74 @@
 <!doctype html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %} Crafter's Closet {% endblock %}
            {% block subtitle %} SUBTITLE HERE {% endblock %}
     </title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-
-    {% if get_flashed_messages() %}
-        <div>
-          <!-- Show flashed messages -->
-            {% with messages = get_flashed_messages() %}
-                {% for message in messages %}
-                    <div>{{ message }}</div>
-                {% endfor %}
-            {% endwith %}
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Crafter's Closet</a>
         </div>
-    {% endif %}
 
-    {% block body %}CONTENT GOES HERE{% endblock %}
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="#">About</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            {% if "user_id" not in session %}
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+            {% else %}
+            <li><a href="/dashboard/{{ user.user_id }}">Your Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
+            {% endif %}
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+        {% if get_flashed_messages() %}
+            <div class="flash-messages">
+              <!-- Show flashed messages -->
+                {% with messages = get_flashed_messages() %}
+                    {% for message in messages %}
+                        <div><span class="glyphicon glyphicon-flash"></span>{{ message }}</div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        {% block body %}CONTENT GOES HERE{% endblock %}
+    </div>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 </body>
 
-    <!-- Add a footer containing a link to the homepage. -->
-    <br>
-    <hr>
-    <footer><a href="/">Crafter's Closet Home</a></footer>
+<div class="push"></div>
+
+<footer class="footer">
+  <div class="container">
+    <p class="text-muted"></p>
+  </div>
+</footer>
 
 </html>

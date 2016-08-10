@@ -1,1 +1,43 @@
-/* CSS file, for when I'm ready to do that.*/
+body {
+    margin: 8px;
+    background-color: #e6f9ff;
+    height: 100%;
+}
+
+.footer {
+    background-color: #80dfff;
+    height: 10%;
+}
+
+.push {
+    height: 100px; /* .push must be the same height as .footer */
+}
+
+
+.navbar {
+    background-color: #80dfff;
+}
+
+.navbar-default .navbar-nav li a {
+    color: white;
+}
+
+.navbar-default .navbar-brand {
+   color: black;
+}
+
+.melon {
+    width:100%;
+    height: auto;
+    margin-top: 3em;
+}
+
+#mission {
+    margin-top: 2em;
+    font-size: 1.25em;
+    line-height: 1.25em;
+}
+
+.col-lg-4 {
+    text-align: center;
+}

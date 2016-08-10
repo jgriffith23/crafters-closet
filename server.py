@@ -32,30 +32,9 @@ def index():
     return render_template("homepage.html", user=user)
 
 
-@app.route("/all-supply-details")
-def show_all_supply_details():
-    """Show a list of all general supply info currently in the database."""
-
-    # Fetch all supply details
-    supply_details = SupplyDetail.query.all()
-
-    return render_template("supply_detail_list.html", supply_details=supply_details)
-
-
 ####################################################
 # User-specific routes
 ####################################################
-
-@app.route("/users")
-def show_users():
-    """Show a list of users."""
-
-    # Fetch all users.
-    users = User.query.all()
-
-    # Show the user list.
-    return render_template("user_list.html", users=users)
-
 
 @app.route('/dashboard/<int:user_id>')
 def show_dashboard(user_id):
@@ -84,8 +63,9 @@ def show_dashboard(user_id):
         # Render a...lovely...dashboard showing the user's inventory.
         return render_template("dashboard.html", user=user, inventory=inventory)
 
-    flash("You can't go there! Please log in.")
-    return redirect("/")
+    else:
+        flash("You can't go there! Please log in.")
+        return redirect("/")
 
 
 ####################################################
@@ -104,6 +84,8 @@ def handle_register():
     """Handles input from registration form."""
 
     # Get the user's email, username, and password from the form.
+
+    #FIXME: Have user enter pw twice?
     email = request.form.get("email")
     username = request.form.get("username")
     password = request.form.get("password")
@@ -115,6 +97,9 @@ def handle_register():
     if user:
         flash("That username has already been registered.")
         return redirect("/register")
+
+    #FIXME: Check whether they entered a pw
+
     else:
         # If the user doesn't exist, create one.
         user = User(email=email, username=username, password=password)
@@ -168,6 +153,8 @@ def handle_login():
 
 @app.route('/logout')
 def logout():
+
+    # FIXME: How would we delete the entire session?
 
     if "user_id" in session:
         del session["user_id"]
