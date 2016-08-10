@@ -20,11 +20,16 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
 
-    print "---------------------------------------"
-    print "\n\nSession:", session, "\n\n"
-    print "---------------------------------------"
+    # Check whether the user is logged in. If so, get the user, so we can
+    # display user-specific info on the homepage.
+    user_id = session.get("user_id")
 
-    return render_template("homepage.html")
+    if user_id:
+        user = User.query.get(user_id)
+    else:
+        user = None
+
+    return render_template("homepage.html", user=user)
 
 
 @app.route("/all-supply-details")
@@ -67,7 +72,8 @@ def show_dashboard(user_id):
         # Get the current user
         user = User.query.get(user_id)
 
-        # Get the current user's inventory details.
+        # Get the current user's inventory details as a list of tuples of the
+        # format: (type, brand, color, units, url, qty)
         inventory = db.session.query(SupplyDetail.supply_type,
                                      SupplyDetail.brand,
                                      SupplyDetail.color,
@@ -75,7 +81,11 @@ def show_dashboard(user_id):
                                      SupplyDetail.purchase_url,
                                      Item.qty).outerjoin(Item).filter_by(user_id=user_id).all()
 
+        # Render a...lovely...dashboard showing the user's inventory.
         return render_template("dashboard.html", user=user, inventory=inventory)
+
+    flash("You can't go there!")
+    return redirect("/")
 
 
 ####################################################
@@ -93,12 +103,15 @@ def register_form():
 def handle_register():
     """Handles input from registration form."""
 
+    # Get the user's email, username, and password from the form.
     email = request.form.get("email")
     username = request.form.get("username")
     password = request.form.get("password")
 
+    # Check whether the user exists.
     user = User.query.filter(User.username == username).first()
 
+    # If that user exists, tell the user they can't have that username.
     if user:
         flash("That username has already been registered.")
         return redirect("/register")
