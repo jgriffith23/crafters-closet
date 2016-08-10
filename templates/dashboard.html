@@ -5,27 +5,44 @@
 
 {% block body %}
 
-<h1>{{ user.username }}'s Dashboard</h1>
+<h1>Dashboard</h1>
 
-<table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Craft Supply</th>
-            <th>Color</th>
-            <th>Quantity Owned</th>
-            <th>Purchase URL</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for supply_type, brand, color, units, purchase_url, qty in inventory %}
-        <tr>
-            <td>{{ brand }} {{ supply_type.title() }}</td>
-            <td>{{ color.title() }}</td>
-            <td>{{ qty }} {{ units }}</td>
-            <td><a href="{{ purchase_url }}">Link</a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-</table>
+<div class="project-options">
+</div>
+
+<div class="inventory-options">
+    <div class="btn-group-vertical" role="group" aria-label="inventory-options">
+        <button type="button" class="btn btn-default">Filter Inventory View</button>
+        <button type="button" class="btn btn-default">Search Your Inventory</button>
+        <button type="button" class="btn btn-default">Add a Supply!</button>
+
+    </div>    
+</div>
+
+<br>
+
+<div class="inventory">
+    <table class="table table-striped">
+        <caption>Your Inventory</caption>
+            <thead>
+            <tr>
+                <th>Craft Supply</th>
+                <th>Color</th>
+                <th>Quantity Owned</th>
+                <th>Purchase URL</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for supply_type, brand, color, units, purchase_url, qty in inventory %}
+            <tr>
+                <td>{{ brand }} {{ supply_type.title() }}</td>
+                <td>{{ color.title() }}</td>
+                <td>{{ qty }} {{ units }}</td>
+                <td><a href="{{ purchase_url }}">Link</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+</div>
 
 {% endblock %}

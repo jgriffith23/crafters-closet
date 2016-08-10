@@ -1,19 +1,16 @@
+/* Body styles */
 body {
     margin: 8px;
     background-color: #e6f9ff;
     height: 100%;
 }
 
-.footer {
-    background-color: #80dfff;
-    height: 10%;
+.inventory {
+
+    background-color:  #ccf2ff;
 }
 
-.push {
-    height: 100px;
-}
-
-
+/* Navbar styles */
 .navbar {
     background-color: #80dfff;
 }
@@ -26,18 +23,12 @@ body {
    color: black;
 }
 
-.melon {
-    width:100%;
-    height: auto;
-    margin-top: 3em;
+/* Footer styles */
+.footer {
+    background-color: #80dfff;
+    height: 10%;
 }
 
-#mission {
-    margin-top: 2em;
-    font-size: 1.25em;
-    line-height: 1.25em;
-}
-
-.col-lg-4 {
-    text-align: center;
+.push {
+    height: 100px;
 }
