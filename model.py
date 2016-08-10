@@ -203,7 +203,7 @@ def example_data():
                        color="Terra Cotta",
                        units="oz",
                        purchase_url="http://www.michaels.com/original-sculpey-oven-bake-clay-1.75lb/M10083451.html")
-    
+
     sd2 = SupplyDetail(supply_type="oven-bake clay",
                        brand="Sculpey",
                        color="White",

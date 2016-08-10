@@ -84,7 +84,7 @@ def show_dashboard(user_id):
         # Render a...lovely...dashboard showing the user's inventory.
         return render_template("dashboard.html", user=user, inventory=inventory)
 
-    flash("You can't go there!")
+    flash("You can't go there! Please log in.")
     return redirect("/")
 
 
@@ -158,7 +158,7 @@ def handle_login():
             print "\n\nSession:", session, "\n\n"
             print "---------------------------------------"
 
-            flash("Welcome back to Crafter's Closet!")
+            flash("Welcome back!")
             return redirect(url_for('.show_dashboard', user_id=user.user_id))
 
     else:
