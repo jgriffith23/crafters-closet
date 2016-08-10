@@ -33,8 +33,8 @@
             <li><a href="/login">Login</a></li>
             <li><a href="/register">Register</a></li>
             {% else %}
-            <li><a href="/dashboard/{{ user.user_id }}">Your Dashboard</a></li>
-            <li><a href="/logout">Logout (Currently logged in as {{ user.username }})</a></li>
+            <li><a href="/dashboard/{{ user.user_id }}"><span id="greeting">Hi, {{ user.username}}!</span><br> Your Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
             {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->

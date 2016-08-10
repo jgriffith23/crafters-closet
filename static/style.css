@@ -23,6 +23,10 @@ body {
    color: black;
 }
 
+#greeting {
+    color: #777;
+}
+
 /* Footer styles */
 .footer {
     background-color: #80dfff;

@@ -60,12 +60,28 @@ def show_dashboard(user_id):
                                      SupplyDetail.purchase_url,
                                      Item.qty).outerjoin(Item).filter_by(user_id=user_id).all()
 
-        # Render a...lovely...dashboard showing the user's inventory.
-        return render_template("dashboard.html", user=user, inventory=inventory)
+        # Prepare data for the "Add a Supply", "Filter Inventory View", and
+        # "Search Your Inventory" features.
+
+        all_supply_types = get_all_supply_types()
+
+        # Render a dashboard showing the user's inventory.
+        return render_template("dashboard.html",
+                               user=user,
+                               inventory=inventory,
+                               all_supply_types=all_supply_types)
 
     else:
         flash("You can't go there! Please log in.")
         return redirect("/")
+
+
+def get_all_supply_types():
+
+    all_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+    all_supply_types = sorted(list(all_supply_types))
+
+    return all_supply_types
 
 
 ####################################################

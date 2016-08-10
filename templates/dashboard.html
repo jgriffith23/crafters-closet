@@ -11,15 +11,73 @@
 </div>
 
 <div class="inventory-options">
-    <div class="btn-group-vertical" role="group" aria-label="inventory-options">
+    <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
         <button type="button" class="btn btn-default">Filter Inventory View</button>
         <button type="button" class="btn btn-default">Search Your Inventory</button>
-        <button type="button" class="btn btn-default">Add a Supply!</button>
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
 
     </div>    
 </div>
 
 <br>
+
+<div class="modal fade" id="add-supply">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Add a Supply to Your Inventory</h4>
+      </div>
+
+      <!-- Begin Modal Body -->
+
+      <div class="modal-body">
+            <form action="/add-supply" method="POST">
+                  <div class="form-group">
+                    <!-- Supply Type Dropdown -->
+                    <label for="supplytype">Supply Type</label><br>
+                        <select name="supplytype" id="supplytype">
+                          {% for type in all_supply_types %}
+                          <option value="{{ type[0] }}">{{ type[0] }}</option>
+                          {% endfor %}
+                        </select>
+                  </div>
+                  <br>
+                  <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <input type="text" class="form-control" id="brand" placeholder="What company made this supply?">
+                  </div>
+                  <br>
+                  <div class="form-group">
+                    <label for="color">Color</label>
+                    <input type="text" class="form-control" id="color" placeholder="What color is this supply?">
+                  </div> 
+                  <br>
+                  <div class="form-group">
+                    <label for="purchase-url">Purchase URL</label>
+                    <input type="text" class="form-control" id="purchase-url" placeholder="Where did you buy this supply?">
+                  </div>
+
+                  <div class="form-group">
+<!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
+                    <label for="quantity-owned">Quantity You Own</label>
+                    <input type="number" class="form-control" id="quantity-owned">
+                  </div>
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Nevermind!</button>
+                <button type="submit" class="btn btn-primary">Add Supply</button>
+            </form>
+    </div>
+
+    </div><!-- /.modal-content -->
+
+  </div><!-- /.modal-dialog -->
+
+</div><!-- /.modal -->
 
 <div class="inventory">
     <table class="table table-striped">
