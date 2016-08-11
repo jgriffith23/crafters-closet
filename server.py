@@ -134,26 +134,33 @@ def add_supply():
 
     return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
 
-# FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
-# def check_for_dup_sd(sd):
-#     """Check whether the passed supply detail exists in the db. Different
-#     purchase url is okay."""
 
-#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
-#                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
-#                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
-#                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+########################################################################
+# Project routes (show project, show project creation form, handle form)
+########################################################################
 
-#     possible_dupe = []
+@app.route("/project/<int:project_id>")
+def show_project(project_id):
+    """Displays a page with all information about a project."""
 
-#     return is_duplicate
+    user_id = session.get("user_id")
+    user = User.query.get(user_id)
+
+    # Get an object representing the project whose id was passed
+    project = Project.query.get(project_id)
+
+    # Get all supplies related to that project
+    project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id).all()
+
+    # Render the project pag
+    return render_template("project.html",
+                           project=project,
+                           project_supplies=project_supplies,
+                           user=user)
 
 
-####################################################
-# Project routes (show creation form, handle form)
-####################################################
 @app.route('/create-project', methods=['GET'])
-def show_project_form():
+def show_project_creation_form():
     """Displays the project creation form."""
 
     # Get the user info from the session.
@@ -218,7 +225,7 @@ def handle_project_creation():
     db.session.commit()
 
     flash("%s added to your projects. Hooray!" % (title))
-    return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
+    return redirect(url_for('.show_project', project_id=project.project_id))
 
 
 ####################################################
@@ -350,6 +357,21 @@ def get_matching_sd(supply_type, brand, color, units):
     print supply_type, brand, color, units
     print "HEY I GOT to get_matching_sd. THIS IS WHAT I FOUND: %s" % (sd_from_db)
     return sd_from_db
+
+
+# FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
+# def check_for_dup_sd(sd):
+#     """Check whether the passed supply detail exists in the db. Different
+#     purchase url is okay."""
+
+#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
+#                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
+#                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
+#                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+
+#     possible_dupe = []
+
+#     return is_duplicate
 
 
 if __name__ == "__main__":
