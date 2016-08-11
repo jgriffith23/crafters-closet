@@ -33,7 +33,7 @@ def index():
 
 
 ####################################################
-# User-specific routes
+# Dashboard routes
 ####################################################
 
 @app.route('/dashboard/<int:user_id>')
@@ -60,29 +60,78 @@ def show_dashboard(user_id):
                                      SupplyDetail.purchase_url,
                                      Item.qty).outerjoin(Item).filter_by(user_id=user_id).all()
 
+#----------------------------------------------------------------------------------------------
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
         # "Search Your Inventory" features.
 
+        # TODO: Ask an adviser whether it makes sense to do all of this here
         all_supply_types = get_all_supply_types()
+        all_units = get_all_supply_units()
+#----------------------------------------------------------------------------------------------
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
                                user=user,
                                inventory=inventory,
-                               all_supply_types=all_supply_types)
+                               all_supply_types=all_supply_types,
+                               all_units=all_units)
 
     else:
         flash("You can't go there! Please log in.")
         return redirect("/")
 
 
-def get_all_supply_types():
+####################################################
+# Inventory routes (add supply, search, filter)
+####################################################
+@app.route('/add-supply', methods=['POST'])
+def add_supply():
+    """Add a supply to the user's inventory.
 
-    all_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
-    all_supply_types = sorted(list(all_supply_types))
+    This route responds to a POST request from Ajax by adding a new record
+    to the items table with the current authenticated user's id, the supply_detail's
+    id, and the quantity given. If the supply_detail doesn't exist, we create one
+    and add it to the database.
 
-    return all_supply_types
+    TODO: Write function so that it actually works as described.
+    """
 
+    supply_type = request.form.get("supplytype")
+    brand = request.form.get("brand")
+    color = request.form.get("color")
+    purchase_url = request.form.get("purchase-url")
+    units = request.form.get("units")
+    qty = request.form.get("quantity-owned")
+
+# TODO: Add a helper function to check whether this supply duplicates an exising
+# supply in the database, and just apply the correct supply_detali ID. Right now,
+# just add the supply to supply_details anyway.
+
+    # Create a new supply detail record.
+    supply_detail = SupplyDetail(supply_type=supply_type,
+                                 brand=brand,
+                                 color=color,
+                                 units=units,
+                                 purchase_url=purchase_url)
+
+    # Add that record to the database.
+    db.session.add(supply_detail)
+    db.session.commit()
+
+    # Fun fact: Once you commit a new record to the db, you can fetch its
+    # autoincrementing id as you would if the record had existed all along!
+    # Let's do that.
+
+    item = Item(user_id=session.get("user_id"),
+                sd_id=supply_detail.sd_id,
+                qty=qty)
+
+    db.session.add(item)
+    db.session.commit()
+
+    flash("OMGWTFBBQ")
+
+    return redirect('/')
 
 ####################################################
 # Registration routes
@@ -178,6 +227,26 @@ def logout():
     print "\n\n\n\nSession", session, "\n\n\n\n"
 
     return redirect("/")
+
+
+############################################################
+# Helper functions
+############################################################
+
+def get_all_supply_types():
+
+    all_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+    all_supply_types = sorted(list(all_supply_types))
+
+    return all_supply_types
+
+
+def get_all_supply_units():
+
+    all_units = set(db.session.query(SupplyDetail.units).all())
+    all_units = sorted(list(all_units))
+
+    return all_units
 
 
 if __name__ == "__main__":

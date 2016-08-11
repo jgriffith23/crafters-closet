@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 
 # Create an object representing the idea of the Crafter's Closet database.
 db = SQLAlchemy()

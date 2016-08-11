@@ -49,23 +49,34 @@
                   <br>
                   <div class="form-group">
                     <label for="brand">Brand</label>
-                    <input type="text" class="form-control" id="brand" placeholder="What company made this supply?">
+                    <input type="text" class="form-control" name="brand" id="brand" placeholder="What company made this supply?">
                   </div>
                   <br>
                   <div class="form-group">
                     <label for="color">Color</label>
-                    <input type="text" class="form-control" id="color" placeholder="What color is this supply?">
+                    <input type="text" class="form-control" name="color" id="color" placeholder="What color is this supply?">
                   </div> 
                   <br>
                   <div class="form-group">
                     <label for="purchase-url">Purchase URL</label>
-                    <input type="text" class="form-control" id="purchase-url" placeholder="Where did you buy this supply?">
+                    <input type="text" class="form-control" name="purchase-url" id="purchase-url" placeholder="Where did you buy this supply?">
                   </div>
 
                   <div class="form-group">
-<!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
+                  <!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
                     <label for="quantity-owned">Quantity You Own</label>
-                    <input type="number" class="form-control" id="quantity-owned">
+                    <input type="number" class="form-control" name="quantity-owned" id="quantity-owned">
+                  </div>
+                  <div class="form-group">
+
+                    <!-- Units Dropdown -->
+                    <!-- FIXME: Remove units option when I can reflect units on qty above -->
+                    <label for="units">Units (Don't be a jerk. Pick the unit that matches your supply type.)</label><br>
+                        <select name="units" id="units">
+                          {% for unit in all_units %}
+                          <option value="{{ unit[0] }}">{{ unit[0] }}</option>
+                          {% endfor %}
+                        </select>
                   </div>
 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Nevermind!</button>
