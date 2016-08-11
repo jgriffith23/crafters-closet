@@ -118,20 +118,37 @@ def add_supply():
     db.session.add(supply_detail)
     db.session.commit()
 
-    # Fun fact: Once you commit a new record to the db, you can fetch its
-    # autoincrementing id as you would if the record had existed all along!
-    # Let's do that.
-
+    # Create a new item record, using the current user's id and the
+    # newly created supply detail's sd_id
     item = Item(user_id=session.get("user_id"),
                 sd_id=supply_detail.sd_id,
                 qty=qty)
 
+    # Add the new item to the database
     db.session.add(item)
     db.session.commit()
 
-    flash("OMGWTFBBQ")
+    flash("%s %s of %s %s have been added to your inventory." %
+         (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
 
-    return redirect('/')
+    return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
+
+
+def check_for_dup_sd(sd):
+    """Check whether the passed supply detail exists in the db. Different
+    purchase url is okay."""
+
+    sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
+                                           SupplyDetail.brand.ilike("%" + sd.brand + "%"),
+                                           SupplyDetail.color.ilike("%" + sd.color + "%"),
+                                           SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+
+    possible_dupe
+
+
+    return is_duplicate
+
+
 
 ####################################################
 # Registration routes

@@ -95,7 +95,8 @@
         <caption>Your Inventory</caption>
             <thead>
             <tr>
-                <th>Craft Supply</th>
+                <th>Brand</th>
+                <th>Type</th>
                 <th>Color</th>
                 <th>Quantity Owned</th>
                 <th>Purchase URL</th>
@@ -104,7 +105,8 @@
             <tbody>
             {% for supply_type, brand, color, units, purchase_url, qty in inventory %}
             <tr>
-                <td>{{ brand }} {{ supply_type.title() }}</td>
+                <td>{{ brand.title() }}</td>
+                <td>{{ supply_type }}</td>
                 <td>{{ color.title() }}</td>
                 <td>{{ qty }} {{ units }}</td>
                 <td><a href="{{ purchase_url }}">Link</a></td>
