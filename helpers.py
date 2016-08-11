@@ -34,15 +34,10 @@ def get_matching_sd(supply_type, brand, color, units):
 
 
 # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
-# def check_for_dup_sd(sd):
-#     """Check whether the passed supply detail exists in the db. Different
-#     purchase url is okay."""
+def check_for_dup_sd(sd):
+    """Check whether the passed supply detail exists in the db. Different
+    purchase url is okay."""
 
-#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
-#                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
-#                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
-#                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+    possible_dupe = get_matching_sd(sd)
 
-#     possible_dupe = []
-
-#     return is_duplicate
+    return is_duplicate

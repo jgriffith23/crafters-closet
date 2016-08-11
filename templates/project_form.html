@@ -6,8 +6,10 @@ Create Project
 
 {% block body %}
 <h1> Create a New Project </h1>
-
+    
+    
     <form action="/create-project" method="POST">
+        <!-- Basic Project info -->
         <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Basic Project Information</h3>
@@ -28,10 +30,15 @@ Create Project
                 <label for="instr-url">Instruction URL</label>
                 <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want.">
               </div>
+              <div class="form-group">
+                <label for="num-supplies">How many supplies?</label>
+                <input type="number" class="form-control" name="num-supplies" id="num-supplies" min=0 placeholder="0">
+              </div>
             </div>
         </div>
 
-        <div class="panel panel-default">
+        <!-- Adding Supplies -->
+        <div class="panel panel-default hidden">
             <div class="panel-heading">
                 <h3 class="panel-title">Supplies Required</h3>
             </div>
@@ -83,5 +90,11 @@ Create Project
 
         <button type="submit" class="btn btn-primary">Create Project</button>
     </form>
+
+    <script>
+
+    </script>
+
+<!-- <script src="/static/js/FILE"></script> -->
 
 {% endblock %}

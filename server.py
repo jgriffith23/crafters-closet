@@ -63,14 +63,11 @@ def show_dashboard(user_id):
         # Get the user's projects.
         projects = Project.query.filter(Project.user_id == user_id).all()
 
-#----------------------------------------------------------------------------------------------
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
         # "Search Your Inventory" features.
 
-        # TODO: Ask an adviser whether it makes sense to do all of this here
         all_supply_types = get_all_supply_types()
         all_units = get_all_supply_units()
-#----------------------------------------------------------------------------------------------
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
