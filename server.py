@@ -6,6 +6,9 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
+from reg_auth import register_form, handle_register, login_form, handle_login, logout
+from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd
+
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -108,7 +111,7 @@ def add_supply():
 # supply in the database, and just apply the correct supply_detali ID. Right now,
 # just add the supply to supply_details anyway.
 
-    # Create a new supply detail record.
+    # Instantiate a new supply detail record.
     supply_detail = SupplyDetail(supply_type=supply_type,
                                  brand=brand,
                                  color=color,
@@ -119,7 +122,7 @@ def add_supply():
     db.session.add(supply_detail)
     db.session.commit()
 
-    # Create a new item record, using the current user's id and the
+    # Instantiate a new item record, using the current user's id and the
     # newly created supply detail's sd_id
     item = Item(user_id=session.get("user_id"),
                 sd_id=supply_detail.sd_id,
@@ -152,7 +155,7 @@ def show_project(project_id):
     # Get all supplies related to that project
     project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id).all()
 
-    # Render the project pag
+    # Render the project page
     return render_template("project.html",
                            project=project,
                            project_supplies=project_supplies,
@@ -228,150 +231,150 @@ def handle_project_creation():
     return redirect(url_for('.show_project', project_id=project.project_id))
 
 
-####################################################
-# Registration routes
-####################################################
+# ####################################################
+# # Registration routes
+# ####################################################
 
-@app.route('/register', methods=['GET'])
-def register_form():
-    """Displays the registration form."""
+# @app.route('/register', methods=['GET'])
+# def register_form():
+#     """Displays the registration form."""
 
-    return render_template("register_form.html")
-
-
-@app.route('/register', methods=['POST'])
-def handle_register():
-    """Handles input from registration form."""
-
-    # Get the user's email, username, and password from the form.
-
-    #FIXME: Have user enter pw twice?
-    email = request.form.get("email")
-    username = request.form.get("username")
-    password = request.form.get("password")
-
-    # Check whether the user exists.
-    user = User.query.filter(User.username == username).first()
-
-    # If that user exists, tell the user they can't have that username.
-    if user:
-        flash("That username has already been registered.")
-        return redirect("/register")
-
-    #FIXME: Check whether they entered a pw
-
-    else:
-        # If the user doesn't exist, create one.
-        user = User(email=email, username=username, password=password)
-        db.session.add(user)
-        db.session.commit()
-        flash("Account created. Happy crafting!")
-
-        #Code 307 preserves the POST request, including form data.
-        return redirect("/login", code=307)
+#     return render_template("register_form.html")
 
 
-####################################################
-# Authentication/Deauthentication routes
-####################################################
+# @app.route('/register', methods=['POST'])
+# def handle_register():
+#     """Handles input from registration form."""
 
-@app.route('/login', methods=['GET'])
-def login_form():
-    """Displays the login form."""
+#     # Get the user's email, username, and password from the form.
 
-    return render_template("login_form.html")
+#     #FIXME: Have user enter pw twice?
+#     email = request.form.get("email")
+#     username = request.form.get("username")
+#     password = request.form.get("password")
 
+#     # Check whether the user exists.
+#     user = User.query.filter(User.username == username).first()
 
-@app.route('/login', methods=['POST'])
-def handle_login():
-    """Handles input from login/registration form."""
+#     # If that user exists, tell the user they can't have that username.
+#     if user:
+#         flash("That username has already been registered.")
+#         return redirect("/register")
 
-    username = request.form.get("username")
-    password = request.form.get("password")
+#     #FIXME: Check whether they entered a pw
 
-    user = User.query.filter(User.username == username).first()
+#     else:
+#         # If the user doesn't exist, create one.
+#         user = User(email=email, username=username, password=password)
+#         db.session.add(user)
+#         db.session.commit()
+#         flash("Account created.")
 
-    if user:
-        if password != user.password:
-            flash("Incorrect username or password.")
-            return redirect("/login")
-        else:
-            #add their user_id to session
-            session["user_id"] = user.user_id
-
-            print "---------------------------------------"
-            print "\n\nSession:", session, "\n\n"
-            print "---------------------------------------"
-
-            flash("Welcome back!")
-            return redirect(url_for('.show_dashboard', user_id=user.user_id))
-
-    else:
-        flash("Incorrect username or password.")
-        return redirect("/login")
+#         #Code 307 preserves the POST request, including form data.
+#         return redirect("/login", code=307)
 
 
-@app.route('/logout')
-def logout():
+# ####################################################
+# # Authentication/Deauthentication routes
+# ####################################################
 
-    # FIXME: How would we delete the entire session?
+# @app.route('/login', methods=['GET'])
+# def login_form():
+#     """Displays the login form."""
 
-    if "user_id" in session:
-        del session["user_id"]
-        flash("See you later!")
-    print "\n\n\n\nSession", session, "\n\n\n\n"
-
-    return redirect("/")
+#     return render_template("login_form.html")
 
 
-############################################################
-# Helper functions
-############################################################
+# @app.route('/login', methods=['POST'])
+# def handle_login():
+#     """Handles input from login/registration form."""
 
-def get_all_supply_types():
+#     username = request.form.get("username")
+#     password = request.form.get("password")
 
-    all_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
-    all_supply_types = sorted(list(all_supply_types))
+#     user = User.query.filter(User.username == username).first()
 
-    return all_supply_types
+#     if user:
+#         if password != user.password:
+#             flash("Incorrect username or password.")
+#             return redirect("/login")
+#         else:
+#             #add their user_id to session
+#             session["user_id"] = user.user_id
 
+#             print "---------------------------------------"
+#             print "\n\nSession:", session, "\n\n"
+#             print "---------------------------------------"
 
-def get_all_supply_units():
+#             flash("Welcome back!")
+#             return redirect(url_for('.show_dashboard', user_id=user.user_id))
 
-    all_units = set(db.session.query(SupplyDetail.units).all())
-    all_units = sorted(list(all_units))
-
-    return all_units
-
-def get_matching_sd(supply_type, brand, color, units):
-    """Get an existing supply detail record from the database whose columns match
-    those of the passed supply detail."""
-
-    # Use ilike() to check columns despite typos
-    sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + supply_type + "%"),
-                                           SupplyDetail.brand.ilike("%" + brand + "%"),
-                                           SupplyDetail.color.ilike("%" + color + "%"),
-                                           SupplyDetail.units.ilike("%" + units + "%")).first()
-
-    print "SO THIs is WHAT YOU GAVE ME:"
-    print supply_type, brand, color, units
-    print "HEY I GOT to get_matching_sd. THIS IS WHAT I FOUND: %s" % (sd_from_db)
-    return sd_from_db
+#     else:
+#         flash("Incorrect username or password.")
+#         return redirect("/login")
 
 
-# FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
-# def check_for_dup_sd(sd):
-#     """Check whether the passed supply detail exists in the db. Different
-#     purchase url is okay."""
+# @app.route('/logout')
+# def logout():
 
-#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
-#                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
-#                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
-#                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+#     # FIXME: How would we delete the entire session?
 
-#     possible_dupe = []
+#     if "user_id" in session:
+#         del session["user_id"]
+#         flash("See you later!")
+#     print "\n\n\n\nSession", session, "\n\n\n\n"
 
-#     return is_duplicate
+#     return redirect("/")
+
+
+# ############################################################
+# # Helper functions
+# ############################################################
+
+# def get_all_supply_types():
+
+#     all_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+#     all_supply_types = sorted(list(all_supply_types))
+
+#     return all_supply_types
+
+
+# def get_all_supply_units():
+
+#     all_units = set(db.session.query(SupplyDetail.units).all())
+#     all_units = sorted(list(all_units))
+
+#     return all_units
+
+# def get_matching_sd(supply_type, brand, color, units):
+#     """Get an existing supply detail record from the database whose columns match
+#     those of the passed supply detail."""
+
+#     # Use ilike() to check columns despite typos
+#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + supply_type + "%"),
+#                                            SupplyDetail.brand.ilike("%" + brand + "%"),
+#                                            SupplyDetail.color.ilike("%" + color + "%"),
+#                                            SupplyDetail.units.ilike("%" + units + "%")).first()
+
+#     print "SO THIs is WHAT YOU GAVE ME:"
+#     print supply_type, brand, color, units
+#     print "HEY I GOT to get_matching_sd. THIS IS WHAT I FOUND: %s" % (sd_from_db)
+#     return sd_from_db
+
+
+# # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
+# # def check_for_dup_sd(sd):
+# #     """Check whether the passed supply detail exists in the db. Different
+# #     purchase url is okay."""
+
+# #     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
+# #                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
+# #                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
+# #                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+
+# #     possible_dupe = []
+
+# #     return is_duplicate
 
 
 if __name__ == "__main__":

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}
+{{ project.title }}
+{% endblock %}
+
+
+{% block body %}
+
+<h1>{{ project.title }}</h1>
+<i>A project {{project.user.username}} plans to make.</i>
+
+<p>{{ project.description }}</p>
+
+<p><a href="{{project.instr_url}}">Tutorial!</a></p>
+
+<h1>Supplies</h1>
+
+<ul>
+{% for supply in project_supplies %}
+
+    <li>{{supply.supply_qty}} {{supply.supply_details.units}} of 
+        {{supply.supply_details.brand }} {{ supply.supply_details.supply_type }}
+        ({{supply.supply_details.color}}) </li>
+
+{% endfor %}
+</ul>
+
+{% endblock %}

@@ -154,7 +154,7 @@
           <tbody>
           {% for project in projects %}
           <tr>
-              <td>{{ project.title.title() }} (Make me a link to this project's page!)</td>
+              <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
               <td>{{ project.description[:50] }}...</td>
           </tr>
           {% endfor %}
