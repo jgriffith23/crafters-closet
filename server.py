@@ -40,10 +40,6 @@ def index():
 def show_dashboard(user_id):
     """Show a user's dashboard."""
 
-    print "---------------------------------------"
-    print "\n\nSession:", session, "\n\n"
-    print "---------------------------------------"
-
     # Get the user's id from the session, if possible.
     user_id = session.get("user_id")
 
@@ -58,7 +54,11 @@ def show_dashboard(user_id):
                                      SupplyDetail.color,
                                      SupplyDetail.units,
                                      SupplyDetail.purchase_url,
-                                     Item.qty).outerjoin(Item).filter_by(user_id=user_id).all()
+                                     Item.qty,
+                                     Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+
+        # Get the user's projects.
+        projects = Project.query.filter(Project.user_id == user_id).all()
 
 #----------------------------------------------------------------------------------------------
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
@@ -73,6 +73,7 @@ def show_dashboard(user_id):
         return render_template("dashboard.html",
                                user=user,
                                inventory=inventory,
+                               projects=projects,
                                all_supply_types=all_supply_types,
                                all_units=all_units)
 
@@ -133,21 +134,52 @@ def add_supply():
 
     return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
 
+# FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
+# def check_for_dup_sd(sd):
+#     """Check whether the passed supply detail exists in the db. Different
+#     purchase url is okay."""
 
-def check_for_dup_sd(sd):
-    """Check whether the passed supply detail exists in the db. Different
-    purchase url is okay."""
+#     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
+#                                            SupplyDetail.brand.ilike("%" + sd.brand + "%"),
+#                                            SupplyDetail.color.ilike("%" + sd.color + "%"),
+#                                            SupplyDetail.units.ilike("%" + sd.units + "%")).first()
 
-    sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + sd.supply_type + "%"),
-                                           SupplyDetail.brand.ilike("%" + sd.brand + "%"),
-                                           SupplyDetail.color.ilike("%" + sd.color + "%"),
-                                           SupplyDetail.units.ilike("%" + sd.units + "%")).first()
+#     possible_dupe = []
 
-    possible_dupe
+#     return is_duplicate
 
 
-    return is_duplicate
+####################################################
+# Project routes (show creation form, handle form)
+####################################################
+@app.route('/create-project', methods=['GET'])
+def show_project_form():
+    """Displays the project creation form."""
 
+    # Get the user info from the session.
+    # FIXME: Refactor to pass a user object into the session?????
+    # Most of the time, all I want is the user_id, so maybe not???
+
+    user_id = session.get("user_id")
+    user = User.query.get(user_id)
+
+    # Get the legal supply types and units from db
+    all_supply_types = get_all_supply_types()
+    all_units = get_all_supply_units()
+
+    return render_template("project_form.html", 
+                           user=user, 
+                           all_supply_types=all_supply_types, 
+                           all_units=all_units)
+
+
+@app.route("/create-project", methods=["POST"])
+def handle_project_creation():
+    """Handles input from project creation form and adds project to database."""
+
+    # Get the user info from the session.
+    user_id = session.get("user_id")
+    return redirect("/dashboard")
 
 
 ####################################################

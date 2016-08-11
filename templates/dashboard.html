@@ -7,20 +7,58 @@
 
 <h1>Dashboard</h1>
 
-<div class="project-options">
-</div>
-
-<div class="inventory-options">
-    <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
-        <button type="button" class="btn btn-default">Filter Inventory View</button>
-        <button type="button" class="btn btn-default">Search Your Inventory</button>
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
-
-    </div>    
-</div>
-
 <br>
 
+<!-- Begin Inventory Panel -->
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Your Inventory</h3>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- Buttons for Inventory Functionality -->
+      <div class="inventory-options">
+          <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="">Filter Inventory View</button>
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#">Search Your Inventory</button>
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
+
+          </div>    
+      </div>
+
+      <!-- Display Inventory -->
+      <table class="table table-striped">
+              <thead>
+              <tr>
+                  <th>Brand</th>
+                  <th>Type</th>
+                  <th>Color</th>
+                  <th>Quantity Owned</th>
+                  <th>Purchase URL</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for supply_type, brand, color, units, purchase_url, qty, item_id in inventory %}
+              <tr>
+                  <td>{{ brand.title() }}</td>
+                  <td>{{ supply_type }}</td>
+                  <td>{{ color.title() }}</td>
+                  <td>{{ qty }} {{ units }} 
+                      <button type="button" class="btn btn-default" id="{{ item_id }}" style="float: right;">
+                        Update
+                      </button> 
+                  </td>
+                  <td><a href="{{ purchase_url }}">{{ purchase_url }}</a></td>
+              </tr>
+              {% endfor %}
+              </tbody>
+      </table>
+    </div>
+</div>
+
+<!-- Modal Code for "Add a Supply" button -->
 <div class="modal fade" id="add-supply">
 
   <div class="modal-dialog" role="document">
@@ -42,7 +80,7 @@
                     <label for="supplytype">Supply Type</label><br>
                         <select name="supplytype" id="supplytype">
                           {% for type in all_supply_types %}
-                          <option value="{{ type[0] }}">{{ type[0] }}</option>
+                            <option value="{{ type[0] }}">{{ type[0] }}</option>
                           {% endfor %}
                         </select>
                   </div>
@@ -90,30 +128,39 @@
 
 </div><!-- /.modal -->
 
-<div class="inventory">
-    <table class="table table-striped">
-        <caption>Your Inventory</caption>
-            <thead>
-            <tr>
-                <th>Brand</th>
-                <th>Type</th>
-                <th>Color</th>
-                <th>Quantity Owned</th>
-                <th>Purchase URL</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for supply_type, brand, color, units, purchase_url, qty in inventory %}
-            <tr>
-                <td>{{ brand.title() }}</td>
-                <td>{{ supply_type }}</td>
-                <td>{{ color.title() }}</td>
-                <td>{{ qty }} {{ units }}</td>
-                <td><a href="{{ purchase_url }}">Link</a></td>
-            </tr>
-            {% endfor %}
-            </tbody>
-    </table>
+
+<!-- Begin Project Panel -->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Your Projects</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="project-options">
+              <!-- Buttons for Project Options -->
+              <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
+                  <button onclick="window.location.href='/create-project'" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="">Create a New Project</button>
+              </div>    
+        </div>
+
+        <!-- Display Inventory -->
+        <table class="table table-striped">
+          <thead>
+          <tr>
+              <th>Title</th>
+              <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for project in projects %}
+          <tr>
+              <td>{{ project.title.title() }} (Make me a link to this project's page!)</td>
+              <td>{{ project.description[:50] }}...</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+  </div>
 </div>
 
 {% endblock %}

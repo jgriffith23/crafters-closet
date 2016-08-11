@@ -5,13 +5,24 @@
 
 {% block body %}
 
-<h2>Login</h2>
+<h2>Sign In</h2>
 
-<div class="navbar-form">
+<div class="container">
     <form action="/login" method="POST">
-        <label for="username">Username: </label><input type="text" name="username" id="username"><br>
-        <label for="password">Password: </label><input type="password" name="password" id="password"><br>
-        <input type="submit" value="Login">
+        <div class="form-group">
+            <label for="username">Username: </label>
+            <input type="text" name="username" id="username"><br>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password: </label>
+            <input type="password" name="password" id="password"><br>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-default">Sign In</button>
+        </div>
+
     </form>
 </div>
 

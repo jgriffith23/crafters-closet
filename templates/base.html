@@ -30,11 +30,11 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if "user_id" not in session %}
-            <li><a href="/login">Login</a></li>
+            <li><a href="/login">Sign In</a></li>
             <li><a href="/register">Register</a></li>
             {% else %}
             <li><a href="/dashboard/{{ user.user_id }}"><span id="greeting">Hi, {{ user.username}}!</span><br> Your Dashboard</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="/logout">Sign Out</a></li>
             {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->
@@ -43,7 +43,7 @@
 
     <div class="container">
         {% if get_flashed_messages() %}
-            <div class="flash-messages">
+            <div class="alert alert-info" role="alert">
               <!-- Show flashed messages -->
                 {% with messages = get_flashed_messages() %}
                     {% for message in messages %}

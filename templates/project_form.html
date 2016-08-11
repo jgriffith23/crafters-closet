@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block subtitle %}
+Create Project
+{% endblock %}
+
+{% block body %}
+<h1> Create a New Project </h1>
+
+    <form action="/create-project" method="POST">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Basic Project Information</h3>
+            </div>
+
+            <div class="panel-body">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="What is this project called?">
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description (500 characters or less.)</label>
+                <textarea type="text" class="form-control" name="description" id="description" placeholder="Notes, general ideas, or anything else you want to say about this project."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="instr-url">Instruction URL</label>
+                <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want.">
+              </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Supplies Required</h3>
+            </div>
+
+            <div class="panel-body">
+              <div class="form-group">
+                <!-- Supply Type Dropdown -->
+                <label for="supplytype">Supply Type</label><br>
+                    <select name="supplytype" id="supplytype">
+                        {% for type in all_supply_types %}
+                            <option value="{{ type[0] }}">{{ type[0] }}</option>
+                        {% endfor %}
+                    </select>
+              </div>
+
+              <div class="form-group">
+                <label for="brand">Brand</label>
+                <input type="text" class="form-control" name="brand" id="brand" placeholder="What company made this supply?">
+              </div>
+
+              <div class="form-group">
+                <label for="color">Color</label>
+                <input type="text" class="form-control" name="color" id="color" placeholder="What color is this supply?">
+              </div> 
+
+              <div class="form-group">
+                <label for="purchase-url">Purchase URL</label>
+                <input type="text" class="form-control" name="purchase-url" id="purchase-url" placeholder="Where did you buy this supply?">
+              </div>
+
+              <div class="form-group">
+              <!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
+                <label for="quantity-owned">Quantity You Own</label>
+                <input type="number" class="form-control" name="quantity-owned" id="quantity-owned">
+              </div>
+              <div class="form-group">
+
+                <!-- Units Dropdown -->
+                <!-- FIXME: Remove units option when I can reflect units on qty above -->
+                <label for="units">Units (Don't be a jerk. Pick the unit that matches your supply type.)</label><br>
+                    <select name="units" id="units">
+                        {% for unit in all_units %}
+                            <option value="{{ unit[0] }}">{{ unit[0] }}</option>
+                        {% endfor %}
+                    </select>
+              </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Project</button>
+    </form>
+
+{% endblock %}
