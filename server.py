@@ -163,13 +163,13 @@ def show_project_form():
     user_id = session.get("user_id")
     user = User.query.get(user_id)
 
-    # Get the legal supply types and units from db
+    # Get the available supply types and units from db
     all_supply_types = get_all_supply_types()
     all_units = get_all_supply_units()
 
-    return render_template("project_form.html", 
-                           user=user, 
-                           all_supply_types=all_supply_types, 
+    return render_template("project_form.html",
+                           user=user,
+                           all_supply_types=all_supply_types,
                            all_units=all_units)
 
 
@@ -179,7 +179,46 @@ def handle_project_creation():
 
     # Get the user info from the session.
     user_id = session.get("user_id")
-    return redirect("/dashboard")
+
+    # Fetch basic project data from form
+    title = request.form.get("title")
+    description = request.form.get("description")
+    instr_url = request.form.get("instr-url")
+
+    #Create and commit project record
+    project = Project(user_id=user_id,
+                      title=title.title(),
+                      description=description,
+                      instr_url=instr_url)
+
+    db.session.add(project)
+    db.session.commit()
+
+    # Get supply info from form
+    supply_type = request.form.get("supplytype")
+    brand = request.form.get("brand")
+    color = request.form.get("color")
+    units = request.form.get("units")
+    qty = request.form.get("qty-required")
+
+    # Get a supply from the db that matches the entered supply
+    sd = get_matching_sd(supply_type, brand, color, units)
+
+    # Get the entered supply's id
+    sd_id = sd.sd_id
+
+    # Create and commit project supply record to db, so the entered
+    # supply is associated with this project.
+
+    project_supply = ProjectSupply(project_id=project.project_id,
+                                   sd_id=sd_id,
+                                   supply_qty=qty)
+
+    db.session.add(project_supply)
+    db.session.commit()
+
+    flash("%s added to your projects. Hooray!" % (title))
+    return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
 
 
 ####################################################
@@ -296,6 +335,21 @@ def get_all_supply_units():
     all_units = sorted(list(all_units))
 
     return all_units
+
+def get_matching_sd(supply_type, brand, color, units):
+    """Get an existing supply detail record from the database whose columns match
+    those of the passed supply detail."""
+
+    # Use ilike() to check columns despite typos
+    sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + supply_type + "%"),
+                                           SupplyDetail.brand.ilike("%" + brand + "%"),
+                                           SupplyDetail.color.ilike("%" + color + "%"),
+                                           SupplyDetail.units.ilike("%" + units + "%")).first()
+
+    print "SO THIs is WHAT YOU GAVE ME:"
+    print supply_type, brand, color, units
+    print "HEY I GOT to get_matching_sd. THIS IS WHAT I FOUND: %s" % (sd_from_db)
+    return sd_from_db
 
 
 if __name__ == "__main__":
