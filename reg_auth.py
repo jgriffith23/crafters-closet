@@ -98,3 +98,4 @@ def logout():
     print "\n\n\n\nSession", session, "\n\n\n\n"
 
     return redirect("/")
+    

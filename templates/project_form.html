@@ -30,70 +30,52 @@ Create Project
                 <label for="instr-url">Instruction URL</label>
                 <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want.">
               </div>
-              <div class="form-group">
-                <label for="num-supplies">How many supplies?</label>
-                <input type="number" class="form-control" name="num-supplies" id="num-supplies" min=0 placeholder="0">
-              </div>
             </div>
         </div>
 
         <!-- Adding Supplies -->
-        <div class="panel panel-default hidden">
+        <div class="panel panel-default"  id="supplies-to-add">
             <div class="panel-heading">
                 <h3 class="panel-title">Supplies Required</h3>
             </div>
-
             <div class="panel-body">
-              <div class="form-group">
-                <!-- Supply Type Dropdown -->
-                <label for="supplytype">Supply Type</label><br>
-                    <select name="supplytype" id="supplytype">
-                        {% for type in all_supply_types %}
-                            <option value="{{ type[0] }}">{{ type[0] }}</option>
-                        {% endfor %}
-                    </select>
-              </div>
-
-              <div class="form-group">
-                <label for="brand">Brand</label>
-                <input type="text" class="form-control" name="brand" id="brand" placeholder="What company made this supply?">
-              </div>
-
-              <div class="form-group">
-                <label for="color">Color</label>
-                <input type="text" class="form-control" name="color" id="color" placeholder="What color is this supply?">
-              </div> 
-
-              <div class="form-group">
-                <label for="purchase-url">Purchase URL</label>
-                <input type="text" class="form-control" name="purchase-url" id="purchase-url" placeholder="Where did you buy this supply?">
-              </div>
-
-              <div class="form-group">
-              <!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
-                <label for="qty-required">Quantity Needed For Project</label>
-                <input type="number" class="form-control" name="qty-required" id="qty-required">
-              </div>
-
-              <div class="form-group">
-                <!-- Units Dropdown -->
-                <!-- FIXME: Remove units option when I can reflect units on qty above -->
-                <label for="units">Units (Don't be a jerk. Pick the unit that matches your supply type.)</label><br>
-                    <select name="units" id="units">
-                        {% for unit in all_units %}
-                            <option value="{{ unit[0] }}">{{ unit[0] }}</option>
-                        {% endfor %}
-                    </select>
-              </div>
+                <button type="button" class="btn btn-default btn-sm" id="supply-form-gen">
+                    <span class="glyphicon glyphicon-plus"></span> Add a Supply to This Project
+                </button>
             </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Create Project</button>
     </form>
 
-    <script>
+<br>
 
-    </script>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script>
+        "use strict";
+        var formCounter = 1;
+
+        $("#supply-form-gen").on("click", function() {
+
+                var formCounterStr = formCounter.toString();
+
+                var supplyTypeName = "supplytype" + formCounterStr.toString();
+                var brandName = "brand" + formCounterStr.toString();
+                var colorName = "color" + formCounterStr.toString();
+                var purchaseUrlName = "purchase-url" + formCounterStr.toString();
+                var unitsName = "units" + formCounterStr.toString();
+                var qtyRequiredName = "qty-required" + formCounterStr.toString();
+
+                var form = "<div class=\"panel-body\"><div class=\"form-group\"><!-- Supply Type Dropdown --><label for=\"supplytype\">Supply Type #"+formCounterStr+"</label><br><select name=\""+supplyTypeName+"\" id=\"supplytype\">{% for type in all_supply_types %}<option value=\"{{ type[0] }}\">{{ type[0] }}</option>{% endfor %}</select></div><div class=\"form-group\"><label for=\"brand\">Brand</label><input type=\"text\" class=\"form-control\" name=\""+brandName+"\" id=\"brand\" placeholder=\"What company made this supply?\"></div><div class=\"form-group\"><label for=\"color\">Color</label><input type=\"text\" class=\"form-control\" name=\""+colorName+"\" id=\"color\" placeholder=\"What color is this supply?\"></div><div class=\"form-group\"><label for=\"purchase-url\">Purchase URL</label><input type=\"text\" class=\"form-control\" name=\""+purchaseUrlName+"\" id=\"purchase-url\" placeholder=\"Where did you buy this supply?\"></div><div class=\"form-group\"><!-- FIXME: Change label below to reflect units of dropdown value dynamically. --><label for=\"qty-required\">Quantity Needed For Project</label><input type=\"number\" class=\"form-control\" name=\""+qtyRequiredName+"\" id=\"qty-required\"></div><div class=\"form-group\"><!-- Units Dropdown --><!-- FIXME: Remove units option when I can reflect units on qty above --><label for=\"units\">Units (Don't be a jerk. Pick the unit that matches your supply type.)</label><br><select name=\""+unitsName+"\" id=\"units\">{% for unit in all_units %}<option value=\"{{ unit[0] }}\">{{ unit[0] }}</option>{% endfor %}</select></div></div>";
+
+                $("#supplies-to-add").append(form);
+
+                formCounter++;
+        });
+
+
+    </script> 
+
 
 <!-- <script src="/static/js/FILE"></script> -->
 
