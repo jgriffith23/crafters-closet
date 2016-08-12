@@ -201,28 +201,37 @@ def handle_project_creation():
     db.session.add(project)
     db.session.commit()
 
-    # Get supply info from form
-    supply_type = request.form.get("supplytype")
-    brand = request.form.get("brand")
-    color = request.form.get("color")
-    units = request.form.get("units")
-    qty = request.form.get("qty-required")
+    # Get supply info from form. First, we need the number of supplies from
+    # the hidden field num-supplies.
+    num_supplies = request.form.get("num-supplies")
 
-    # Get a supply from the db that matches the entered supply
-    sd = get_matching_sd(supply_type, brand, color, units)
+    # Given num-supplies, we can iterate over the number of supplies to add
+    # records to the db.
+    for supply_num in range(int(num_supplies)):
+        print "\n\n STUFF HERE: ", supply_num, num_supplies, range(int(num_supplies))
+        fieldname_num = str(supply_num+1)
+        supply_type = request.form.get("supplytype"+fieldname_num)
+        brand = request.form.get("brand"+fieldname_num)
+        color = request.form.get("color"+fieldname_num)
+        units = request.form.get("units"+fieldname_num)
+        qty = request.form.get("qty-required"+fieldname_num)
 
-    # Get the entered supply's id
-    sd_id = sd.sd_id
+        # Get a supply from the db that matches the entered supply
+        sd = get_matching_sd(supply_type, brand, color, units)
+        print "\n\n MORE STUFF, SD THIS TIME", supply_type, brand, color, units
 
-    # Create and commit project supply record to db, so the entered
-    # supply is associated with this project.
+        # Get the entered supply's id
+        sd_id = sd.sd_id
 
-    project_supply = ProjectSupply(project_id=project.project_id,
-                                   sd_id=sd_id,
-                                   supply_qty=qty)
+        # Create and commit project supply record to db, so the entered
+        # supply is associated with this project.
 
-    db.session.add(project_supply)
-    db.session.commit()
+        project_supply = ProjectSupply(project_id=project.project_id,
+                                       sd_id=sd_id,
+                                       supply_qty=qty)
+
+        db.session.add(project_supply)
+        db.session.commit()
 
     flash("%s added to your projects. Hooray!" % (title))
     return redirect(url_for('.show_project', project_id=project.project_id))

@@ -36,7 +36,7 @@ Create Project
         <!-- Adding Supplies -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Supplies Required</h3>
+                <h3 class="panel-title">Supplies Required (Don't refresh the page unless you want to start over!)</h3>
             </div>
             <div class="panel-body">
                 <div id="supplies-to-add">
@@ -47,7 +47,7 @@ Create Project
                 </button>
             </div>
 
-            <input type="hidden" id="num-supplies">
+            <input type="hidden" id="num-supplies" name="num-supplies" value="0">
         </div>
 
         <button type="submit" class="btn btn-primary">Create Project</button>
@@ -58,7 +58,7 @@ Create Project
     <script src="http://code.jquery.com/jquery.js"></script>
     <script>
         "use strict";
-        var formCounter = 1;
+        var formCounter = 0;
 
         $("#supply-form-gen").on("click", function() {
 
