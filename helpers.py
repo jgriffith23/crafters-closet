@@ -33,6 +33,80 @@ def get_matching_sd(supply_type, brand, color, units):
     return sd_from_db
 
 
+def get_brand_color_url(supply_type):
+    """Given a supply type, get all relevant supply detail info
+    for supplies of that type."""
+
+    query = db.session.query(SupplyDetail.brand,
+                             SupplyDetail.color,
+                             SupplyDetail.purchase_url).filter(SupplyDetail.supply_type == supply_type)
+
+    result = query.all()
+
+    return result
+
+
+def get_supply_units(supply_type):
+    """Given a supply type, return the possible units."""
+
+    query = db.session.query(SupplyDetail.units).filter(SupplyDetail.supply_type == supply_type)
+
+    result = query.all()
+
+    return set(result)
+
+def check_supply_quantities(project_supplies, project_id, user_id):
+    """Given a list of project supplies, the project's ID, and a user
+    ID, check whether the user has enough of each supply in the list, and 
+    return how many of each supply the user has to buy."""
+
+    # Gives the supply id, quantity required for the project,
+    # and the quantity the current user owns. Format: (sd_id, project_supply qty, item qty)
+    # where project_supply qty ==> required for project, item qty ==> number user owns.
+    join_ps_items = db.session.query(ProjectSupply.sd_id,
+                                     ProjectSupply.supply_qty,
+                                     Item.qty).join(Item, ProjectSupply.sd_id == Item.sd_id)
+
+    supply_comparison = join_ps_items.filter(ProjectSupply.project_id == project_id,
+                                             Item.user_id == user_id).all()
+
+    # for supply in project_supplies:
+
+def get_required_supply_info(project_id):
+    """Given a project id, get details about the supplies required to make that
+    project. These details are NOT user-specific.
+
+    Format of data: [(sd_id, supply_type, color, brand, qty for project, units), ...]
+
+    Example:
+    [(1, u'yarn', u'Red Heart', u'Petal Pink', 4, u'yds'),
+     (24, u'LED', u'SparkFun', u'blue', 6, u'components'),
+     (30, u'Popsicle Sticks', u'Sticks n Stuff', u'beige', 45, u'pcs')]
+
+    """
+
+    # Craft a query to join the tables defined by the SupplyDetail and
+    # ProjectSupply models, so we can get information from both.
+    q = db.session.query(ProjectSupply.sd_id,
+                         SupplyDetail.supply_type,
+                         SupplyDetail.brand,
+                         SupplyDetail.color,
+                         ProjectSupply.supply_qty,
+                         SupplyDetail.units).join(ProjectSupply,
+                                                  SupplyDetail.sd_id == ProjectSupply.sd_id)
+
+    # Add a filter to the query so that we'll only get details for supplies related
+    # to the passed project
+    q_filtered = q.filter(ProjectSupply.project_id == project_id)
+
+    # Fetch the specified details
+    required_supply_details = q_filtered.all()
+
+    return required_supply_info
+
+
+
+
 # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
 def check_for_dup_sd(sd):
     """Check whether the passed supply detail exists in the db. Different

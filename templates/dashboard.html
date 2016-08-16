@@ -23,8 +23,6 @@
           <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
               <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="">Filter Inventory View</button>
               <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#">Search Your Inventory</button>
-              <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
-
           </div>    
       </div>
 
@@ -55,6 +53,7 @@
               {% endfor %}
               </tbody>
       </table>
+      <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
     </div>
 </div>
 
@@ -80,7 +79,7 @@
                     <label for="supplytype">Supply Type</label><br>
                         <select name="supplytype" id="supplytype">
                           {% for type in all_supply_types %}
-                            <option value="{{ type[0] }}">{{ type[0] }}</option>
+                            <option value="{{ type[0] }}">{{ type[0] }}</option> 
                           {% endfor %}
                         </select>
                   </div>
@@ -102,7 +101,7 @@
 
                   <div class="form-group">
                   <!-- FIXME: Change label below to reflect units of dropdown value dynamically. -->
-                    <label for="quantity-owned">Quantity You Own</label>
+                    <label for="quantity-owned">Quantity You Own (in UNITS)</label>
                     <input type="number" class="form-control" name="quantity-owned" id="quantity-owned">
                   </div>
                   <div class="form-group">

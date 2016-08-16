@@ -32,7 +32,8 @@ def index():
     else:
         user = None
 
-    return render_template("homepage.html", user=user)
+    dict_thing = {"stuff":"omgwtfbbq"}
+    return render_template("homepage.html", user=user, dict_thing=dict_thing)
 
 
 ####################################################
@@ -68,6 +69,14 @@ def show_dashboard(user_id):
 
         all_supply_types = get_all_supply_types()
         all_units = get_all_supply_units()
+
+        #FIXME: Pass dict of supply types : units to front end instead, so we can
+        #dynamically update units w/ the correct ones based on the supply type the user picks.
+        # Also, hardcode supply types because why not?
+
+        units_by_supply_type = db.session.query(SupplyDetail.supply_type, SupplyDetail.units).all()
+
+        units_by_supply_type = dict(units_by_supply_type)
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
@@ -152,6 +161,12 @@ def show_project(project_id):
     # Get all supplies related to that project
     project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id).all()
 
+    # supply_comparison = db.session.query(ProjectSupply.sd_id,
+    #                                  ProjectSupply.supply_qty,
+    #                                  Item.qty).join(Item, ProjectSupply.sd_id == Item.sd_id).filter(ProjectSupply.project_id == 43, Item.user_id == 3).all()
+
+
+
     # Render the project page
     return render_template("project.html",
                            project=project,
@@ -207,9 +222,10 @@ def handle_project_creation():
 
     # Given num-supplies, we can iterate over the number of supplies to add
     # records to the db.
-    for supply_num in range(int(num_supplies)):
-        print "\n\n STUFF HERE: ", supply_num, num_supplies, range(int(num_supplies))
-        fieldname_num = str(supply_num+1)
+
+    # Need to take the range of num_supplies + 1 or we won't get all supplies.
+    for supply_num in range(int(num_supplies)+1):
+        fieldname_num = str(supply_num)
         supply_type = request.form.get("supplytype"+fieldname_num)
         brand = request.form.get("brand"+fieldname_num)
         color = request.form.get("color"+fieldname_num)
@@ -218,7 +234,6 @@ def handle_project_creation():
 
         # Get a supply from the db that matches the entered supply
         sd = get_matching_sd(supply_type, brand, color, units)
-        print "\n\n MORE STUFF, SD THIS TIME", supply_type, brand, color, units
 
         # Get the entered supply's id
         sd_id = sd.sd_id
@@ -331,8 +346,11 @@ def logout():
     print "\n\n\n\nSession", session, "\n\n\n\n"
 
     return redirect("/")
-    
 
+@app.route('/practice-foo')
+def show_js_practice():
+    """A test route for genenerating dropdowns. DELETE ME WHEN DONE"""
+    return render_template("dynamic-dropdowns.html")
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

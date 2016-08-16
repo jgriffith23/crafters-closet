@@ -9,23 +9,8 @@ Home
 
 <h1>Welcome to Crafter's Closet!</h1>
 
-{% if "user_id" in session %}
-<h3>You are logged in as {{ user.username }}.</h3>
+<img src="https://pbs.twimg.com/media/BGJ3WBDCIAAiG4b.jpg">
 
-<a href="/dashboard/{{user.user_id}}">Go to your dashboard.</a>
-
-<br> 
-
-<form action="/logout">
-    <input type="submit" value="Logout">
-</form>
-
-{% else %}
-
-<p><a href="/register">Register to log your craft supplies!</a></p>
-
-<p><a href="/login">Login if you already have an account.</a></p>
-
-{% endif %}
+{{ dict_thing["stuff"] }}
 
 {% endblock %}

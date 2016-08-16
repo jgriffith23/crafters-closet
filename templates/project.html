@@ -12,18 +12,43 @@
 
 <p>{{ project.description }}</p>
 
-<p><a href="{{project.instr_url}}">Tutorial!</a></p>
+<p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
 
-<h1>Supplies</h1>
 
-<ul>
-{% for supply in project_supplies %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Supply Information</h3>
+    </div>
 
-    <li>{{supply.supply_qty}} {{supply.supply_details.units}} of 
-        {{supply.supply_details.brand }} {{ supply.supply_details.supply_type }}
-        ({{supply.supply_details.color}}) </li>
+    <div class="panel-body">
 
-{% endfor %}
-</ul>
+        <table class="table table-striped">
+              <thead>
+              <tr>
+                  <th>Supply Type</th>
+                  <th>Brand</th>
+                  <th>Color</th>
+                  <th>Qty Required</th>
+                  <th>Qty You Own</th>
+                  <th>Qty to Buy</th>
+              </tr>
+              </thead>
+              <tbody>
+
+              {% for supply in project_supplies %}
+              <tr>
+                  <td>{{ supply.supply_details.supply_type }}</td>
+                  <td>{{ supply.supply_details.brand }}</td>
+                  <td>{{ supply.supply_details.color }}</td>
+                  <td>{{ supply.supply_qty }} {{ supply.supply_details.units }}</td>
+                  <td> ?????? </td>
+                  <td> ?????? </td>
+              </tr>
+              {% endfor %}
+
+              </tbody>
+        </table>
+      </div>
+    </div>
 
 {% endblock %}

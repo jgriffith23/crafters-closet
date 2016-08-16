@@ -157,8 +157,8 @@ class ProjectSupply(db.Model):
                                      backref="project_supplies")
 
     def __repr__(self):
-        return "<ProjectSupply project_id=%s, sd_id=%s>" % \
-            (self.project_id, self.sd_id)
+        return "<ProjectSupply project_id=%s, sd_id=%s, supply_qty=%s>" % \
+            (self.project_id, self.sd_id, self.supply_qty)
 
 
 class Item(db.Model):
