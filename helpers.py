@@ -161,7 +161,6 @@ def craft_project_supplies_info(project, user_id):
     return project_supplies_info
 
 
-# # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
 # def check_for_dup_sd(sd):
 #     """Check whether the passed supply detail exists in the db. Different
 #     purchase url is okay."""

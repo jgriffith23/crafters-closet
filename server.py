@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
-from reg_auth import register_form, handle_register, login_form, handle_login, logout
+#from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd, craft_project_supplies_info
 
 app = Flask(__name__)
@@ -64,17 +64,8 @@ def show_dashboard(user_id):
 
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
         # "Search Your Inventory" features.
-
         all_supply_types = get_all_supply_types()
         all_units = get_all_supply_units()
-
-        #FIXME: Pass dict of supply types : units to front end instead, so we can
-        #dynamically update units w/ the correct ones based on the supply type the user picks.
-        # Also, hardcode supply types because why not?
-
-        units_by_supply_type = db.session.query(SupplyDetail.supply_type, SupplyDetail.units).all()
-
-        units_by_supply_type = dict(units_by_supply_type)
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
@@ -172,9 +163,6 @@ def show_project_creation_form():
     """Displays the project creation form."""
 
     # Get the user info from the session.
-    # FIXME: Refactor to pass a user object into the session?????
-    # Most of the time, all I want is the user_id, so maybe not???
-
     user_id = session.get("user_id")
     user = User.query.get(user_id)
 
@@ -244,7 +232,7 @@ def handle_project_creation():
     flash("%s added to your projects. Hooray!" % (title))
     return redirect(url_for('.show_project', project_id=project.project_id))
 
-    
+
 ####################################################
 # Registration routes
 ####################################################
@@ -261,11 +249,10 @@ def handle_register():
     """Handles input from registration form."""
 
     # Get the user's email, username, and password from the form.
-
-    #FIXME: Have user enter pw twice?
     email = request.form.get("email")
     username = request.form.get("username")
     password = request.form.get("password")
+    repeat_pw = request.form.get("repeat-pw")
 
     # Check whether the user exists.
     user = User.query.filter(User.username == username).first()
@@ -275,7 +262,10 @@ def handle_register():
         flash("That username has already been registered.")
         return redirect("/register")
 
-    #FIXME: Check whether they entered a pw
+    # Check whether the password and repeated passwords match.
+    elif password != repeat_pw:
+        flash("Entered passwords do not match.")
+        return redirect("/register")
 
     else:
         # If the user doesn't exist, create one.
@@ -313,12 +303,8 @@ def handle_login():
             flash("Incorrect username or password.")
             return redirect("/login")
         else:
-            #add their user_id to session
+            # Add their user_id to session
             session["user_id"] = user.user_id
-
-            print "---------------------------------------"
-            print "\n\nSession:", session, "\n\n"
-            print "---------------------------------------"
 
             flash("Welcome back!")
             return redirect(url_for('.show_dashboard', user_id=user.user_id))
@@ -331,14 +317,12 @@ def handle_login():
 @app.route('/logout')
 def logout():
 
-    # FIXME: How would we delete the entire session?
-
-    if "user_id" in session:
-        del session["user_id"]
-        flash("See you later!")
-    print "\n\n\n\nSession", session, "\n\n\n\n"
+    # Clear the session to log the user out and clear their cookie.
+    session.clear()
+    flash("See you later!")
 
     return redirect("/")
+
 
 @app.route('/practice-foo')
 def show_js_practice():
