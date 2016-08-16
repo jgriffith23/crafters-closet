@@ -14,46 +14,9 @@
 
 <p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
 
-
 <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Supply Information. Delete me when you're done debugging!</h3>
-    </div>
-
-    <div class="panel-body">
-
-        <table class="table table-striped">
-              <thead>
-              <tr>
-                  <th>Supply Type</th>
-                  <th>Brand</th>
-                  <th>Color</th>
-                  <th>Qty Required</th>
-                  <th>Qty You Own</th>
-                  <th>Qty to Buy</th>
-              </tr>
-              </thead>
-              <tbody>
-
-              {% for supply in project_supplies %}
-              <tr>
-                  <td>{{ supply.supply_details.supply_type }}</td>
-                  <td>{{ supply.supply_details.brand }}</td>
-                  <td>{{ supply.supply_details.color }}</td>
-                  <td>{{ supply.supply_qty }} {{ supply.supply_details.units }}</td>
-                  <td> ?????? </td>
-                  <td> ?????? </td>
-              </tr>
-              {% endfor %}
-
-              </tbody>
-        </table>
-      </div>
-    </div>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Supply Information using project_supplies_info</h3>
+      <h3 class="panel-title">Supply Information</h3>
     </div>
 
     <div class="panel-body">
@@ -65,7 +28,8 @@
                   <th>Brand</th>
                   <th>Color</th>
                   <th>Quantity Required</th>
-                  <th>Quantity You Need to Buy</th>
+                  <th>Quantity Owned</th>
+                  <th>Quantity to Buy</th>
               </tr>
               </thead>
               <tbody>
@@ -76,6 +40,7 @@
                   <td>{{ info_grp["brand"].title() }}</td>
                   <td>{{ info_grp["color"].title() }}</td>
                   <td>{{ info_grp["qty_specified"] }} {{ info_grp["units"] }}</td>
+                  <td>{{ info_grp["qty_owned"] }} {{ info_grp["units"] }}</td>
                   <td>{{ info_grp["qty_to_buy"] }} {{ info_grp["units"] }}</td>
               </tr>
               {% endfor %}
@@ -84,8 +49,5 @@
         </table>
       </div>
     </div>
-
-<h4>Yo, I'm project_supplies_info. Delete me when you're done debugging, too!</h4>
-{{ project_supplies_info }}
 
 {% endblock %}

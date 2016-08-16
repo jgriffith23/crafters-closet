@@ -56,35 +56,20 @@ def get_supply_units(supply_type):
     return set(result)
 
 
-def check_supply_quantities(project_supplies, project_id, user_id):
-    """Given a list of project supplies, the project's ID, and a user
-    ID, check whether the user has enough of each supply in the list, and
-    return how many of each supply the user has to buy."""
-
-    # Gives the supply id, quantity required for the project,
-    # and the quantity the current user owns. Format: (sd_id, project_supply qty, item qty)
-    # where project_supply qty ==> required for project, item qty ==> number user owns.
-    join_ps_items = db.session.query(ProjectSupply.sd_id,
-                                     ProjectSupply.supply_qty,
-                                     Item.qty).join(Item, ProjectSupply.sd_id == Item.sd_id)
-
-    supply_comparison = join_ps_items.filter(ProjectSupply.project_id == project_id,
-                                             Item.user_id == user_id).all()
-
-    # for supply in project_supplies:
-
-
 def get_project_supplies_list(project_id):
     """Given a project id, get details about the supplies required to make that
-    project. These details are NOT user-specific.
+    project. These details are NOT user-specific, but rather project-specific.
 
-    Format of data: [(sd_id, supply_type, color, brand, qty for project, units), ...]
+    Format of data: {'color': ???, 'brand': ???, 'qty_to_buy': ???, 'sd_id': ???
+                     'units': ???, 'qty_specified': ???, 'supply_type': ???}
 
     Example:
-    [(1, u'yarn', u'Red Heart', u'Petal Pink', 4, u'yds'),
-     (24, u'LED', u'SparkFun', u'blue', 6, u'components'),
-     (30, u'Popsicle Sticks', u'Sticks n Stuff', u'beige', 45, u'pcs')]
-
+    [{'color': u'Petal Pink', 'brand': u'Red Heart', 'qty_to_buy': 0, 'sd_id': 1,
+      'units': u'yds', 'qty_specified': 4, 'supply_type': u'yarn'},
+      {'color': u'blue', 'brand': u'SparkFun', 'qty_to_buy': 0, 'sd_id': 24,
+      'units': u'components', 'qty_specified': 6, 'supply_type': u'LED'},
+      {'color': u'beige', 'brand': u'Sticks n Stuff', 'qty_to_buy': 45, 'sd_id':
+      30, 'units': u'pcs', 'qty_specified': 45, 'supply_type': u'Popsicle Sticks'}]
     """
 
     # Craft a query to join the tables defined by the SupplyDetail and
@@ -120,9 +105,9 @@ def get_project_supplies_list(project_id):
 
 
 def calc_amt_to_buy(sd_id, user_id, qty_specified):
-    """Given a supply that is in a project and a user, figure out how much of
-    that supply a user would need to buy to build the project that supply
-    belongs to."""
+    """Given a supply id from a project, a user id, and the qty of the supply
+    needed for a project, calculate how much of that supply a user needs to buy
+    to build the project that supply belongs to."""
 
     # Get the item in the user's inventory with the sd_id passed
     item = Item.query.filter(Item.sd_id == sd_id, Item.user_id == user_id).first()
@@ -143,9 +128,10 @@ def calc_amt_to_buy(sd_id, user_id, qty_specified):
 
     return amt_to_buy
 
+
 def craft_project_supplies_info(project, user_id):
     """Given a project and a user_id, craft a dictionary containing
-    all necessary info to display on a project page, including the amount of 
+    all necessary info to display on a project page, including the amount of
     required supplies a user owns and how  much they'd need to buy."""
 
     # Get the project's id.
@@ -162,16 +148,24 @@ def craft_project_supplies_info(project, user_id):
                                      user_id,
                                      supply["qty_specified"])
 
+        item = Item.query.filter(Item.sd_id == supply["sd_id"],
+                                 Item.user_id == user_id).first()
+
         supply["qty_to_buy"] = amt_to_buy
+
+        if item is None:
+            supply["qty_owned"] = 0
+        else:
+            supply["qty_owned"] = item.qty
 
     return project_supplies_info
 
 
-# FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
-def check_for_dup_sd(sd):
-    """Check whether the passed supply detail exists in the db. Different
-    purchase url is okay."""
+# # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE
+# def check_for_dup_sd(sd):
+#     """Check whether the passed supply detail exists in the db. Different
+#     purchase url is okay."""
 
-    possible_dupe = get_matching_sd(sd)
+#     possible_dupe = get_matching_sd(sd)
 
-    return is_duplicate
+#     return is_duplicate

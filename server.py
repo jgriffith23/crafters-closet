@@ -156,16 +156,14 @@ def show_project(project_id):
     # Get an object representing the project whose id was passed
     project = Project.query.get(project_id)
 
-    # # Get all supplies related to that project
-    project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id).all()
-
+    # Get a dictionary representing all supply info for this project,
+    # including the amount of any supplies a user must buy.
     project_supplies_info = craft_project_supplies_info(project, user_id)
 
     # Render the project page
     return render_template("project.html",
                            project=project,
                            project_supplies_info=project_supplies_info,
-                           project_supplies=project_supplies,
                            user=user)
 
 
