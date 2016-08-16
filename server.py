@@ -7,7 +7,7 @@ from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 from reg_auth import register_form, handle_register, login_form, handle_login, logout
-from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd
+from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd, craft_project_supplies_info
 
 app = Flask(__name__)
 
@@ -31,9 +31,7 @@ def index():
         user = User.query.get(user_id)
     else:
         user = None
-
-    dict_thing = {"stuff":"omgwtfbbq"}
-    return render_template("homepage.html", user=user, dict_thing=dict_thing)
+    return render_template("homepage.html", user=user)
 
 
 ####################################################
@@ -158,18 +156,15 @@ def show_project(project_id):
     # Get an object representing the project whose id was passed
     project = Project.query.get(project_id)
 
-    # Get all supplies related to that project
+    # # Get all supplies related to that project
     project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id).all()
 
-    # supply_comparison = db.session.query(ProjectSupply.sd_id,
-    #                                  ProjectSupply.supply_qty,
-    #                                  Item.qty).join(Item, ProjectSupply.sd_id == Item.sd_id).filter(ProjectSupply.project_id == 43, Item.user_id == 3).all()
-
-
+    project_supplies_info = craft_project_supplies_info(project, user_id)
 
     # Render the project page
     return render_template("project.html",
                            project=project,
+                           project_supplies_info=project_supplies_info,
                            project_supplies=project_supplies,
                            user=user)
 

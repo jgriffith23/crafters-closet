@@ -1,6 +1,6 @@
 """Helper functions specific to Crafter's Closet project."""
 
-from model import SupplyDetail, db
+from model import SupplyDetail, ProjectSupply, Item, Project, db
 
 
 def get_all_supply_types():
@@ -55,9 +55,10 @@ def get_supply_units(supply_type):
 
     return set(result)
 
+
 def check_supply_quantities(project_supplies, project_id, user_id):
     """Given a list of project supplies, the project's ID, and a user
-    ID, check whether the user has enough of each supply in the list, and 
+    ID, check whether the user has enough of each supply in the list, and
     return how many of each supply the user has to buy."""
 
     # Gives the supply id, quantity required for the project,
@@ -72,7 +73,8 @@ def check_supply_quantities(project_supplies, project_id, user_id):
 
     # for supply in project_supplies:
 
-def get_required_supply_info(project_id):
+
+def get_project_supplies_list(project_id):
     """Given a project id, get details about the supplies required to make that
     project. These details are NOT user-specific.
 
@@ -87,7 +89,7 @@ def get_required_supply_info(project_id):
 
     # Craft a query to join the tables defined by the SupplyDetail and
     # ProjectSupply models, so we can get information from both.
-    q = db.session.query(ProjectSupply.sd_id,
+    q = db.session.query(SupplyDetail.sd_id,
                          SupplyDetail.supply_type,
                          SupplyDetail.brand,
                          SupplyDetail.color,
@@ -100,11 +102,69 @@ def get_required_supply_info(project_id):
     q_filtered = q.filter(ProjectSupply.project_id == project_id)
 
     # Fetch the specified details
-    required_supply_details = q_filtered.all()
+    specified_supplies = q_filtered.all()
 
-    return required_supply_info
+    # Create an empty list and a list containing the columns for each piece
+    # of info for a supply
+    supplies_list = []
+    columns = ["sd_id", "supply_type", "brand", "color", "qty_specified", "units"]
+
+    # For each set of supply information, create a dictionary using the columns
+    # above as keys and the information itself as values.
+    for supply in specified_supplies:
+        supply_dict = dict(zip(columns, supply))
+        supplies_list.append(supply_dict)
+
+    # Return a list of dictionaries
+    return supplies_list
 
 
+def calc_amt_to_buy(sd_id, user_id, qty_specified):
+    """Given a supply that is in a project and a user, figure out how much of
+    that supply a user would need to buy to build the project that supply
+    belongs to."""
+
+    # Get the item in the user's inventory with the sd_id passed
+    item = Item.query.filter(Item.sd_id == sd_id, Item.user_id == user_id).first()
+
+    # If the user doesn't own that item, they have to buy the amount of supplies
+    # specified in the project.
+    if item is None:
+        amt_to_buy = qty_specified
+
+    # If the user does have that item in their inventory, subtract the qty owned
+    # from the qty specified to see how much the user needs to buy.
+    else:
+        qty_owned = item.qty
+        amt_to_buy = qty_specified - qty_owned
+
+        if amt_to_buy < 0:
+            amt_to_buy = 0
+
+    return amt_to_buy
+
+def craft_project_supplies_info(project, user_id):
+    """Given a project and a user_id, craft a dictionary containing
+    all necessary info to display on a project page, including the amount of 
+    required supplies a user owns and how  much they'd need to buy."""
+
+    # Get the project's id.
+    project_id = project.project_id
+
+    # Get a list of dictionaries representing the supplies needed for the
+    # project.
+    project_supplies_info = get_project_supplies_list(project_id)
+
+    # For each supply in the list of dictionaries, calculate how many
+    # of that supply the user must buy, and add that amount to the dictionary.
+    for supply in project_supplies_info:
+        amt_to_buy = calc_amt_to_buy(supply["sd_id"],
+                                     user_id,
+                                     supply["qty_specified"])
+
+        supply["qty_to_buy"] = amt_to_buy
+
+    return project_supplies_info
 
 
 # FIXME: FINISH IMPLEMENTING THE DUPLICATE CHECK FEATURE

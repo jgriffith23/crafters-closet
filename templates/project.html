@@ -17,7 +17,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Supply Information</h3>
+      <h3 class="panel-title">Supply Information. Delete me when you're done debugging!</h3>
     </div>
 
     <div class="panel-body">
@@ -50,5 +50,42 @@
         </table>
       </div>
     </div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Supply Information using project_supplies_info</h3>
+    </div>
+
+    <div class="panel-body">
+
+        <table class="table table-striped">
+              <thead>
+              <tr>
+                  <th>Supply Type</th>
+                  <th>Brand</th>
+                  <th>Color</th>
+                  <th>Quantity Required</th>
+                  <th>Quantity You Need to Buy</th>
+              </tr>
+              </thead>
+              <tbody>
+
+              {% for info_grp in project_supplies_info %}
+              <tr>
+                  <td>{{ info_grp["supply_type"].title() }}</td>
+                  <td>{{ info_grp["brand"].title() }}</td>
+                  <td>{{ info_grp["color"].title() }}</td>
+                  <td>{{ info_grp["qty_specified"] }} {{ info_grp["units"] }}</td>
+                  <td>{{ info_grp["qty_to_buy"] }} {{ info_grp["units"] }}</td>
+              </tr>
+              {% endfor %}
+
+              </tbody>
+        </table>
+      </div>
+    </div>
+
+<h4>Yo, I'm project_supplies_info. Delete me when you're done debugging, too!</h4>
+{{ project_supplies_info }}
 
 {% endblock %}
