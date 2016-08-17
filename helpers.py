@@ -12,16 +12,13 @@ def get_all_supply_types():
     return all_supply_types
 
 
-def get_supply_units():
+def get_all_supply_units():
     """Returns all existing units of measurement from the db."""
 
     all_units = set(db.session.query(SupplyDetail.units).all())
     all_units = sorted(list(all_units))
 
     return all_units
-
-def get_all_supply_colors():
-
 
 
 def get_matching_sd(supply_type, brand, color, units):
