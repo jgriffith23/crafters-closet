@@ -1,13 +1,14 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, session, url_for
+from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
-from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd, craft_project_supplies_info
+from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd, get_all_brands_by_supply_type
+from helpers import craft_project_supplies_info
 
 app = Flask(__name__)
 
@@ -67,18 +68,27 @@ def show_dashboard(user_id):
         all_supply_types = get_all_supply_types()
         all_units = get_all_supply_units()
 
+        table_body = render_template("supply_table.html", inventory=inventory)
+
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
                                user=user,
                                inventory=inventory,
                                projects=projects,
                                all_supply_types=all_supply_types,
-                               all_units=all_units)
+                               all_units=all_units,
+                               table_body=table_body)
 
     else:
         flash("You can't go there! Please log in.")
         return redirect("/")
 
+
+@app.route("/dashboard/brands.json")
+def get_brands():
+    brands = get_all_brands_by_supply_type()
+    brands = jsonify(brands)
+    return(brands)
 
 ####################################################
 # Inventory routes (add supply, search, filter)
@@ -125,6 +135,7 @@ def add_supply():
          (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
 
     return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
+
 
 
 ########################################################################

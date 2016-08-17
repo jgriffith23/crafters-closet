@@ -1,24 +1,26 @@
 
-var supplyTypes = ["yarn", "oven-bake clay", "acrylic paint"];
-var brands = {
-    "yarn": ["Red Heart", "Loops & Threads", "Craft Smart"],
-    "oven-bake clay": ["Sculpey", "Some Other Place"],
-    "acrylic paint": ["Americana", "Craft Smart"]
-};
-
 var units = {
     "yarn": "yds",
     "oven-bake clay": "oz",
     "acrylic paint": "oz"
 };
 
+// Craft a URL to send a get request to.
+var url = "/dashboard/brands.json";
+var brands;
+$.get(url, function(results) {
+    console.log("I'm trying to get the brands!");
+    brands = results;
+});
+
 console.log("JavaScript maybe?");
 
 // Place an event listener on the supply type dropdown that fires when
 // the dropdown value changes.
-$("#supplytype").on("click", function () {
+$("#supplytype").on("change", function () {
 
     console.log("I'm in the event now!");
+
 
     // Enable the brands dropdown.
     $("#brand").prop("disabled", false);
@@ -33,6 +35,7 @@ $("#supplytype").on("click", function () {
     // create an option string based on the brands available, and 
     // append that string to the brands dropdown.
     for(var i = 0; i < brands[supplyType].length; i++){
+        console.log("I'm getting inside your for loop.");
         var optionStr = "<option value=\""+brands[supplyType][i]+"\">"+brands[supplyType][i]+"</option>";
         $("#brand").append(optionStr);
     }

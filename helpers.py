@@ -33,19 +33,6 @@ def get_matching_sd(supply_type, brand, color, units):
     return sd_from_db
 
 
-def get_brand_color_url(supply_type):
-    """Given a supply type, get all relevant supply detail info
-    for supplies of that type."""
-
-    query = db.session.query(SupplyDetail.brand,
-                             SupplyDetail.color,
-                             SupplyDetail.purchase_url).filter(SupplyDetail.supply_type == supply_type)
-
-    result = query.all()
-
-    return result
-
-
 def get_supply_units(supply_type):
     """Given a supply type, return the possible units."""
 
@@ -55,6 +42,57 @@ def get_supply_units(supply_type):
 
     return set(result)
 
+
+def get_all_brands_by_supply_type():
+    """Fetch all brands in the database by supply type.
+
+    Returns a dictionary of the following format:
+
+    {"supplytype1": ["brand1", "brand2", ...],
+     "supplytype2": ["brand3", ...], ...}
+    """
+
+    # Fetch all supply types from the db. Cast the list returned by the
+    # db query into a set to remove dupes.
+    supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+
+    # Create a dictionary of empty lists, where each key is a supply in the db.
+    # Uses dictionary comprehension!
+    brands_by_type = {supply_type: [] for (supply_type,) in supply_types}
+
+    # For each supply type, fetch the brands associated with that type. Then, use
+    # a list comprehension to create a list of brands & set the value of the key for
+    # that supply type equal to the list.
+    for key in brands_by_type.iterkeys():
+        brands = set(db.session.query(SupplyDetail.brand).filter(SupplyDetail.supply_type == key).all())
+        brands_by_type[key] = [brand for (brand,) in brands if brand is not None]
+
+    return brands_by_type
+
+
+# def get_brand_color_url(supply_type):
+#     """Given a supply type, get all relevant supply detail info
+#     for supplies of that type."""
+
+#     query = db.session.query(SupplyDetail.brand,
+#                              SupplyDetail.color,
+#                              SupplyDetail.purchase_url).filter(SupplyDetail.supply_type == supply_type)
+
+#     result = query.all()
+
+#     return result
+
+# def check_for_dup_sd(sd):
+#     """Check whether the passed supply detail exists in the db. Different
+#     purchase url is okay."""
+
+#     possible_dupe = get_matching_sd(sd)
+
+#     return is_duplicate
+
+###########################################################
+# Helpers for generating supply info table in project.html
+###########################################################
 
 def get_project_supplies_list(project_id):
     """Given a project id, get details about the supplies required to make that
@@ -160,11 +198,3 @@ def craft_project_supplies_info(project, user_id):
 
     return project_supplies_info
 
-
-# def check_for_dup_sd(sd):
-#     """Check whether the passed supply detail exists in the db. Different
-#     purchase url is okay."""
-
-#     possible_dupe = get_matching_sd(sd)
-
-#     return is_duplicate

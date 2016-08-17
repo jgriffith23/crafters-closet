@@ -26,6 +26,8 @@
           </div>    
       </div>
 
+      {{ table_body }}
+
       <!-- Display Inventory -->
       <table class="table table-striped">
               <thead>
@@ -115,7 +117,7 @@
                   <!-- Units -->
                   <div class="form-group">
                     <label for="units">Units</label><br>
-                    <input class="form-control" type=text name="units" id="units" disabled>
+                    <input class="form-control" type=text name="units" id="units" readonly="readonly">
                   </div>
 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Nevermind!</button>
