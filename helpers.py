@@ -2,6 +2,10 @@
 
 from model import SupplyDetail, ProjectSupply, Item, Project, db
 
+####################################################################
+# Get small groups of data from the database in formats agreeable 
+# to Jinja
+####################################################################
 
 def get_all_supply_types():
     """Returns all existing types of supplies from the db."""
@@ -43,6 +47,10 @@ def get_supply_units(supply_type):
     return set(result)
 
 
+###################################################################
+# Get larger groups of data from the database in dictionary format
+# for easy jsonification.
+###################################################################
 def get_all_brands_by_supply_type():
     """Fetch all brands in the database by supply type.
 
@@ -70,6 +78,34 @@ def get_all_brands_by_supply_type():
     return brands_by_type
 
 
+def get_all_units_by_supply_type():
+    """Fetch all units in the database by supply type.
+
+    Returns a dictionary of the following format:
+
+    {"supplytype1": "units",
+     "supplytype2": "units"}
+    """
+
+    # Fetch all supply types from the db. Cast the list returned by the
+    # db query into a set to remove dupes.
+    raw_supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+    supply_types = [raw_type for (raw_type,) in raw_supply_types]
+
+    # Create a dictionary of empty lists, where each key is a supply in the db.
+    # Uses dictionary comprehension!
+    units_by_type = {}
+
+    # For each supply type, fetch the unit of measure associated with that type
+    # and create a key/value pair with the type as the key and the unit as the value.
+    for supply_type in supply_types:
+        unit_q = db.session.query(SupplyDetail.units).filter(SupplyDetail.supply_type == supply_type)
+        unit = unit_q.first()
+        units_by_type[supply_type] = units_by_type.get(supply_type, unit[0])
+
+    return units_by_type
+
+
 # def get_brand_color_url(supply_type):
 #     """Given a supply type, get all relevant supply detail info
 #     for supplies of that type."""
@@ -91,7 +127,7 @@ def get_all_brands_by_supply_type():
 #     return is_duplicate
 
 ###########################################################
-# Helpers for generating supply info table in project.html
+# Generate supply info table in project.html
 ###########################################################
 
 def get_project_supplies_list(project_id):

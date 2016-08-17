@@ -1,16 +1,26 @@
 
-var units = {
-    "yarn": "yds",
-    "oven-bake clay": "oz",
-    "acrylic paint": "oz"
-};
+// var units = {
+//     "yarn": "yds",
+//     "oven-bake clay": "oz",
+//     "acrylic paint": "oz"
+// };
 
 // Craft a URL to send a get request to.
-var url = "/dashboard/brands.json";
+var brandsURL = "/dashboard/brands.json";
 var brands;
-$.get(url, function(results) {
+var unitsURL = "/dashboard/units.json";
+var units;
+
+$.get(brandsURL, function(results) {
     console.log("I'm trying to get the brands!");
     brands = results;
+});
+
+$.get(unitsURL, function(results) {
+    debugger;
+    console.log("I'm trying to get the units!");
+    units = results;
+    console.log(results);
 });
 
 console.log("JavaScript maybe?");

@@ -7,7 +7,8 @@ from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
-from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd, get_all_brands_by_supply_type
+from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd 
+from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
 from helpers import craft_project_supplies_info
 
 app = Flask(__name__)
@@ -89,6 +90,13 @@ def get_brands():
     brands = get_all_brands_by_supply_type()
     brands = jsonify(brands)
     return(brands)
+
+
+@app.route("/dashboard/units.json")
+def get_units():
+    units = get_all_units_by_supply_type()
+    units = jsonify(units)
+    return(units)
 
 ####################################################
 # Inventory routes (add supply, search, filter)
