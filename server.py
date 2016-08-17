@@ -87,12 +87,10 @@ def show_dashboard(user_id):
 def add_supply():
     """Add a supply to the user's inventory.
 
-    This route responds to a POST request from Ajax by adding a new record
+    This route responds to a POST request by adding a new record
     to the items table with the current authenticated user's id, the supply_detail's
     id, and the quantity given. If the supply_detail doesn't exist, we create one
     and add it to the database.
-
-    TODO: Write function so that it actually works as described.
     """
 
     supply_type = request.form.get("supplytype")
@@ -101,10 +99,6 @@ def add_supply():
     purchase_url = request.form.get("purchase-url")
     units = request.form.get("units")
     qty = request.form.get("quantity-owned")
-
-# TODO: Add a helper function to check whether this supply duplicates an exising
-# supply in the database, and just apply the correct supply_detali ID. Right now,
-# just add the supply to supply_details anyway.
 
     # Instantiate a new supply detail record.
     supply_detail = SupplyDetail(supply_type=supply_type,
@@ -306,7 +300,7 @@ def handle_login():
             # Add their user_id to session
             session["user_id"] = user.user_id
 
-            flash("Welcome back!")
+            flash("Welcome to Crafter's Closet!")
             return redirect(url_for('.show_dashboard', user_id=user.user_id))
 
     else:
