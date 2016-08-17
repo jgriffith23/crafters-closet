@@ -1,6 +1,6 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify
+from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify, Markup
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db
@@ -69,7 +69,7 @@ def show_dashboard(user_id):
         all_supply_types = get_all_supply_types()
         all_units = get_all_supply_units()
 
-        table_body = render_template("supply_table.html", inventory=inventory)
+        table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
@@ -87,6 +87,7 @@ def show_dashboard(user_id):
 
 @app.route("/dashboard/brands.json")
 def get_brands():
+    """Fetch all brands in the db by supply type, and return as JSON."""
     brands = get_all_brands_by_supply_type()
     brands = jsonify(brands)
     return(brands)
@@ -94,6 +95,7 @@ def get_brands():
 
 @app.route("/dashboard/units.json")
 def get_units():
+    """Fetch all units in the db by supply type, and return as JSON."""
     units = get_all_units_by_supply_type()
     units = jsonify(units)
     return(units)

@@ -26,36 +26,11 @@
           </div>    
       </div>
 
+      <!-- Display inventory with safe HTML obtained from server. -->
       {{ table_body }}
 
-      <!-- Display Inventory -->
-      <table class="table table-striped">
-              <thead>
-              <tr>
-                  <th>Brand</th>
-                  <th>Type</th>
-                  <th>Color</th>
-                  <th>Quantity Owned</th>
-                  <th>Purchase URL</th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for supply_type, brand, color, units, purchase_url, qty, item_id in inventory %}
-              <tr>
-                  <td>{{ brand.title() }}</td>
-                  <td>{{ supply_type }}</td>
-                  <td>{{ color.title() }}</td>
-                  <td>{{ qty }} {{ units }} 
-                      <button type="button" class="btn btn-default" id="{{ item_id }}" style="float: right;">
-                        Update
-                      </button> 
-                  </td>
-                  <td><a href="{{ purchase_url }}">{{ purchase_url }}</a></td>
-              </tr>
-              {% endfor %}
-              </tbody>
-      </table>
       <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
+
     </div>
 </div>
 
@@ -111,7 +86,7 @@
                   <!-- Qty Owned -->
                   <div class="form-group">
                     <label for="quantity-owned">Quantity You Own (in UNITS)</label>
-                    <input type="number" class="form-control" name="quantity-owned" id="quantity-owned">
+                    <input type="number" class="form-control" name="quantity-owned" id="quantity-owned" min=0>
                   </div>
 
                   <!-- Units -->
