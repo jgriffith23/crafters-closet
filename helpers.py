@@ -124,92 +124,45 @@ def get_all_units_by_supply_type():
     return units_by_type
 
 
-# def get_brand_color_url(supply_type):
-#     """Given a supply type, get all relevant supply detail info
-#     for supplies of that type."""
-
-#     query = db.session.query(SupplyDetail.brand,
-#                              SupplyDetail.color,
-#                              SupplyDetail.purchase_url).filter(SupplyDetail.supply_type == supply_type)
-
-#     result = query.all()
-
-#     return result
-
-# def check_for_dup_sd(sd):
-#     """Check whether the passed supply detail exists in the db. Different
-#     purchase url is okay."""
-
-#     possible_dupe = get_matching_sd(sd)
-
-#     return is_duplicate
-
 ############################################################
-# Functions to generate inventory table based on filtering
+# Generate inventory table data based on filtering/searching
 ############################################################
 
-def get_full_inventory(user_id):
-    """Gets a user's entire supply inventory."""
-
-    inventory = db.session.query(SupplyDetail.supply_type,
-                                 SupplyDetail.brand,
-                                 SupplyDetail.color,
-                                 SupplyDetail.units,
-                                 SupplyDetail.purchase_url,
-                                 Item.qty,
-                                 Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
-
-    return inventory
-
-
-def get_inventory(user_id, brand="", supply_type="", color=""):
+def get_filtered_inventory(user_id, brand="", supply_type="", color=""):
     """Given a user and a supply brand, fetches inventory table HTML to only
     display supplies from that brand. Returns list of tuples."""
 
+    # Craft a query to the db for all needed columns.
+    q = db.session.query(SupplyDetail.supply_type,
+                         SupplyDetail.brand,
+                         SupplyDetail.color,
+                         SupplyDetail.units,
+                         SupplyDetail.purchase_url,
+                         Item.qty,
+                         Item.item_id).outerjoin(Item).filter(Item.user_id == user_id)
+
+    # If the brand actually came with a filter selected, fetch the inventory
+    # filtered by brand.
     if brand != "":
-        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
-                                            SupplyDetail.brand,
-                                            SupplyDetail.color,
-                                            SupplyDetail.units,
-                                            SupplyDetail.purchase_url,
-                                            Item.qty,
-                                            Item.item_id).outerjoin(Item)
 
-        q_by_brand = q_columns_to_get.filter(Item.user_id == user_id,
-                                             SupplyDetail.brand == brand)
+        q = q.filter(SupplyDetail.brand == brand)
 
-        inventory = q_by_brand.all()
+    # If we aren't filtering by brand, then check the supply type argument
+    # to see if it's not empty.
+    if supply_type != "":
 
-    elif supply_type != "":
-        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
-                                            SupplyDetail.brand,
-                                            SupplyDetail.color,
-                                            SupplyDetail.units,
-                                            SupplyDetail.purchase_url,
-                                            Item.qty,
-                                            Item.item_id).outerjoin(Item)
+        # Craft a query to the db for all needed columns.
+        q = q.filter(SupplyDetail.supply_type == supply_type)
 
-        q_by_type = q_columns_to_get.filter(Item.user_id == user_id,
-                                            SupplyDetail.supply_type == supply_type)
+    # If we aren't filtering by brand or type, then check the color argument
+    # to see if it's not empty.
+    if color != "":
 
-        inventory = q_by_type.all()
+        q = q.filter(SupplyDetail.color == color)
 
-    elif color != "":
-        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
-                                            SupplyDetail.brand,
-                                            SupplyDetail.color,
-                                            SupplyDetail.units,
-                                            SupplyDetail.purchase_url,
-                                            Item.qty,
-                                            Item.item_id).outerjoin(Item)
-
-        q_by_color = q_columns_to_get.filter(Item.user_id == user_id,
-                                             SupplyDetail.color == color)
-
-        inventory = q_by_color.all()
-
-    else:
-        inventory = get_full_inventory(user_id)
+    # If the user didn't send any filter params, then just fetch the whole
+    # inventory!
+    inventory = sorted(q.all())
 
     return inventory
 

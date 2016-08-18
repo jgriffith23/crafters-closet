@@ -9,7 +9,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
-from helpers import craft_project_supplies_info, get_inventory
+from helpers import craft_project_supplies_info, get_filtered_inventory
 
 app = Flask(__name__)
 
@@ -60,6 +60,8 @@ def show_dashboard(user_id):
                                      SupplyDetail.purchase_url,
                                      Item.qty,
                                      Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+
+        inventory = sorted(inventory)
 
         # Get the user's projects.
         projects = Project.query.filter(Project.user_id == user_id).all()
@@ -167,7 +169,7 @@ def filter_inventory():
     user_id = session.get("user_id")
 
     # Fetch the filtered inventory as a list of tuples.
-    inventory = get_inventory(user_id, brand, supply_type, color)
+    inventory = get_filtered_inventory(user_id, brand, supply_type, color)
 
     # Render the HTML for the filtered inventory as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))

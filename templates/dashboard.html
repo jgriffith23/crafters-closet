@@ -16,25 +16,26 @@
       <h3 class="panel-title">Search Inventory</h3>
     </div>
 
-  <div class="panel-body">
+  <div class="panel-body" id="filter-search">
       <!-- Buttons for Inventory Functionality -->
       <h4>Choose your filter option. One or zero, please. Not two, nor three.</h4>
       <div class="filter-options">
-        <form action="" method="POST">
+        <form>
           <div class="btn-group-horizontal" role="group" aria-label="filter-options">
-              <label for="filter-brand">Filter by Brand:</label>
-              <select type="button" class="btn btn-default btn-sm" data-target="" name="filter-brand" id="filter-brand">
-                <option value=""></option>
-                {% for brand in all_brands %}
-                    <option value="{{ brand[0] }}">{{ brand[0] }}</option> 
-                {% endfor %}
-              </select>
 
               <label for="filter-type">Filter by Type:</label>
               <select type="button" class="btn btn-default btn-sm" data-target="" name="filter-type" id="filter-type">
                 <option value=""></option>
                 {% for type in all_supply_types %}
                     <option value="{{ type[0] }}">{{ type[0] }}</option> 
+                {% endfor %}
+              </select>
+
+              <label for="filter-brand">Filter by Brand:</label>
+              <select type="button" class="btn btn-default btn-sm" data-target="" name="filter-brand" id="filter-brand">
+                <option value=""></option>
+                {% for brand in all_brands %}
+                    <option value="{{ brand[0] }}">{{ brand[0] }}</option> 
                 {% endfor %}
               </select>
 
