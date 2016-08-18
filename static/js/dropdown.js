@@ -1,10 +1,4 @@
 
-// var units = {
-//     "yarn": "yds",
-//     "oven-bake clay": "oz",
-//     "acrylic paint": "oz"
-// };
-
 // Craft a URL to send a get request for brands and make a variable to hold
 // the response.
 var brandsURL = "/dashboard/brands.json";
@@ -26,6 +20,11 @@ $.get(brandsURL, function(results) {
 $.get(unitsURL, function(results) {
     units = results;
 });
+
+
+/////////////////////////////////////
+// Modal "Add Supply" Dropdown Code
+/////////////////////////////////////
 
 // Place an event listener on the supply type dropdown that fires when
 // the dropdown value changes.

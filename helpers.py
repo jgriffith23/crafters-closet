@@ -2,9 +2,9 @@
 
 from model import SupplyDetail, ProjectSupply, Item, Project, db
 
+
 ####################################################################
-# Get small groups of data from the database in formats agreeable 
-# to Jinja
+# Get all non-duplicate, non-null fields in a column.
 ####################################################################
 
 def get_all_supply_types():
@@ -14,6 +14,24 @@ def get_all_supply_types():
     all_supply_types = sorted(list(all_supply_types))
 
     return all_supply_types
+
+
+def get_all_brands():
+    """Returns all existing brands in db."""
+
+    all_brands = set(db.session.query(SupplyDetail.brand).filter(SupplyDetail.brand != None).all())
+    all_brands = sorted(list(all_brands))
+
+    return all_brands
+
+
+def get_all_colors():
+    """Returns all existing colors in db."""
+
+    all_colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.color != None).all())
+    all_colors = sorted(list(all_colors))
+
+    return all_colors
 
 
 def get_all_supply_units():
@@ -37,14 +55,14 @@ def get_matching_sd(supply_type, brand, color, units):
     return sd_from_db
 
 
-def get_supply_units(supply_type):
-    """Given a supply type, return the possible units."""
+# def get_supply_units(supply_type):
+#     """Given a supply type, return the possible units."""
 
-    query = db.session.query(SupplyDetail.units).filter(SupplyDetail.supply_type == supply_type)
+#     query = db.session.query(SupplyDetail.units).filter(SupplyDetail.supply_type == supply_type)
 
-    result = query.all()
+#     result = query.all()
 
-    return set(result)
+#     return set(result)
 
 
 ###################################################################

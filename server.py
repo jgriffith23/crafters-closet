@@ -7,7 +7,7 @@ from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
-from helpers import get_all_supply_types, get_all_supply_units, get_matching_sd 
+from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
 from helpers import craft_project_supplies_info
 
@@ -67,7 +67,8 @@ def show_dashboard(user_id):
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
         # "Search Your Inventory" features.
         all_supply_types = get_all_supply_types()
-        all_units = get_all_supply_units()
+        all_brands = get_all_brands()
+        all_colors = get_all_colors()
 
         table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
@@ -77,7 +78,8 @@ def show_dashboard(user_id):
                                inventory=inventory,
                                projects=projects,
                                all_supply_types=all_supply_types,
-                               all_units=all_units,
+                               all_brands=all_brands,
+                               all_colors=all_colors,
                                table_body=table_body)
 
     else:
@@ -99,6 +101,7 @@ def get_units():
     units = get_all_units_by_supply_type()
     units = jsonify(units)
     return(units)
+
 
 ####################################################
 # Inventory routes (add supply, search, filter)
