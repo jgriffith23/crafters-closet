@@ -162,7 +162,7 @@ def get_full_inventory(user_id):
     return inventory
 
 
-def get_inventory_by_brand(user_id, brand=""):
+def get_inventory(user_id, brand="", supply_type="", color=""):
     """Given a user and a supply brand, fetches inventory table HTML to only
     display supplies from that brand. Returns list of tuples."""
 
@@ -175,10 +175,38 @@ def get_inventory_by_brand(user_id, brand=""):
                                             Item.qty,
                                             Item.item_id).outerjoin(Item)
 
-        q_filtered = q_columns_to_get.filter(Item.user_id == user_id,
+        q_by_brand = q_columns_to_get.filter(Item.user_id == user_id,
                                              SupplyDetail.brand == brand)
 
-        inventory = q_filtered.all()
+        inventory = q_by_brand.all()
+
+    elif supply_type != "":
+        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
+                                            SupplyDetail.brand,
+                                            SupplyDetail.color,
+                                            SupplyDetail.units,
+                                            SupplyDetail.purchase_url,
+                                            Item.qty,
+                                            Item.item_id).outerjoin(Item)
+
+        q_by_type = q_columns_to_get.filter(Item.user_id == user_id,
+                                            SupplyDetail.supply_type == supply_type)
+
+        inventory = q_by_type.all()
+
+    elif color != "":
+        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
+                                            SupplyDetail.brand,
+                                            SupplyDetail.color,
+                                            SupplyDetail.units,
+                                            SupplyDetail.purchase_url,
+                                            Item.qty,
+                                            Item.item_id).outerjoin(Item)
+
+        q_by_color = q_columns_to_get.filter(Item.user_id == user_id,
+                                             SupplyDetail.color == color)
+
+        inventory = q_by_color.all()
 
     else:
         inventory = get_full_inventory(user_id)

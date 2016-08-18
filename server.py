@@ -9,7 +9,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
-from helpers import craft_project_supplies_info, get_inventory_by_brand
+from helpers import craft_project_supplies_info, get_inventory
 
 app = Flask(__name__)
 
@@ -41,7 +41,7 @@ def index():
 ####################################################
 
 @app.route('/dashboard/<int:user_id>')
-def show_dashboard(user_id, inventory=None):
+def show_dashboard(user_id):
     """Show a user's dashboard."""
 
     # Get the user's id from the session, if possible.
@@ -53,14 +53,13 @@ def show_dashboard(user_id, inventory=None):
 
         # Get the current user's inventory details as a list of tuples of the
         # format: (type, brand, color, units, url, qty)
-        if inventory is None:
-            inventory = db.session.query(SupplyDetail.supply_type,
-                                         SupplyDetail.brand,
-                                         SupplyDetail.color,
-                                         SupplyDetail.units,
-                                         SupplyDetail.purchase_url,
-                                         Item.qty,
-                                         Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+        inventory = db.session.query(SupplyDetail.supply_type,
+                                     SupplyDetail.brand,
+                                     SupplyDetail.color,
+                                     SupplyDetail.units,
+                                     SupplyDetail.purchase_url,
+                                     Item.qty,
+                                     Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
 
         # Get the user's projects.
         projects = Project.query.filter(Project.user_id == user_id).all()
@@ -157,20 +156,23 @@ def add_supply():
 
 @app.route("/inventory/filter.html")
 def filter_inventory():
+    """Gives AJAX a filtered version of the HTML for the user's inventory, based on
+    brand, supply type, or color."""
+
+    # Get the brand, supply_type, and color from the GET request arguments.
+    # Alse get the user_id from the session.
     brand = request.args.get("brand")
+    supply_type = request.args.get("supplytype")
+    color = request.args.get("color")
     user_id = session.get("user_id")
 
-    inventory = get_inventory_by_brand(user_id, brand)
-    print "########################################################"
-    print "I'm filter_inventory, and I got this from AJAX: ", brand
-    print "########################################################"
+    # Fetch the filtered inventory as a list of tuples.
+    inventory = get_inventory(user_id, brand, supply_type, color)
 
-    print "########################################################"
-    print "I'm filter_inventory, and I got this from gibb:", inventory
-    print "########################################################"
-
+    # Render the HTML for the filtered inventory as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
+    # Return the HTML to the AJAX request as a response.
     return table_body
 
 
@@ -276,6 +278,9 @@ def handle_project_creation():
 
 ####################################################
 # Registration routes
+#
+# These are based on code created in collaboration
+# with rayramsay (https://github.com/rayramsay/).
 ####################################################
 
 @app.route('/register', methods=['GET'])
@@ -321,6 +326,9 @@ def handle_register():
 
 ####################################################
 # Authentication/Deauthentication routes
+#
+# These are based on code created in collaboration
+# with rayramsay (https://github.com/rayramsay/).
 ####################################################
 
 @app.route('/login', methods=['GET'])
@@ -346,6 +354,7 @@ def handle_login():
         else:
             # Add their user_id to session
             session["user_id"] = user.user_id
+            session["username"] = user.username
 
             flash("Welcome to Crafter's Closet!")
             return redirect(url_for('.show_dashboard', user_id=user.user_id))
@@ -364,11 +373,6 @@ def logout():
 
     return redirect("/")
 
-
-@app.route('/practice-foo')
-def show_js_practice():
-    """A test route for genenerating dropdowns. DELETE ME WHEN DONE"""
-    return render_template("dynamic-dropdowns.html")
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
