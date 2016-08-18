@@ -18,9 +18,8 @@
 
   <div class="panel-body" id="filter-search">
       <!-- Buttons for Inventory Functionality -->
-      <h4>Choose your filter option. One or zero, please. Not two, nor three.</h4>
-      <div class="filter-options">
-        <form>
+      <h4>Choose your filter options.</h4>
+      <div id="filter-options">
           <div class="btn-group-horizontal" role="group" aria-label="filter-options">
 
               <label for="filter-type">Filter by Type:</label>
@@ -50,11 +49,12 @@
               <button type="button" id="apply-filter" class="btn btn-default btn-sm" data-target="">Apply Filter</button>
 
               <br>
+          </div>
 
-              <input type="text" name="search-params" id="search-params" placeholder="Enter search terms.">
-              <button type="button" class="btn btn-default btn-sm" data-target="">Search!</button>
-          </div> 
-        </form>   
+          <div id="search-field">
+              <input type="text" name="search-term" id="search-term" placeholder="Enter search term.">
+              <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
+          </div>   
       </div>
   </div>
 </div>

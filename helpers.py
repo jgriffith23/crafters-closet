@@ -167,6 +167,13 @@ def get_filtered_inventory(user_id, brand="", supply_type="", color=""):
     return inventory
 
 
+def get_inventory_by_search(user_id, search_parameter):
+    """Given a user id and search terms, get a list of tuples representing
+    all items owned by that user with the relevant strings."""
+
+    pass
+
+
 ###########################################################
 # Generate supply info table in project.html
 ###########################################################

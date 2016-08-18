@@ -178,6 +178,18 @@ def filter_inventory():
     return table_body
 
 
+@app.route("/inventory/search-results.html")
+def search_inventory():
+    """Returns only the rows in the user's inventory relevant to the passed
+    search term."""
+
+    search_term = request.args.get("search")
+
+    test_str = "I need to search for: " + search_term
+
+    return test_str
+
+
 ########################################################################
 # Project routes (show project, show project creation form, handle form)
 ########################################################################

@@ -1,8 +1,9 @@
-console.log("Hey I found inventorySearch woo!");
+
+//////////////////////////////////////////////
+// Filter inventory code
+//////////////////////////////////////////////
 
 $("#apply-filter").on("click", function() {
-    console.log("so I found your apply-filter event...");
-
     // Get the values to craft our request URL from the DOM.
     var brand = $("#filter-brand").val();
     var type = $("#filter-type").val();
@@ -22,8 +23,28 @@ $("#apply-filter").on("click", function() {
     // Make a get request to the crafted URL. Expecting new html for the
     // inventory table in response.
     $.get(requestURL, function(results){
-        console.log("Here's my result fresh from Flask: " + results);
         $("#inv-table").html(results);
     });
 });
 
+
+//////////////////////////////////////////////
+// Search inventory code
+//////////////////////////////////////////////
+
+//"/inventory/search-results.html"
+
+$("#search-button").on("click", function() {
+    console.log("So that search click happened...");
+    var searchTerm = $("#search-term").val();
+
+    var encodedSearchTerm = encodeURIComponent(searchTerm);
+
+    var requestURL = "/inventory/search-results.html?search=" + encodedSearchTerm;
+
+    $.get(requestURL, function(results) {
+
+        console.log("Hey so we're making a get request now.");
+        console.log(results);
+    });
+});
