@@ -144,6 +144,42 @@ def get_all_units_by_supply_type():
 
 #     return is_duplicate
 
+############################################################
+# Functions to generate inventory table based on filtering
+############################################################
+
+def get_full_inventory(user_id):
+    """Gets a user's entire supply inventory."""
+
+    inventory = db.session.query(SupplyDetail.supply_type,
+                                 SupplyDetail.brand,
+                                 SupplyDetail.color,
+                                 SupplyDetail.units,
+                                 SupplyDetail.purchase_url,
+                                 Item.qty,
+                                 Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+
+
+def get_inventory_by_brand(user_id, brand):
+    """Given a user and a supply brand, fetches inventory table HTML to only
+    display supplies from that brand."""
+
+    columns_to_get_q = db.session.query(SupplyDetail.supply_type,
+                                        SupplyDetail.brand,
+                                        SupplyDetail.color,
+                                        SupplyDetail.units,
+                                        SupplyDetail.purchase_url,
+                                        Item.qty,
+                                        Item.item_id).outerjoin(Item)
+
+    filtered_columns_q = columns_to_get_q.filter(Item.user_id == user_id,
+                                                 SupplyDetail.brand == brand)
+
+    columns = filtered_columns_q.all()
+
+    return columns
+
+
 ###########################################################
 # Generate supply info table in project.html
 ###########################################################

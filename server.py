@@ -9,7 +9,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
-from helpers import craft_project_supplies_info
+from helpers import craft_project_supplies_info, get_inventory_by_brand
 
 app = Flask(__name__)
 
@@ -41,7 +41,7 @@ def index():
 ####################################################
 
 @app.route('/dashboard/<int:user_id>')
-def show_dashboard(user_id):
+def show_dashboard(user_id, inventory=None):
     """Show a user's dashboard."""
 
     # Get the user's id from the session, if possible.
@@ -53,13 +53,14 @@ def show_dashboard(user_id):
 
         # Get the current user's inventory details as a list of tuples of the
         # format: (type, brand, color, units, url, qty)
-        inventory = db.session.query(SupplyDetail.supply_type,
-                                     SupplyDetail.brand,
-                                     SupplyDetail.color,
-                                     SupplyDetail.units,
-                                     SupplyDetail.purchase_url,
-                                     Item.qty,
-                                     Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+        if inventory is None:
+            inventory = db.session.query(SupplyDetail.supply_type,
+                                         SupplyDetail.brand,
+                                         SupplyDetail.color,
+                                         SupplyDetail.units,
+                                         SupplyDetail.purchase_url,
+                                         Item.qty,
+                                         Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
 
         # Get the user's projects.
         projects = Project.query.filter(Project.user_id == user_id).all()
@@ -87,6 +88,9 @@ def show_dashboard(user_id):
         return redirect("/")
 
 
+# The following routes are dashboard routes because the "add supply" window
+# appears as part of the dashboard template, and we need this data before
+# we can submit a new supply.
 @app.route("/dashboard/brands.json")
 def get_brands():
     """Fetch all brands in the db by supply type, and return as JSON."""
@@ -149,6 +153,22 @@ def add_supply():
 
     return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
 
+
+@app.route("/inventory/filter.html")
+def filter_inventory():
+    brand = request.args.get("brand")
+    user_id = session.get("user_id")
+
+    inventory_tups = get_inventory_by_brand(user_id, brand)
+    print "########################################################"
+    print "I'm filter_inventory, and I got this from AJAX: ", brand
+    print "########################################################"
+
+    print "########################################################"
+    print "I'm filter_inventory, and I got this from gibb:", inventory_tups
+    print "########################################################"
+
+    return str(inventory_tups)
 
 
 ########################################################################
