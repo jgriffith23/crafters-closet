@@ -159,25 +159,31 @@ def get_full_inventory(user_id):
                                  Item.qty,
                                  Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
 
+    return inventory
 
-def get_inventory_by_brand(user_id, brand):
+
+def get_inventory_by_brand(user_id, brand=""):
     """Given a user and a supply brand, fetches inventory table HTML to only
-    display supplies from that brand."""
+    display supplies from that brand. Returns list of tuples."""
 
-    columns_to_get_q = db.session.query(SupplyDetail.supply_type,
-                                        SupplyDetail.brand,
-                                        SupplyDetail.color,
-                                        SupplyDetail.units,
-                                        SupplyDetail.purchase_url,
-                                        Item.qty,
-                                        Item.item_id).outerjoin(Item)
+    if brand != "":
+        q_columns_to_get = db.session.query(SupplyDetail.supply_type,
+                                            SupplyDetail.brand,
+                                            SupplyDetail.color,
+                                            SupplyDetail.units,
+                                            SupplyDetail.purchase_url,
+                                            Item.qty,
+                                            Item.item_id).outerjoin(Item)
 
-    filtered_columns_q = columns_to_get_q.filter(Item.user_id == user_id,
-                                                 SupplyDetail.brand == brand)
+        q_filtered = q_columns_to_get.filter(Item.user_id == user_id,
+                                             SupplyDetail.brand == brand)
 
-    columns = filtered_columns_q.all()
+        inventory = q_filtered.all()
 
-    return columns
+    else:
+        inventory = get_full_inventory(user_id)
+
+    return inventory
 
 
 ###########################################################

@@ -73,10 +73,11 @@ def show_dashboard(user_id, inventory=None):
 
         table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
+        print "So I'm in show_dashboard, and here's your inventory: ", inventory
+
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
                                user=user,
-                               inventory=inventory,
                                projects=projects,
                                all_supply_types=all_supply_types,
                                all_brands=all_brands,
@@ -159,16 +160,18 @@ def filter_inventory():
     brand = request.args.get("brand")
     user_id = session.get("user_id")
 
-    inventory_tups = get_inventory_by_brand(user_id, brand)
+    inventory = get_inventory_by_brand(user_id, brand)
     print "########################################################"
     print "I'm filter_inventory, and I got this from AJAX: ", brand
     print "########################################################"
 
     print "########################################################"
-    print "I'm filter_inventory, and I got this from gibb:", inventory_tups
+    print "I'm filter_inventory, and I got this from gibb:", inventory
     print "########################################################"
 
-    return str(inventory_tups)
+    table_body = Markup(render_template("supply_table.html", inventory=inventory))
+
+    return table_body
 
 
 ########################################################################

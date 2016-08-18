@@ -17,6 +17,7 @@ $("#apply-filter").on("click", function() {
     var requestURL = "/inventory/filter.html?brand=" + encodedBrand;
     $.get(requestURL, function(results){
         console.log("Here's my result fresh from Flask: " + results);
+        $("#inv-table").html(results);
     });
 });
 
