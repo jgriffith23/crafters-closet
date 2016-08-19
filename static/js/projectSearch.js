@@ -18,6 +18,6 @@ $("#search-projects").on("click", function () {
 
     $.get("/projects/search-results.html?search=" + encodedSearchTerm,
         function(results) {
-            $("#project-search-results").append(results);
+            $("#project-search-results").html(results);
     });
 });

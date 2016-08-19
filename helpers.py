@@ -334,16 +334,48 @@ def get_projects_by_search(search_term):
     relevant project data."""
 
     # Craft a query to the db for all needed columns.
-    q_projects = db.session.query(Project.title,
-                                  Project.description,
-                                  Project.instr_url,
-                                  Project.project_id)
+    # q_projects = db.session.query(Project.title,
+    #                               Project.description,
+    #                               Project.instr_url,
+    #                               Project.project_id)
+
+    # q_projects = Project.query
 
     # Wrap the user's search term in SQL wildcards and use it as a filter
     # on the existing query.
     sql_like_str = "%" + search_term + "%"
-    q_projects = q_projects.filter(Project.title.ilike(sql_like_str) |
-                                   Project.description.ilike(sql_like_str))
+    # q_projects = q_projects.filter(Project.title.ilike(sql_like_str) |
+    #                                Project.description.ilike(sql_like_str) |)
+
+    projects = Project.query.all()
+    for p in projects:
+        project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == p.project_id).all()
+        print "#######################for level 1"
+        print project_supplies
+        for ps in project_supplies:
+            print "##########################for level 2"
+            # Set up query for supply info
+            q = db.session.query(SupplyDetail.supply_type, SupplyDetail.color, SupplyDetail.brand)
+            supplies = tuple(q.join(ProjectSupply).filter(ProjectSupply.project_id == ps.project_id).all())
+            print supplies
+            for s in supplies:
+                print s
+                print "########################for level 3"
+                for detail in range(len(s)):
+                    print "#########################for level 4"
+                    if sql_like_str in zip(*s)[detail]:
+                        print("I FOUND ONE")
+
+                    else:
+
+                        print("nope")
+
+
+
+    #     q_project_supplies = ProjectSupply.query.filter(ProjectSupply.project_id == project.project_id)
+
+    #     if s in ps.supply_details.supply_type or "yarn" in ps.supply_details.brand or "yarn" in ps.supply_details.color:
+
 
     # q_supplies = db.session.query()
     # q_supplies = q.filter(SupplyDetail.supply_type.ilike(sql_like_str) |
@@ -351,6 +383,7 @@ def get_projects_by_search(search_term):
     #                       SupplyDetail.color.ilike(sql_like_str))
 
     # Fetch the project info, filtered by the search parameter.
-    projects = sorted(q_projects.all())
+    # projects = sorted(q_projects.all())
 
-    return projects
+    print "I swear I did something."
+    return ""
