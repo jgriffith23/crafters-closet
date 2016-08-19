@@ -10,5 +10,26 @@ Home
 <h1>Welcome to Crafter's Closet!</h1>
 
 <img src="https://pbs.twimg.com/media/BGJ3WBDCIAAiG4b.jpg">
+<br>
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Feeling Crafty?</h3>
+    </div>
+    <div class="panel-body">
+        <h4>Search for a project!</h4>
+
+        <div id="search-field">
+            <input type="text" name="search-term" id="search-term" placeholder="Enter search term.">
+            <button type="button" class="btn btn-default btn-sm" id="search-projects">Search</button>
+        </div>
+
+        <h4 id="search-active-head"></h4>
+        <div id="project-search-results">
+            <!-- We'll append project search results here. -->
+        </div>
+    </div>
+
+<script src="/static/js/projectSearch.js"></script>
 
 {% endblock %}

@@ -324,3 +324,33 @@ def craft_project_supplies_info(project, user_id):
             supply["qty_owned"] = item.qty
 
     return project_supplies_info
+
+
+############################################################
+# Data processing functions for project search table.
+############################################################
+def get_projects_by_search(search_term):
+    """Given a search term, return a list of tuples containing
+    relevant project data."""
+
+    # Craft a query to the db for all needed columns.
+    q_projects = db.session.query(Project.title,
+                                  Project.description,
+                                  Project.instr_url,
+                                  Project.project_id)
+
+    # Wrap the user's search term in SQL wildcards and use it as a filter
+    # on the existing query.
+    sql_like_str = "%" + search_term + "%"
+    q_projects = q_projects.filter(Project.title.ilike(sql_like_str) |
+                                   Project.description.ilike(sql_like_str))
+
+    # q_supplies = db.session.query()
+    # q_supplies = q.filter(SupplyDetail.supply_type.ilike(sql_like_str) |
+    #                       SupplyDetail.brand.ilike(sql_like_str) |
+    #                       SupplyDetail.color.ilike(sql_like_str))
+
+    # Fetch the project info, filtered by the search parameter.
+    projects = sorted(q_projects.all())
+
+    return projects

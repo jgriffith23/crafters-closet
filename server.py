@@ -9,7 +9,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
-from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search
+from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
 
 app = Flask(__name__)
 
@@ -318,6 +318,27 @@ def get_new_supply_form():
     safe_supply_form = Markup(supply_form)
 
     return safe_supply_form
+
+
+@app.route("/projects/search-results.html")
+def get_project_search_results():
+    """Return HTML representing a table of projects that match the user's
+    search query."""
+
+    # Get the string the user wanted to search for.
+    search_term = request.args.get("search")
+
+    # Get a group of projects filtered by the search term, as a list of tuples.
+    projects = get_projects_by_search(search_term)
+
+    # Render HTML for search results as a safe-to-use Markup object.
+    project_table_body = Markup(render_template("project_table.html", projects=projects))
+
+    #return project_table_body
+
+    print "OMG I GOT PROJECTS", projects
+
+    return str(project_table_body)
 
 
 
