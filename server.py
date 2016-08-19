@@ -8,7 +8,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
-from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
+from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search
 
 app = Flask(__name__)
@@ -107,6 +107,14 @@ def get_units():
     units = get_all_units_by_supply_type()
     units = jsonify(units)
     return(units)
+
+
+@app.route("/dashboard/colors.json")
+def get_colors():
+    """Fetch all colors in the db by supply type, and return as JSON."""
+    colors = get_all_colors_by_supply_type()
+    colors = jsonify(colors)
+    return(colors)
 
 
 ####################################################
@@ -301,10 +309,11 @@ def get_new_supply_form():
     """Generates a form for adding a new supply to a project."""
 
     all_supply_types = get_all_supply_types()
+    form_num = request.args.get("counter")
 
     supply_form = render_template("project-supply-form.html",
                                   all_supply_types=all_supply_types,
-                                  x=42)
+                                  x=form_num)
 
     safe_supply_form = Markup(supply_form)
 

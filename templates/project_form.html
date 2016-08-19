@@ -56,31 +56,6 @@ Create Project
 <br>
 
     <script src="http://code.jquery.com/jquery.js"></script>
-    <script>
-        "use strict";
-        var formCounter = 0;
-
-        $("#supply-form-gen").on("click", function() {
-
-                var formCounterStr = formCounter.toString();
-
-                var supplyTypeName = "supplytype" + formCounterStr.toString();
-                var brandName = "brand" + formCounterStr.toString();
-                var colorName = "color" + formCounterStr.toString();
-                var purchaseUrlName = "purchase-url" + formCounterStr.toString();
-                var unitsName = "units" + formCounterStr.toString();
-                var qtyRequiredName = "qty-required" + formCounterStr.toString();
-
-                var form = "<div class=\"panel-body\"><div class=\"form-group\"><!-- Supply Type Dropdown --><label for=\"supplytype\">Supply Type #"+formCounterStr+"</label><br><select name=\""+supplyTypeName+"\" id=\"supplytype\">{% for type in all_supply_types %}<option value=\"{{ type[0] }}\">{{ type[0] }}</option>{% endfor %}</select></div><div class=\"form-group\"><label for=\"brand\">Brand</label><input type=\"text\" class=\"form-control\" name=\""+brandName+"\" id=\"brand\" placeholder=\"What company made this supply?\"></div><div class=\"form-group\"><label for=\"color\">Color</label><input type=\"text\" class=\"form-control\" name=\""+colorName+"\" id=\"color\" placeholder=\"What color is this supply?\"></div><div class=\"form-group\"><label for=\"purchase-url\">Purchase URL</label><input type=\"text\" class=\"form-control\" name=\""+purchaseUrlName+"\" id=\"purchase-url\" placeholder=\"Where did you buy this supply?\"></div><div class=\"form-group\"><!-- FIXME: Change label below to reflect units of dropdown value dynamically. --><label for=\"qty-required\">Quantity Needed For Project</label><input type=\"number\" class=\"form-control\" name=\""+qtyRequiredName+"\" id=\"qty-required\"></div><div class=\"form-group\"><!-- Units Dropdown --><!-- FIXME: Remove units option when I can reflect units on qty above --><label for=\"units\">Units (Don't be a jerk. Pick the unit that matches your supply type.)</label><br><select name=\""+unitsName+"\" id=\"units\">{% for unit in all_units %}<option value=\"{{ unit[0] }}\">{{ unit[0] }}</option>{% endfor %}</select></div></div>";
-
-                $("#supplies-to-add").append(form);
-                $("#num-supplies").val(formCounter);
-
-                formCounter++;
-        });
-
-    </script> 
-
     <button type="button" class="btn btn-default btn-sm" id="test-gen">
         <span class="glyphicon glyphicon-plus"></span> TEST ADDING SUPPLY
     </button>
@@ -88,7 +63,6 @@ Create Project
     </div>
 
     <script src="/static/js/supplyFormGen.js"></script> 
-    <script src="/static/js/dropdown.js"></script>
 
 
 <!-- <script src="/static/js/FILE"></script> -->

@@ -1,0 +1,115 @@
+    <div class="form-group">
+    <!-- Supply Type Dropdown -->
+    <label for="supplytype{{ x }}">Supply Type #{{ x }}</label><br>
+        <select class="form-control" name="supplytype{{ x }}" id="supplytype{{ x }}">
+          <option value=""></option>
+          {% for type in all_supply_types %}
+            <option value="{{ type[0] }}">{{ type[0] }}</option> 
+          {% endfor %}
+        </select>
+    </div>
+    <br>
+
+    <!-- Brand -->
+    <div class="form-group">
+        <label for="brand{{ x }}">Brand</label>
+            <select class="form-control" name="brand{{ x }}" id="brand{{ x }}"></select>
+    </div>
+    <br>
+
+    <!-- Color -->
+    <div class="form-group">
+    <label for="color{{ x }}">Color</label>
+        <select type="text" class="form-control" name="color{{ x }}" id="color{{ x }}"></select>
+    </div> 
+    <br>
+
+    <!-- Qty Owned -->
+    <div class="form-group">
+        <label for="qty-required{{ x }}">Quantity Required</label>
+            <input type="number" class="form-control" name="qty-required{{ x }}" id="qty-required{{ x }}" min=0>
+    </div>
+
+    <!-- Units -->
+    <div class="form-group">
+        <label for="units{{ x }}">Units</label><br>
+            <input class="form-control" type=text name="units{{ x }}" id="units{{ x }}" readonly="readonly">
+    </div>
+
+    <script>
+    "use strict";
+
+    // Craft a URL to send a get request for brands and make a variable to hold
+    // the response.
+    var brandsURL = "/dashboard/brands.json";
+    var brands;
+
+    // Craft a URL to send a get request for units and make a variable to hold
+    // the response.
+    var unitsURL = "/dashboard/units.json";
+    var units;
+
+    var colorsURL = "/dashboard/colors.json";
+    var colors;
+
+    // On successfully receiving brands/units data from the server, 
+    // store it in the variables created previously. These are AJAX get requests
+    // that take the corresponding URL from above and an anonymous function
+    // as parameters.
+    $.get(brandsURL, function(results) {
+        brands = results;
+        console.log(brands);
+    });
+
+    $.get(unitsURL, function(results) {
+        units = results;
+        console.log(units);
+    });
+
+    $.get(colorsURL, function(results) {
+        colors = results;
+        console.log(colors);
+    });
+
+
+    /////////////////////////////////////
+    // Modal "Add Supply" Dropdown Code
+    /////////////////////////////////////
+
+    // Place an event listener on the supply type dropdown that fires when
+    // the dropdown value changes.
+    $("#supplytype{{x}}").on("change", function () {
+
+        // Enable the brands dropdown.
+        $("#brand{{x}}").prop("disabled", false);
+
+        // Clear the old options from the brands dropdown
+        $("#brand{{x}}").empty();
+
+        // Enable the colors dropdown.
+        $("#color{{x}}").prop("disabled", false);
+
+        // Clear the old options from the colors dropdown
+        $("#color{{x}}").empty();
+
+        // Get the supply type from the first dropdown
+        var supplyType = $("#supplytype{{x}}").val();
+
+        // Iterate over the length of the list of brand/color options. For each,
+        // create an option string based on the brands/colors available, and 
+        // append that string to the brands or colors dropdown, respectively.
+        for(var i = 0; i < brands[supplyType].length; i++){
+            var brdOptionStr = "<option value=\""+brands[supplyType][i]+"\">"+brands[supplyType][i]+"</option>";
+            $("#brand{{x}}").append(brdOptionStr);
+        }
+
+        for (var i = 0; i < colors[supplyType].length; i++){
+            var clrOptionStr = "<option value=\""+colors[supplyType][i]+"\">"+colors[supplyType][i]+"</option>";
+            $("#color{{x}}").append(clrOptionStr);
+        }
+
+        // Set the value of the units field.
+        $("#units{{x}}").val(units[supplyType]);
+
+    });
+    </script>

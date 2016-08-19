@@ -124,6 +124,29 @@ def get_all_units_by_supply_type():
 
     return units_by_type
 
+def get_all_colors_by_supply_type():
+    """Fetch all brands in the database by supply type.
+
+    Returns a dictionary of the following format:
+    """
+
+    # Fetch all supply types from the db. Cast the list returned by the
+    # db query into a set to remove dupes.
+    supply_types = set(db.session.query(SupplyDetail.supply_type).all())
+
+    # Create a dictionary of empty lists, where each key is a supply in the db.
+    # Uses dictionary comprehension!
+    colors_by_type = {supply_type: [] for (supply_type,) in supply_types}
+
+    # For each supply type, fetch the brands associated with that type. Then, use
+    # a list comprehension to create a list of brands & set the value of the key for
+    # that supply type equal to the list.
+    for key in colors_by_type.iterkeys():
+        colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.supply_type == key).all())
+        colors_by_type[key] = [color for (color,) in colors if color is not None]
+
+    return colors_by_type
+
 
 ############################################################
 # Generate inventory table data based on filtering/searching
