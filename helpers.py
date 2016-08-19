@@ -160,18 +160,37 @@ def get_filtered_inventory(user_id, brand="", supply_type="", color=""):
 
         q = q.filter(SupplyDetail.color == color)
 
-    # If the user didn't send any filter params, then just fetch the whole
-    # inventory!
+    # Fetch the inventory, filtered by the passed parameters. (If the user
+    # didn't enter any, then we'll get the whole inventory.)
     inventory = sorted(q.all())
 
     return inventory
 
 
-def get_inventory_by_search(user_id, search_parameter):
-    """Given a user id and search terms, get a list of tuples representing
+def get_inventory_by_search(user_id, search_term):
+    """Given a user id and search parameter, get a list of tuples representing
     all items owned by that user with the relevant strings."""
 
-    pass
+    # Craft a query to the db for all needed columns.
+    q = db.session.query(SupplyDetail.supply_type,
+                         SupplyDetail.brand,
+                         SupplyDetail.color,
+                         SupplyDetail.units,
+                         SupplyDetail.purchase_url,
+                         Item.qty,
+                         Item.item_id).outerjoin(Item).filter(Item.user_id == user_id)
+
+    # Wrap the user's search term in SQL wildcards and use it as a filter
+    # on the existing query.
+    sql_like_str = "%" + search_term + "%"
+    q = q.filter(SupplyDetail.supply_type.ilike(sql_like_str) |
+                 SupplyDetail.brand.ilike(sql_like_str) |
+                 SupplyDetail.color.ilike(sql_like_str))
+
+    # Fetch the inventory, filtered by the search parameter.
+    inventory = sorted(q.all())
+
+    return inventory
 
 
 ###########################################################
@@ -281,4 +300,3 @@ def craft_project_supplies_info(project, user_id):
             supply["qty_owned"] = item.qty
 
     return project_supplies_info
-

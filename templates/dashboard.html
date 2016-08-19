@@ -18,7 +18,7 @@
 
   <div class="panel-body" id="filter-search">
       <!-- Buttons for Inventory Functionality -->
-      <h4>Choose your filter options.</h4>
+      <h4>Choose your filter options...</h4>
       <div id="filter-options">
           <div class="btn-group-horizontal" role="group" aria-label="filter-options">
 
@@ -47,13 +47,23 @@
               </select>
 
               <button type="button" id="apply-filter" class="btn btn-default btn-sm" data-target="">Apply Filter</button>
-
-              <br>
           </div>
 
+          <br>
+          <br>
+
+          <h4>...Or search your inventory by an arbitrary string.</h4>
           <div id="search-field">
               <input type="text" name="search-term" id="search-term" placeholder="Enter search term.">
               <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
+          </div>
+
+          <br>
+          <br>
+
+          <div id="reset-inventory">
+          <h4>Done with specifics?</h4>
+              <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
           </div>   
       </div>
   </div>
@@ -158,14 +168,7 @@
     </div>
 
     <div class="panel-body">
-        <div class="project-options">
-              <!-- Buttons for Project Options -->
-              <div class="btn-group-horizontal" role="group" aria-label="inventory-options">
-                  <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="">Create a New Project</button>
-              </div>    
-        </div>
-
-        <!-- Display Inventory -->
+        <!-- Display Projects -->
         <table class="table table-striped">
           <thead>
           <tr>
@@ -182,7 +185,11 @@
           {% endfor %}
           </tbody>
         </table>
+
+        <!-- Add Project Button -->
+        <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project</button>
   </div>
+
 </div>
 
 {% endblock %}

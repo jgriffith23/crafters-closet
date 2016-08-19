@@ -32,19 +32,32 @@ $("#apply-filter").on("click", function() {
 // Search inventory code
 //////////////////////////////////////////////
 
-//"/inventory/search-results.html"
-
 $("#search-button").on("click", function() {
-    console.log("So that search click happened...");
+    // Get the entered search term.
     var searchTerm = $("#search-term").val();
 
+    // Encode the search term for use in URLs.
     var encodedSearchTerm = encodeURIComponent(searchTerm);
 
+    // Craft a request URL.
     var requestURL = "/inventory/search-results.html?search=" + encodedSearchTerm;
 
+    // Make a get request to the crafted URL. Expecting new html for the
+    // inventory table in response.
     $.get(requestURL, function(results) {
+        $("#inv-table").html(results);
+    });
+});
 
-        console.log("Hey so we're making a get request now.");
-        console.log(results);
+
+/////////////////////////////////////////////
+// Clear all applied filters/searches
+/////////////////////////////////////////////
+
+$("#clear-filters").on("click", function() {
+
+    requestURL = "/inventory/filter.html?brand=&supplytype=&color=";
+    $.get(requestURL, function(results) {
+        $("#inv-table").html(results);
     });
 });

@@ -9,7 +9,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 #from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
-from helpers import craft_project_supplies_info, get_filtered_inventory
+from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search
 
 app = Flask(__name__)
 
@@ -183,11 +183,17 @@ def search_inventory():
     """Returns only the rows in the user's inventory relevant to the passed
     search term."""
 
+    # Get the string the user wanted to search for.
     search_term = request.args.get("search")
+    user_id = session.get("user_id")
 
-    test_str = "I need to search for: " + search_term
+    # Get the user's inventory filtered by the search term, as a list of tuples.
+    inventory = get_inventory_by_search(user_id, search_term)
 
-    return test_str
+    # Render HTML for search results as a safe-to-use Markup object.
+    table_body = Markup(render_template("supply_table.html", inventory=inventory))
+
+    return table_body
 
 
 ########################################################################
