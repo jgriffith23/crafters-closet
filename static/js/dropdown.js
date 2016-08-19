@@ -1,3 +1,4 @@
+"use strict";
 
 // Craft a URL to send a get request for brands and make a variable to hold
 // the response.

@@ -36,9 +36,9 @@ def index():
     return render_template("homepage.html", user=user)
 
 
-####################################################
-# Dashboard routes
-####################################################
+################################################################
+# General dashboard routes (show dash, get data for dash, etc.)
+################################################################
 
 @app.route('/dashboard/<int:user_id>')
 def show_dashboard(user_id):
@@ -294,6 +294,22 @@ def handle_project_creation():
 
     flash("%s added to your projects. Hooray!" % (title))
     return redirect(url_for('.show_project', project_id=project.project_id))
+
+
+@app.route("/create-project/new-supply-form.html")
+def get_new_supply_form():
+    """Generates a form for adding a new supply to a project."""
+
+    all_supply_types = get_all_supply_types()
+
+    supply_form = render_template("project-supply-form.html",
+                                  all_supply_types=all_supply_types,
+                                  x=42)
+
+    safe_supply_form = Markup(supply_form)
+
+    return safe_supply_form
+
 
 
 ####################################################

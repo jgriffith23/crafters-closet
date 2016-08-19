@@ -4,7 +4,8 @@ from model import SupplyDetail, ProjectSupply, Item, Project, db
 
 
 ####################################################################
-# Get all non-duplicate, non-null fields in a column.
+# Get all non-duplicate, non-null fields in a column from the
+# supply_details table.
 ####################################################################
 
 def get_all_supply_types():
