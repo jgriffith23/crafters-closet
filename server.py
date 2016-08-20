@@ -335,11 +335,7 @@ def get_project_search_results():
     project_table_body = Markup(render_template("project_table.html", projects=projects))
 
     #return project_table_body
-
-    print "OMG I GOT PROJECTS", projects
-
-    return str(project_table_body)
-
+    return project_table_body
 
 
 ####################################################
