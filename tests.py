@@ -20,9 +20,27 @@ class CCTests(unittest.TestCase):
         self.client = app.test_client()
         app.config['TESTING'] = True
 
+    def test_login_page(self):
+        result = self.client.get("/login")
+        self.assertIn("Sign In", result.data)
+
     def test_homepage(self):
         result = self.client.get("/")
         self.assertIn("Welcome to Crafter's Closet!", result.data)
+
+    def test_dashboard(self):
+        login("jhacks","")
+        result = self.client.get("/dashboard")
+        self.assertIn("Dashboard", result.data)
+
+    def login(self, username, password):
+        return self.app.post('/login', data=dict(
+            username=username,
+            password=password
+        ), follow_redirects=True)
+
+    def logout(self):
+        return self.app.get('/logout', follow_redirects=True)
 
 
 class CCTestsDatabase(unittest.TestCase):

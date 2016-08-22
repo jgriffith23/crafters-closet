@@ -40,8 +40,8 @@ def index():
 # General dashboard routes (show dash, get data for dash, etc.)
 ################################################################
 
-@app.route('/dashboard/<int:user_id>')
-def show_dashboard(user_id):
+@app.route('/dashboard/')
+def show_dashboard():
     """Show a user's dashboard."""
 
     # Get the user's id from the session, if possible.
@@ -161,7 +161,7 @@ def add_supply():
     flash("%s %s of %s %s have been added to your inventory." %
          (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
 
-    return redirect(url_for('.show_dashboard', user_id=session.get("user_id")))
+    return redirect(url_for('.show_dashboard'))
 
 
 @app.route("/inventory/filter.html")
@@ -213,7 +213,7 @@ def show_project(project_id):
     """Displays a page with all information about a project."""
 
     user_id = session.get("user_id")
-    user = User.query.get(user_id)
+    print "I'm the user ID", user_id
 
     # Get an object representing the project whose id was passed
     project = Project.query.get(project_id)
@@ -222,11 +222,12 @@ def show_project(project_id):
     # including the amount of any supplies a user must buy.
     project_supplies_info = craft_project_supplies_info(project, user_id)
 
+    print "HERE'S YOUR INFO :P ", project_supplies_info
+
     # Render the project page
     return render_template("project.html",
                            project=project,
-                           project_supplies_info=project_supplies_info,
-                           user=user)
+                           project_supplies_info=project_supplies_info)
 
 
 @app.route('/create-project', methods=['GET'])
@@ -419,7 +420,7 @@ def handle_login():
             session["username"] = user.username
 
             flash("Welcome to Crafter's Closet!")
-            return redirect(url_for('.show_dashboard', user_id=user.user_id))
+            return show_dashboard()
 
     else:
         flash("Incorrect username or password.")

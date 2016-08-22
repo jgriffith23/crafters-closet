@@ -4,20 +4,27 @@
 ///////////////////////////////////////////////
 
 $("#search-projects").on("click", function () {
-    console.log("I see that click you made.");
 
+    // Get the search term.
     var searchTerm = $("#search-term").val();
 
-    console.log("I see " + searchTerm + " in your search box.");
+    // If the search string is empty, just remove the whole search
+    // results section from the page.
+    if (searchTerm === ""){
+        $("#search-active-head").html("");
+        $("#project-search-results").html("");
+    }
 
-    encodedSearchTerm = encodeURIComponent(searchTerm);
+    // Otherwise, encode search term, create a URL, and send a get request
+    // to the server for html containing the search results.
+    else{
+        encodedSearchTerm = encodeURIComponent(searchTerm);
 
-    console.log("I'll send " + encodedSearchTerm + " to the server.");
+        $("#search-active-head").html("Projects Relevant to Your Search");
 
-    $("#search-active-head").html("Projects Relevant to Your Search");
-
-    $.get("/projects/search-results.html?search=" + encodedSearchTerm,
-        function(results) {
-            $("#project-search-results").html(results);
-    });
+        $.get("/projects/search-results.html?search=" + encodedSearchTerm,
+            function(results) {
+                $("#project-search-results").html(results);
+        });
+    }
 });

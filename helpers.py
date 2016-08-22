@@ -152,7 +152,7 @@ def get_all_colors_by_supply_type():
 # Generate inventory table data based on filtering/searching
 ############################################################
 
-def get_filtered_inventory(user_id, brand="", supply_type="", color=""):
+def get_filtered_inventory(user_id=None, brand="", supply_type="", color=""):
     """Given a user and a supply brand, fetches inventory table HTML to only
     display supplies from that brand. Returns list of tuples."""
 
@@ -269,27 +269,35 @@ def get_project_supplies_list(project_id):
     return supplies_list
 
 
-def calc_amt_to_buy(sd_id, user_id, qty_specified):
+def calc_amt_to_buy(sd_id, qty_specified, user_id=None):
     """Given a supply id from a project, a user id, and the qty of the supply
     needed for a project, calculate how much of that supply a user needs to buy
     to build the project that supply belongs to."""
 
-    # Get the item in the user's inventory with the sd_id passed
-    item = Item.query.filter(Item.sd_id == sd_id, Item.user_id == user_id).first()
+    if user_id is not None:
+        # Get the item in the user's inventory with the sd_id passed
+        item = Item.query.filter(Item.sd_id == sd_id, Item.user_id == user_id).first()
 
-    # If the user doesn't own that item, they have to buy the amount of supplies
-    # specified in the project.
-    if item is None:
+        # If the user doesn't own that item, they have to buy the amount of supplies
+        # specified in the project.
+        if item is None:
+            amt_to_buy = qty_specified
+
+        # If the user does have that item in their inventory, subtract the qty owned
+        # from the qty specified to see how much the user needs to buy.
+        else:
+            qty_owned = item.qty
+            amt_to_buy = qty_specified - qty_owned
+
+            if amt_to_buy < 0:
+                amt_to_buy = 0
+
+    # If the user doesn't exist, assume they need to buy all the supplies
+    # specified.
+    else:
         amt_to_buy = qty_specified
 
-    # If the user does have that item in their inventory, subtract the qty owned
-    # from the qty specified to see how much the user needs to buy.
-    else:
-        qty_owned = item.qty
-        amt_to_buy = qty_specified - qty_owned
-
-        if amt_to_buy < 0:
-            amt_to_buy = 0
+    print "HERE'S WHAT YOU HAVE TO BUY: ", amt_to_buy
 
     return amt_to_buy
 
@@ -310,8 +318,7 @@ def craft_project_supplies_info(project, user_id):
     # of that supply the user must buy, and add that amount to the dictionary.
     for supply in project_supplies_info:
         amt_to_buy = calc_amt_to_buy(supply["sd_id"],
-                                     user_id,
-                                     supply["qty_specified"])
+                                     supply["qty_specified"], user_id)
 
         item = Item.query.filter(Item.sd_id == supply["sd_id"],
                                  Item.user_id == user_id).first()
@@ -354,5 +361,4 @@ def get_projects_by_search(search_term):
     search_results = q.all()
     search_results = sorted(set(search_results))
 
-    print "I swear I got the tuples."
     return search_results
