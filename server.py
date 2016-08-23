@@ -70,6 +70,7 @@ def show_dashboard():
         all_colors = get_all_colors()
 
         table_body = Markup(render_template("supply_table.html", inventory=inventory))
+        inventory_chart = Markup(render_template("inventory-chart.html"))
 
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
@@ -77,7 +78,8 @@ def show_dashboard():
                                all_supply_types=all_supply_types,
                                all_brands=all_brands,
                                all_colors=all_colors,
-                               table_body=table_body)
+                               table_body=table_body,
+                               inventory_chart=inventory_chart)
 
     else:
         flash("You can't go there! Please log in.")
@@ -88,7 +90,8 @@ def show_dashboard():
 def supply_types_data():
     """Return data about supplies in a user's inventory."""
 
-    data_dict = get_inventory_chart_dict()
+    user_id = session.get("user_id")
+    data_dict = get_inventory_chart_dict(user_id)
     return data_dict
 
 

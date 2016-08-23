@@ -3,6 +3,9 @@
 from model import SupplyDetail, ProjectSupply, Item, Project, db
 from flask import jsonify
 
+CHART_COLORS = ["#b366ff", "#0059b3", "#00cc99", "#ffd480",
+                "#ff99cc", "#b3e6ff", "#bfff80", "#ffccb3"]
+
 
 ####################################################################
 # Get all non-duplicate, non-null fields in a column from the
@@ -68,36 +71,51 @@ def get_matching_sd(supply_type, brand, color, units):
 
 
 ###################################################################
-# Get larger groups of data from the database in dictionary format
+# Get groups of data from the database in dictionary format
 # for easy jsonification.
 ###################################################################
-def get_user_inventory_json(user_id):
-    """Fetch all of a user's supplies and return as JSON."""
-    q = db.session.query(Item.item_id,
-                         SupplyDetail.supply_type,
-                         SupplyDetail.brand,
-                         SupplyDetail.color,
-                         SupplyDetail.units,
-                         SupplyDetail.purchase_url,
-                         Item.qty).outerjoin(Item)
 
-    q = q.filter_by(user_id=user_id)
+def get_inventory_chart_dict(user_id):
+    """Build a JSON object representing the total numbers of each type of item
+    in a user's inventory."""
 
-    r = q.all()
+    # Get all of the passed user's items
+    items = Item.query.filter(Item.user_id == user_id)
 
-    #FIXME: FINISH THIS FUNCTION
+    # Create an empty dict for counting supply quantities and an empty set
+    # to contain non-repeating supply types, to be used as chart labels.
+    type_quantities = {}
+    labels = set([])
 
+    # For each item in the user's inventory, get the type and quantity.
+    # If the supply type isn't in the dict, add it. Either way, add the
+    # current quantity to that type's total value. Add the supply type
+    # to the labels set.
+    for item in items:
 
-def get_inventory_chart_dict():
-    """"""
+        supply_type = item.supply_details.supply_type
+        qty_owned = item.qty
 
-    data_dict = {"labels": ["Christmas Melon", "Crenshaw"],
-                 "datasets": [{"data": [300, 50],
-                               "backgroundColor": ["#FF6384", "#36A2EB"],
-                               "hoverBackgroundColor": ["#FF6384", "#36A2EB"]}]
-                }
+        type_quantities[supply_type] = type_quantities.get(supply_type, 0)
+        type_quantities[supply_type] += qty_owned
 
-    return jsonify(data_dict)
+        labels.add(supply_type)
+
+    # Put the quantity counts we just made in a list, in the same order as
+    # the labels array.
+    data = [type_quantities[label] for label in labels]
+
+    # Get enough colors from the global colors list to fill out the chart.
+    backgroundColors = CHART_COLORS[:len(labels)]
+
+    # Create the data dictionary in a format Chart.js can understand, and
+    # return it as JSON.
+    supply_data_dict = {"labels": list(labels),
+                        "datasets": [{"data": data,
+                                      "backgroundColor": backgroundColors}]
+                       }
+
+    return jsonify(supply_data_dict)
 
 
 def get_all_brands_by_supply_type():
