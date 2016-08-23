@@ -256,4 +256,4 @@ if __name__ == "__main__":
     set_val_sd_id()
     set_val_item_id()
     set_val_project_id()
-    set_val_ps_id()2
+    set_val_ps_id()
