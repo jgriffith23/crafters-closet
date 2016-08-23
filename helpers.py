@@ -1,6 +1,7 @@
 """Helper functions specific to Crafter's Closet project."""
 
 from model import SupplyDetail, ProjectSupply, Item, Project, db
+from flask import jsonify
 
 
 ####################################################################
@@ -70,6 +71,35 @@ def get_matching_sd(supply_type, brand, color, units):
 # Get larger groups of data from the database in dictionary format
 # for easy jsonification.
 ###################################################################
+def get_user_inventory_json(user_id):
+    """Fetch all of a user's supplies and return as JSON."""
+    q = db.session.query(Item.item_id,
+                         SupplyDetail.supply_type,
+                         SupplyDetail.brand,
+                         SupplyDetail.color,
+                         SupplyDetail.units,
+                         SupplyDetail.purchase_url,
+                         Item.qty).outerjoin(Item)
+
+    q = q.filter_by(user_id=user_id)
+
+    r = q.all()
+
+    #FIXME: FINISH THIS FUNCTION
+
+
+def get_inventory_chart_dict():
+    """"""
+
+    data_dict = {"labels": ["Christmas Melon", "Crenshaw"],
+                 "datasets": [{"data": [300, 50],
+                               "backgroundColor": ["#FF6384", "#36A2EB"],
+                               "hoverBackgroundColor": ["#FF6384", "#36A2EB"]}]
+                }
+
+    return jsonify(data_dict)
+
+
 def get_all_brands_by_supply_type():
     """Fetch all brands in the database by supply type.
 
@@ -124,6 +154,7 @@ def get_all_units_by_supply_type():
 
     return units_by_type
 
+
 def get_all_colors_by_supply_type():
     """Fetch all brands in the database by supply type.
 
@@ -146,6 +177,28 @@ def get_all_colors_by_supply_type():
         colors_by_type[key] = [color for (color,) in colors if color is not None]
 
     return colors_by_type
+
+
+# def get_all_colors_by_brand():
+#     """Fetch all colors in the database by brand."""
+
+#     # Query the database to get all colors associated with the brand, as a
+#     # list of tuples
+#     brands = get_all_brands()
+
+#     # Create a dictionary of empty lists, where each key is a brand in the db.
+#     colors_by_brand = {brand: [] for (brand,) in brands}
+
+#     # For each brand, fetch the colors associated with that brand. Then, use
+#     # a list comprehension to create a list of colors & set the value of the key for
+#     # that brand equal to the list.
+#     for key in colors_by_brand.iterkeys():
+#         colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.supply_type == key).all())
+#         colors_by_type[key] = [color for (color,) in colors if color is not None]
+
+#     print colors_by_brand
+
+#     return colors_by_brand
 
 
 ############################################################

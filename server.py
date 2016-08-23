@@ -6,10 +6,10 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
-#from reg_auth import register_form, handle_register, login_form, handle_login, logout
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
+from helpers import get_inventory_chart_dict
 
 app = Flask(__name__)
 
@@ -40,7 +40,7 @@ def index():
 # General dashboard routes (show dash, get data for dash, etc.)
 ################################################################
 
-@app.route('/dashboard/')
+@app.route('/dashboard')
 def show_dashboard():
     """Show a user's dashboard."""
 
@@ -48,9 +48,6 @@ def show_dashboard():
     user_id = session.get("user_id")
 
     if user_id:
-        # Get the current user
-        user = User.query.get(user_id)
-
         # Get the current user's inventory details as a list of tuples of the
         # format: (type, brand, color, units, url, qty)
         inventory = db.session.query(SupplyDetail.supply_type,
@@ -74,11 +71,8 @@ def show_dashboard():
 
         table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
-        print "So I'm in show_dashboard, and here's your inventory: ", inventory
-
         # Render a dashboard showing the user's inventory.
         return render_template("dashboard.html",
-                               user=user,
                                projects=projects,
                                all_supply_types=all_supply_types,
                                all_brands=all_brands,
@@ -88,6 +82,14 @@ def show_dashboard():
     else:
         flash("You can't go there! Please log in.")
         return redirect("/")
+
+
+@app.route("/supply-types.json")
+def supply_types_data():
+    """Return data about supplies in a user's inventory."""
+
+    data_dict = get_inventory_chart_dict()
+    return data_dict
 
 
 # The following routes are dashboard routes because the "add supply" window
@@ -222,8 +224,6 @@ def show_project(project_id):
     # including the amount of any supplies a user must buy.
     project_supplies_info = craft_project_supplies_info(project, user_id)
 
-    print "HERE'S YOUR INFO :P ", project_supplies_info
-
     # Render the project page
     return render_template("project.html",
                            project=project,
@@ -276,6 +276,7 @@ def handle_project_creation():
     # Given num-supplies, we can iterate over the number of supplies to add
     # records to the db.
 
+    # FIXME: Move project supply creation into a helper function.
     # Need to take the range of num_supplies + 1 or we won't get all supplies.
     for supply_num in range(int(num_supplies)+1):
         fieldname_num = str(supply_num)
@@ -319,6 +320,12 @@ def get_new_supply_form():
     safe_supply_form = Markup(supply_form)
 
     return safe_supply_form
+
+
+# @app.route("/colors-by-brand.json")
+# def fetch_colors_json():
+#     """"""
+#     pass
 
 
 @app.route("/projects/search-results.html")
@@ -420,7 +427,7 @@ def handle_login():
             session["username"] = user.username
 
             flash("Welcome to Crafter's Closet!")
-            return show_dashboard()
+            return redirect("/dashboard")
 
     else:
         flash("Incorrect username or password.")
