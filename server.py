@@ -11,7 +11,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
-from helpers import get_inventory_chart_dict, get_all_colors_by_brand
+from helpers import get_inventory_chart_dict, get_colors_from_brand
 
 app = Flask(__name__)
 
@@ -47,9 +47,17 @@ def typeahead_practice():
 
 @app.route("/typing-test/colors-by-brand.json")
 def typeahead_colors():
+    brand = request.args.get("brand")
+    print "##############################"
+    print "##############################"
+    print "##############################"
+    print "##############################"
+    print "##############################"
+    print brand
 
-    colors_dict = get_all_colors_by_brand()
-    colors = colors_dict["Americana"]
+    colors = get_colors_from_brand(brand)
+    # colors_dict = get_all_colors_by_brand()
+    # colors = colors_dict["Americana"]
 
     return Response(json.dumps(colors), mimetype='application/json')
 

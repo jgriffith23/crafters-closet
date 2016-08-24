@@ -196,7 +196,7 @@ def get_all_colors_by_supply_type():
     return colors_by_type
 
 
-def get_all_colors_by_brand():
+def get_all_colors_dict_by_brand():
     """Fetch all colors in the database by brand."""
 
     # Query the database to get all colors associated with the brand, as a
@@ -214,6 +214,18 @@ def get_all_colors_by_brand():
         colors_by_brand[key] = [color for (color,) in colors if color is not None]
 
     return colors_by_brand
+
+
+def get_colors_from_brand(brand):
+    """"""
+    colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.brand.ilike("%"+brand+"%")).all())
+    colors = [color for (color,) in colors if color is not None]
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+    print brand, ": ", colors
+    return colors
 
 
 ############################################################
