@@ -48,15 +48,14 @@ def get_all_supply_units():
     return all_units
 
 
-def get_matching_sd(supply_type, brand, color, units):
+def get_matching_sd(supply_type, brand, color):
     """Gets an existing supply detail record from the database whose columns match
     those of the passed supply detail."""
 
     # Use ilike() to check columns despite typos
     sd_from_db = SupplyDetail.query.filter(SupplyDetail.supply_type.ilike("%" + supply_type + "%"),
                                            SupplyDetail.brand.ilike("%" + brand + "%"),
-                                           SupplyDetail.color.ilike("%" + color + "%"),
-                                           SupplyDetail.units.ilike("%" + units + "%")).first()
+                                           SupplyDetail.color.ilike("%" + color + "%")).first()
     return sd_from_db
 
 
@@ -197,26 +196,24 @@ def get_all_colors_by_supply_type():
     return colors_by_type
 
 
-# def get_all_colors_by_brand():
-#     """Fetch all colors in the database by brand."""
+def get_all_colors_by_brand():
+    """Fetch all colors in the database by brand."""
 
-#     # Query the database to get all colors associated with the brand, as a
-#     # list of tuples
-#     brands = get_all_brands()
+    # Query the database to get all colors associated with the brand, as a
+    # list of tuples
+    brands = get_all_brands()
 
-#     # Create a dictionary of empty lists, where each key is a brand in the db.
-#     colors_by_brand = {brand: [] for (brand,) in brands}
+    # Create a dictionary of empty lists, where each key is a brand in the db.
+    colors_by_brand = {brand: [] for (brand,) in brands}
 
-#     # For each brand, fetch the colors associated with that brand. Then, use
-#     # a list comprehension to create a list of colors & set the value of the key for
-#     # that brand equal to the list.
-#     for key in colors_by_brand.iterkeys():
-#         colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.supply_type == key).all())
-#         colors_by_type[key] = [color for (color,) in colors if color is not None]
+    # For each brand, fetch the colors associated with that brand. Then, use
+    # a list comprehension to create a list of colors & set the value of the key for
+    # that brand equal to the list.
+    for key in colors_by_brand.iterkeys():
+        colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.brand == key).all())
+        colors_by_brand[key] = [color for (color,) in colors if color is not None]
 
-#     print colors_by_brand
-
-#     return colors_by_brand
+    return colors_by_brand
 
 
 ############################################################

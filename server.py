@@ -2,6 +2,8 @@ from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify, Markup
 from flask_debugtoolbar import DebugToolbarExtension
+from flask import Response 
+import json
 
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
@@ -9,7 +11,7 @@ from model import User, SupplyDetail, Project, ProjectSupply, Item
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
-from helpers import get_inventory_chart_dict
+from helpers import get_inventory_chart_dict, get_all_colors_by_brand
 
 app = Flask(__name__)
 
@@ -34,6 +36,22 @@ def index():
     else:
         user = None
     return render_template("homepage.html", user=user)
+
+
+@app.route("/typing-test")
+def typeahead_practice():
+    """Render a page to be used for playing w/ typeahead.js"""
+
+    return render_template("typing_test.html")
+
+
+@app.route("/typing-test/colors-by-brand.json")
+def typeahead_colors():
+
+    colors_dict = get_all_colors_by_brand()
+    colors = colors_dict["Americana"]
+
+    return Response(json.dumps(colors), mimetype='application/json')
 
 
 ################################################################
@@ -142,29 +160,38 @@ def add_supply():
     units = request.form.get("units")
     qty = request.form.get("quantity-owned")
 
-    # Instantiate a new supply detail record.
-    supply_detail = SupplyDetail(supply_type=supply_type,
-                                 brand=brand,
-                                 color=color,
-                                 units=units,
-                                 purchase_url=purchase_url)
+    possible_sd = get_matching_sd(supply_type, brand, color)
 
-    # Add that record to the database.
-    db.session.add(supply_detail)
-    db.session.commit()
+    # FIXME: Move all of this logic into helper functions!
 
-    # Instantiate a new item record, using the current user's id and the
-    # newly created supply detail's sd_id
-    item = Item(user_id=session.get("user_id"),
-                sd_id=supply_detail.sd_id,
-                qty=qty)
+    if possible_sd:
+        flash("Did you mean this supply? %s %s %s (id %s)" %
+             (possible_sd.supply_type, possible_sd.brand, possible_sd.color, possible_sd.sd_id))
 
-    # Add the new item to the database
-    db.session.add(item)
-    db.session.commit()
+    else:
+        # Instantiate a new supply detail record.
+        supply_detail = SupplyDetail(supply_type=supply_type,
+                                     brand=brand,
+                                     color=color,
+                                     units=units,
+                                     purchase_url=purchase_url)
 
-    flash("%s %s of %s %s have been added to your inventory." %
-         (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
+        # Add that record to the database.
+        db.session.add(supply_detail)
+        db.session.commit()
+
+        # Instantiate a new item record, using the current user's id and the
+        # newly created supply detail's sd_id
+        item = Item(user_id=session.get("user_id"),
+                    sd_id=supply_detail.sd_id,
+                    qty=qty)
+
+        # Add the new item to the database
+        db.session.add(item)
+        db.session.commit()
+
+        flash("%s %s of %s %s have been added to your inventory." %
+             (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
 
     return redirect(url_for('.show_dashboard'))
 
