@@ -122,10 +122,23 @@ def add_supply_to_db(supply_type, brand, color, units, purchase_url):
 def update_item(item, qty, overwrite=False):
     """Given an item, change the quantity in the user's inventory."""
     if overwrite:
-        item.qty = qty
+        if qty == "0":
+            db.session.delete(item)
+            db.session.commit()
+            success_string = "Deleted!"
+
+        else:
+            item.qty = qty
+            db.session.commit()
+            success_string = str(item.qty) + " " + str(item.supply_details.units)
     else:
         item.qty = item.qty + qty
-    db.session.commit()
+        db.session.commit()
+        success_string = "Amount of " + item.supply_details.brand + \
+                         item.supply_details.color + \
+                         item.supply_details.supply_type + " updated."
+
+    return success_string
 
 
 ###################################################################

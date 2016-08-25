@@ -46,10 +46,8 @@ def update_test():
     item_id = request.form.get("itemID")
     item = Item.query.get(item_id)
     overwrite = True
-    update_item(item, new_qty, overwrite)
-
-    success_string = str(item.qty) + " " + str(item.supply_details.units)
-    return success_string
+    result = update_item(item, new_qty, overwrite)
+    return result
 
 
 ################################################################
