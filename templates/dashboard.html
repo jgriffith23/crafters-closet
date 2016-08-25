@@ -107,12 +107,12 @@
 
       <!-- Begin Modal Body -->
       <div class="modal-body">
-            <form action="/add-supply" method="POST">
+            <form action="/add-supply" id="supply-form"method="POST">
 
                   <div class="form-group">
                     <!-- Supply Type Dropdown -->
                     <label for="supplytype">Supply Type</label><br>
-                        <select class="form-control" name="supplytype" id="supplytype">
+                        <select class="form-control supplytype" name="supplytype" id="supplytype">
                           <option value=""></option>
                           {% for type in all_supply_types %}
                             <option value="{{ type[0] }}">{{ type[0] }}</option> 
@@ -131,10 +131,10 @@
                   <!-- Color -->
                   <div class="form-group">
                     <label for="color">Color</label>
-                    <input type="text" class="form-control" name="color" id="color" placeholder="What color is this supply?">
+                    <input type="text" class="form-control autocomplete" name="color" id="color" placeholder="What color is this supply?">
                   </div>
                    <br>
-                  <script src="/static/js/typeaheadPractice.js"></script>
+                  <script src="/static/js/autocomplete.js"></script>
 
                   <!-- URL -->
                   <div class="form-group">
@@ -157,6 +157,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Nevermind!</button>
                 <button type="submit" class="btn btn-primary">Add Supply</button>
             </form>
+        <!-- // <script src="/static/js/addSupplyValidation.js"></script> -->
         <script src="/static/js/dropdown.js"></script>
     </div>
 

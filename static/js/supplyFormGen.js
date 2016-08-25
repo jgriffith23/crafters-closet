@@ -1,4 +1,4 @@
-console.log("You made it to supplyFormGen");
+
 formCounter = 0;
 
 

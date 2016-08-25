@@ -3,7 +3,7 @@
     <div class="form-group">
     <!-- Supply Type Dropdown -->
     <label for="supplytype{{ x }}">Supply Type #{{ x }}</label><br>
-        <select class="form-control" name="supplytype{{ x }}" id="supplytype{{ x }}">
+        <select class="form-control supplytype" name="supplytype{{ x }}" id="supplytype{{ x }}">
           <option value=""></option>
           {% for type in all_supply_types %}
             <option value="{{ type[0] }}">{{ type[0] }}</option> 
@@ -22,8 +22,10 @@
     <!-- Color -->
     <div class="form-group">
     <label for="color{{ x }}">Color</label>
-        <select type="text" class="form-control" name="color{{ x }}" id="color{{ x }}"></select>
-    </div> 
+        <input type="text" class="form-control autocomplete" name="color{{ x }}" id="color{{ x }}" placeholder="What color is this supply?">
+    </div>
+    <script src="/static/js/autocomplete.js"></script>
+ 
     <br>
 
     <!-- Qty Owned -->
@@ -60,22 +62,19 @@
     // as parameters.
     $.get(brandsURL, function(results) {
         brands = results;
-        console.log(brands);
     });
 
     $.get(unitsURL, function(results) {
         units = results;
-        console.log(units);
     });
 
     $.get(colorsURL, function(results) {
         colors = results;
-        console.log(colors);
     });
 
 
     /////////////////////////////////////
-    // Modal "Add Supply" Dropdown Code
+    // "Add Supply" Dropdown Code
     /////////////////////////////////////
 
     // Place an event listener on the supply type dropdown that fires when
@@ -88,8 +87,8 @@
         // Clear the old options from the brands dropdown
         $("#brand{{x}}").empty();
 
-        // Enable the colors dropdown.
-        $("#color{{x}}").prop("disabled", false);
+        // // Enable the colors dropdown.
+        // $("#color{{x}}").prop("disabled", false);
 
         // Clear the old options from the colors dropdown
         $("#color{{x}}").empty();
@@ -105,10 +104,10 @@
             $("#brand{{x}}").append(brdOptionStr);
         }
 
-        for (var i = 0; i < colors[supplyType].length; i++){
-            var clrOptionStr = "<option value=\""+colors[supplyType][i]+"\">"+colors[supplyType][i]+"</option>";
-            $("#color{{x}}").append(clrOptionStr);
-        }
+        // for (var i = 0; i < colors[supplyType].length; i++){
+        //     var clrOptionStr = "<option value=\""+colors[supplyType][i]+"\">"+colors[supplyType][i]+"</option>";
+        //     $("#color{{x}}").append(clrOptionStr);
+        // }
 
         // Set the value of the units field.
         $("#units{{x}}").val(units[supplyType]);

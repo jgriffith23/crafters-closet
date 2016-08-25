@@ -2,7 +2,7 @@ from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify, Markup
 from flask_debugtoolbar import DebugToolbarExtension
-from flask import Response 
+from flask import Response
 import json
 
 from model import connect_to_db, db
@@ -12,6 +12,8 @@ from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, 
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
 from helpers import get_inventory_chart_dict, get_colors_from_brand
+from helpers import add_item_to_inventory, get_matching_item, update_item
+from helpers import add_supply_to_db
 
 app = Flask(__name__)
 
@@ -36,30 +38,6 @@ def index():
     else:
         user = None
     return render_template("homepage.html", user=user)
-
-
-@app.route("/typing-test")
-def typeahead_practice():
-    """Render a page to be used for playing w/ typeahead.js"""
-
-    return render_template("typing_test.html")
-
-
-@app.route("/typing-test/colors-by-brand.json")
-def typeahead_colors():
-    brand = request.args.get("brand")
-    print "##############################"
-    print "##############################"
-    print "##############################"
-    print "##############################"
-    print "##############################"
-    print brand
-
-    colors = get_colors_from_brand(brand)
-    # colors_dict = get_all_colors_by_brand()
-    # colors = colors_dict["Americana"]
-
-    return Response(json.dumps(colors), mimetype='application/json')
 
 
 ################################################################
@@ -121,9 +99,64 @@ def supply_types_data():
     return data_dict
 
 
-# The following routes are dashboard routes because the "add supply" window
-# appears as part of the dashboard template, and we need this data before
-# we can submit a new supply.
+####################################################
+# Add Supply routes
+####################################################
+@app.route('/add-supply', methods=['POST'])
+def add_supply():
+    """Add a supply to the user's inventory.
+
+    This route responds to a POST request by adding a new record
+    to the items table with the current authenticated user's id, the supply_detail's
+    id, and the quantity given. If the supply_detail doesn't exist, we create one
+    and add it to the database.
+    """
+
+    user_id = session.get("user_id")
+
+    supply_type = request.form.get("supplytype")
+    brand = request.form.get("brand")
+    color = request.form.get("color")
+    purchase_url = request.form.get("purchase-url")
+    units = request.form.get("units")
+    qty = request.form.get("quantity-owned")
+
+    sd_from_db = get_matching_sd(supply_type, brand, color)
+
+    # FIXME: Move all of this logic into helper functions!
+
+    # If the supply detail exists...
+    if sd_from_db:
+
+        # Create an item object.
+        item_from_db = get_matching_item(user_id, sd_from_db.sd_id)
+
+        # If that item exists...
+        if item_from_db:
+
+            # Just update the record.
+            update_item(item_from_db, int(qty))
+            flash("hey i found an item in yo inventory & updated it")
+
+        # Otherwise, add the item to the user's inventory.
+        else:
+            add_item_to_inventory(user_id, sd_from_db.sd_id, qty)
+            flash("%s %s of %s %s have been added to your inventory." %
+                 (qty, units, brand, supply_type))
+
+    # If the detail doesn't exist, create a new supply detail, add it,
+    # and add an item to the inventory with those details.
+    else:
+        new_sd = add_supply_to_db(supply_type, brand, color, units, purchase_url)
+        add_item_to_inventory(user_id, new_sd.sd_id, qty)
+
+        flash("Whoa, this is new! %s %s of %s %s %s have been added to your inventory." %
+             (qty, units, color, brand, supply_type))
+
+    return redirect(url_for('.show_dashboard'))
+
+
+# The next four routes fetch data that we need to add supplies.
 @app.route("/dashboard/brands.json")
 def get_brands():
     """Fetch all brands in the db by supply type, and return as JSON."""
@@ -148,61 +181,24 @@ def get_colors():
     return(colors)
 
 
-####################################################
-# Inventory routes (add supply, search, filter)
-####################################################
-@app.route('/add-supply', methods=['POST'])
-def add_supply():
-    """Add a supply to the user's inventory.
+@app.route("/typeahead/colors-by-brand.json")
+def typeahead_colors():
+    """Fetch tags for colors autocomplete feature in adding supplies."""
 
-    This route responds to a POST request by adding a new record
-    to the items table with the current authenticated user's id, the supply_detail's
-    id, and the quantity given. If the supply_detail doesn't exist, we create one
-    and add it to the database.
-    """
+    # Get the brand from the URL args.
+    brand = request.args.get("brand")
 
-    supply_type = request.form.get("supplytype")
-    brand = request.form.get("brand")
-    color = request.form.get("color")
-    purchase_url = request.form.get("purchase-url")
-    units = request.form.get("units")
-    qty = request.form.get("quantity-owned")
+    # Get the list of colors for that brand.
+    colors = get_colors_from_brand(brand)
 
-    possible_sd = get_matching_sd(supply_type, brand, color)
+    # JSONify the list (not to be confused w/ calling jsonify...)
+    # and return it.
+    return Response(json.dumps(colors), mimetype='application/json')
 
-    # FIXME: Move all of this logic into helper functions!
 
-    if possible_sd:
-        flash("Did you mean this supply? %s %s %s (id %s)" %
-             (possible_sd.supply_type, possible_sd.brand, possible_sd.color, possible_sd.sd_id))
-
-    else:
-        # Instantiate a new supply detail record.
-        supply_detail = SupplyDetail(supply_type=supply_type,
-                                     brand=brand,
-                                     color=color,
-                                     units=units,
-                                     purchase_url=purchase_url)
-
-        # Add that record to the database.
-        db.session.add(supply_detail)
-        db.session.commit()
-
-        # Instantiate a new item record, using the current user's id and the
-        # newly created supply detail's sd_id
-        item = Item(user_id=session.get("user_id"),
-                    sd_id=supply_detail.sd_id,
-                    qty=qty)
-
-        # Add the new item to the database
-        db.session.add(item)
-        db.session.commit()
-
-        flash("%s %s of %s %s have been added to your inventory." %
-             (item.qty, supply_detail.units, supply_detail.brand, supply_detail.supply_type))
-
-    return redirect(url_for('.show_dashboard'))
-
+##########################################################
+# Inventory filter/search routes
+##########################################################
 
 @app.route("/inventory/filter.html")
 def filter_inventory():
@@ -358,12 +354,6 @@ def get_new_supply_form():
     safe_supply_form = Markup(supply_form)
 
     return safe_supply_form
-
-
-# @app.route("/colors-by-brand.json")
-# def fetch_colors_json():
-#     """"""
-#     pass
 
 
 @app.route("/projects/search-results.html")

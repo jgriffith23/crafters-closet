@@ -48,6 +48,10 @@ def get_all_supply_units():
     return all_units
 
 
+###################################################
+# Fetch complete existing records
+###################################################
+
 def get_matching_sd(supply_type, brand, color):
     """Gets an existing supply detail record from the database whose columns match
     those of the passed supply detail."""
@@ -59,14 +63,67 @@ def get_matching_sd(supply_type, brand, color):
     return sd_from_db
 
 
-# def get_supply_units(supply_type):
-#     """Given a supply type, return the possible units."""
+def get_matching_item(user_id, sd_id):
+    """Given a user and a supply id, find an existing item record."""
 
-#     query = db.session.query(SupplyDetail.units).filter(SupplyDetail.supply_type == supply_type)
+    q = Item.query.filter(Item.user_id == user_id, Item.sd_id == sd_id)
 
-#     result = query.all()
+    item_from_db = q.first()
 
-#     return set(result)
+    return item_from_db
+
+
+
+#################################################
+# Add records to database
+#################################################
+
+def add_item_to_inventory(user_id, sd_id, qty):
+    """Add an item to the user's inventory.
+    Creates a new record for the items table and adds it."""
+
+    # Instantiate a new item record, using the current user's id and the
+    # newly created supply detail's sd_id
+    item = Item(user_id=user_id,
+                sd_id=sd_id,
+                qty=qty)
+
+    # Add the new item to the database
+    db.session.add(item)
+    db.session.commit()
+
+    # Return the id of the item just created.
+    return item
+
+
+def add_supply_to_db(supply_type, brand, color, units, purchase_url):
+    """Add details about a supply to the database.
+    Creates a new record for the supply_details table and adds it."""
+
+    # Instantiate a new supply detail record.
+    supply_detail = SupplyDetail(supply_type=supply_type,
+                                 brand=brand,
+                                 color=color,
+                                 units=units,
+                                 purchase_url=purchase_url)
+
+    # Add that record to the database.
+    db.session.add(supply_detail)
+    db.session.commit()
+
+    # Return the id of the supply_detail just created.
+    return supply_detail
+
+
+#################################################################
+# Functions that update records in db.
+#################################################################
+
+def update_item(item, qty):
+    """Given an item, change the quantity in the user's inventory."""
+
+    item.qty = item.qty + qty
+    db.session.commit()
 
 
 ###################################################################
@@ -220,11 +277,6 @@ def get_colors_from_brand(brand):
     """"""
     colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.brand.ilike("%"+brand+"%")).all())
     colors = [color for (color,) in colors if color is not None]
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-    print brand, ": ", colors
     return colors
 
 
