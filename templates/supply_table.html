@@ -17,9 +17,13 @@
             <td>{{ supply_type }}</td>
             <td>{{ brand }}</td>
             <td>{{ color }}</td>
-            <td>{{ qty }} {{ units }}</td>
+            <td>   
+                <div class="qty-column" id="{{ item_id }}">{{ qty }} {{ units }} </div>
+                    <input type="text" class="qty-field" id="{{ item_id }}" hidden name="new-qty" id="new-qty"><br>
+                </div>
+            </td>
             <td> 
-                <button type="button" class="btn btn-default" id="{{ item_id }}" style="float: right;">
+                <button type="button" class="btn btn-default update-item" id="{{ item_id }}" style="float: right;">
                   Update
                 </button> 
             </td>
@@ -35,3 +39,5 @@
         {% endfor %}
         </tbody>
 </table>
+
+<script src="/static/js/updateSupply.js"></script>

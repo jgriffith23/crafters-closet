@@ -40,6 +40,14 @@ def index():
     return render_template("homepage.html", user=user)
 
 
+@app.route("/update-test", methods=["POST"])
+def update_test():
+    print "request.args: ", request.args
+    print "request.form: ", request.form
+    print "request.data: ", request.data
+    return "we're talking now"
+
+
 ################################################################
 # General dashboard routes (show dash, get data for dash, etc.)
 ################################################################
