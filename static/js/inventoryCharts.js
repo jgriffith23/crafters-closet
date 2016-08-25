@@ -14,3 +14,7 @@ $.get("/supply-types.json", function (data) {
                                           });
     $('#donutLegend').html(myDonutChart.generateLegend());
 });
+
+// var qtyCols = $(".qty-column");
+
+// qtyCols.

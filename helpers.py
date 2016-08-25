@@ -120,8 +120,17 @@ def add_supply_to_db(supply_type, brand, color, units, purchase_url):
 #################################################################
 
 def update_item(item, qty, overwrite=False):
-    """Given an item, change the quantity in the user's inventory."""
-    if overwrite:
+    """Given an item, change the quantity in the user's inventory. Returns
+    a string to be sent back to the server, based on the action taken."""
+
+    # If there's no qty, the user probably didn't mean to change anything. To
+    # be save, just return the old values, and make no changes.
+    if qty == "":
+        success_string = str(item.qty) + " " + str(item.supply_details.units)
+
+    # If overwrite is true, then check qty. If the qty is 0, just delete
+    # the record; otherwise, change the old item qty to reflect the new one.
+    elif overwrite:
         if qty == "0":
             db.session.delete(item)
             db.session.commit()
@@ -131,11 +140,14 @@ def update_item(item, qty, overwrite=False):
             item.qty = qty
             db.session.commit()
             success_string = str(item.qty) + " " + str(item.supply_details.units)
+
+    # If we're changing but not overwriting, then we must be trying to add
+    # a supply that exists. Just increase the qty in the db.
     else:
         item.qty = item.qty + qty
         db.session.commit()
-        success_string = "Amount of " + item.supply_details.brand + \
-                         item.supply_details.color + \
+        success_string = "Amount of " + item.supply_details.brand + " " + \
+                         item.supply_details.color + " " + \
                          item.supply_details.supply_type + " updated."
 
     return success_string

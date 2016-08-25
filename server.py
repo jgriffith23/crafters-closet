@@ -40,16 +40,6 @@ def index():
     return render_template("homepage.html", user=user)
 
 
-@app.route("/update-test", methods=["POST"])
-def update_test():
-    new_qty = request.form.get("qty")
-    item_id = request.form.get("itemID")
-    item = Item.query.get(item_id)
-    overwrite = True
-    result = update_item(item, new_qty, overwrite)
-    return result
-
-
 ################################################################
 # General dashboard routes (show dash, get data for dash, etc.)
 ################################################################
@@ -109,9 +99,9 @@ def supply_types_data():
     return data_dict
 
 
-####################################################
-# Add Supply routes
-####################################################
+#################################################################
+# Inventory data manipulation routes (adding/updating supplies)
+#################################################################
 @app.route('/add-supply', methods=['POST'])
 def add_supply():
     """Add a supply to the user's inventory.
@@ -145,8 +135,8 @@ def add_supply():
         if item_from_db:
 
             # Just update the record.
-            update_item(item_from_db, int(qty))
-            flash("hey i found an item in yo inventory & updated it")
+            result = update_item(item_from_db, int(qty))
+            flash(result)
 
         # Otherwise, add the item to the user's inventory.
         else:
@@ -164,6 +154,23 @@ def add_supply():
              (qty, units, color, brand, supply_type))
 
     return redirect(url_for('.show_dashboard'))
+
+
+@app.route("/update-item", methods=["POST"])
+def update_test():
+    """Updates a row in the user's inventory based on values passed from AJAX."""
+
+    # Get the item qty and its id
+    new_qty = request.form.get("qty")
+    item_id = request.form.get("itemID")
+
+    # Instantiate the item
+    item = Item.query.get(item_id)
+
+    # Perform a wholesale overwrite.
+    overwrite = True
+    result = update_item(item, new_qty, overwrite)
+    return result
 
 
 # The next four routes fetch data that we need to add supplies.

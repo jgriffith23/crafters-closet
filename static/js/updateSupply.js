@@ -35,7 +35,7 @@ update_buttons.on("click", function() {
     // the quantity text in the column.
     else if (updating === true) {
         updating = false;
-        $.post("/update-test", {"qty": $(field).val(), "itemID": buttonID}, function(data) {
+        $.post("/update-item", {"qty": $(field).val(), "itemID": buttonID}, function(data) {
             $(field).toggle();
             $(col).html(data);
 
@@ -48,6 +48,7 @@ update_buttons.on("click", function() {
 
             else {
                 $(buttonSelector).html("Update");
+                alert("Supply updated!");
             }
         });
     }
