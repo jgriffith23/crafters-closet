@@ -42,10 +42,14 @@ def index():
 
 @app.route("/update-test", methods=["POST"])
 def update_test():
-    print "request.args: ", request.args
-    print "request.form: ", request.form
-    print "request.data: ", request.data
-    return "we're talking now"
+    new_qty = request.form.get("qty")
+    item_id = request.form.get("itemID")
+    item = Item.query.get(item_id)
+    overwrite = True
+    update_item(item, new_qty, overwrite)
+
+    success_string = str(item.qty) + " " + str(item.supply_details.units)
+    return success_string
 
 
 ################################################################

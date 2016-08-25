@@ -119,10 +119,12 @@ def add_supply_to_db(supply_type, brand, color, units, purchase_url):
 # Functions that update records in db.
 #################################################################
 
-def update_item(item, qty):
+def update_item(item, qty, overwrite=False):
     """Given an item, change the quantity in the user's inventory."""
-
-    item.qty = item.qty + qty
+    if overwrite:
+        item.qty = qty
+    else:
+        item.qty = item.qty + qty
     db.session.commit()
 
 
