@@ -20,7 +20,7 @@ $("#search-projects").on("click", function () {
     else{
         encodedSearchTerm = encodeURIComponent(searchTerm);
 
-        $("#search-active-head").html("Projects Relevant to Your Search");
+        $("#search-active-head").html("Projects Relevant to Your Search (Click title links to view supply lists.)");
 
         $.get("/projects/search-results.html?search=" + encodedSearchTerm,
             function(results) {
