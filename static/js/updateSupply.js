@@ -51,6 +51,21 @@ update_buttons.on("click", function() {
                 alert("Supply updated!");
             }
         });
+
+        $.get("/supply-types.json", function(newSupplyData) {
+            $('#donutChart').remove();
+            $("#donutLegend").remove();
+            $("#supply-type-chart").append('<canvas id="donutChart"></canvas>');
+            //$("#supply-type-chart").append('<div id="donutLegend" class="chart-legend"></div>');
+            contextForDonut = $("#donutChart").get(0).getContext("2d");
+            var inventoryChart = new Chart(contextForDonut, {
+                                            label: "Supplies by Quantity",
+                                            type: 'doughnut',
+                                            data: newSupplyData,
+                                            options: options
+                                          });
+            $('#donutLegend').html(inventoryChart.generateLegend());
+        });
     }
 
 });

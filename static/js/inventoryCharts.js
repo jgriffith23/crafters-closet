@@ -6,15 +6,11 @@ var contextForDonut = $("#donutChart").get(0).getContext("2d");
 
 // Make a GET request for the chart data, and make the chart.
 $.get("/supply-types.json", function (data) {
-    var myDonutChart = new Chart(contextForDonut, {
+    var inventoryChart = new Chart(contextForDonut, {
                                             label: "Supplies by Quantity",
                                             type: 'doughnut',
                                             data: data,
                                             options: options
                                           });
-    $('#donutLegend').html(myDonutChart.generateLegend());
+    //$('#donutLegend').html(inventoryChart.generateLegend());
 });
-
-// var qtyCols = $(".qty-column");
-
-// qtyCols.
