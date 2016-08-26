@@ -96,7 +96,7 @@ def add_item_to_inventory(user_id, sd_id, qty):
     return item
 
 
-def add_supply_to_db(supply_type, brand, color, units, purchase_url):
+def add_supply_to_db(supply_type, brand, color, units):
     """Add details about a supply to the database.
     Creates a new record for the supply_details table and adds it."""
 
@@ -104,8 +104,7 @@ def add_supply_to_db(supply_type, brand, color, units, purchase_url):
     supply_detail = SupplyDetail(supply_type=supply_type,
                                  brand=brand,
                                  color=color,
-                                 units=units,
-                                 purchase_url=purchase_url)
+                                 units=units)
 
     # Add that record to the database.
     db.session.add(supply_detail)

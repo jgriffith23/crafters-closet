@@ -17,11 +17,24 @@ now.
 <h1>{{ project.title }}</h1>
 <i>A project {{project.user.username}} plans to make.</i>
 
-<p>{{ project.description }}</p>
+<br>
+<br>
 
-<p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h4>Project Overview</h4>
+  </div>
+  <div class="panel-body">
+    <h3>Description</h3>
+    <p>{{ project.description }}</p>
+    <h3>Tutorial Source</h3>
+    <p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
+    <h3>Photo</h3>
+        <img class="project-photo" src="{{ project.img_url }}">
+  </div>
+</div>
 
-<div class="panel panel-default">
+<div class="panel panel-primary">
     <div class="panel-heading">
       <h3 class="panel-title">Supply Information</h3>
     </div>
@@ -43,9 +56,9 @@ now.
 
               {% for info_grp in project_supplies_info %}
               <tr>
-                  <td>{{ info_grp["supply_type"].title() }}</td>
-                  <td>{{ info_grp["brand"].title() }}</td>
-                  <td>{{ info_grp["color"].title() }}</td>
+                  <td>{{ info_grp["supply_type"] }}</td>
+                  <td>{{ info_grp["brand"] }}</td>
+                  <td>{{ info_grp["color"] }}</td>
                   <td>{{ info_grp["qty_specified"] }} {{ info_grp["units"] }}</td>
                   <td>{{ info_grp["qty_owned"] }} {{ info_grp["units"] }}</td>
                   <td>{{ info_grp["qty_to_buy"] }} {{ info_grp["units"] }}</td>

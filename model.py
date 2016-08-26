@@ -99,6 +99,7 @@ class Project(db.Model):
     # If a user doesn't care about logging instructions or a description,
     # then that's on them.
     instr_url = db.Column(db.String(256), nullable=True)
+    img_url = db.Column(db.String(256), nullable=True)
     description = db.Column(db.String(500), nullable=True)
 
     # Define relationship between project_supply_details table

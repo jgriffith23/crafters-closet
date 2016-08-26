@@ -9,9 +9,9 @@ from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
 from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
-from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type, get_all_colors_by_supply_type
+from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
-from helpers import get_inventory_chart_dict, get_colors_from_brand
+from helpers import get_inventory_chart_dict, get_colors_from_brand, get_all_colors_dict_by_brand
 from helpers import add_item_to_inventory, get_matching_item, update_item
 from helpers import add_supply_to_db
 
@@ -117,13 +117,12 @@ def add_supply():
     supply_type = request.form.get("supplytype")
     brand = request.form.get("brand")
     color = request.form.get("color")
-    purchase_url = request.form.get("purchase-url")
     units = request.form.get("units")
     qty = request.form.get("quantity-owned")
 
     sd_from_db = get_matching_sd(supply_type, brand, color)
 
-    # FIXME: Move all of this logic into helper functions!
+    # FIXME: Move more logic into helper functions!
 
     # If the supply detail exists...
     if sd_from_db:
@@ -147,7 +146,7 @@ def add_supply():
     # If the detail doesn't exist, create a new supply detail, add it,
     # and add an item to the inventory with those details.
     else:
-        new_sd = add_supply_to_db(supply_type, brand, color, units, purchase_url)
+        new_sd = add_supply_to_db(supply_type, brand, color, units)
         add_item_to_inventory(user_id, new_sd.sd_id, qty)
 
         flash("Whoa, this is new! %s %s of %s %s %s have been added to your inventory." %
@@ -157,7 +156,7 @@ def add_supply():
 
 
 @app.route("/update-item", methods=["POST"])
-def update_test():
+def update_item():
     """Updates a row in the user's inventory based on values passed from AJAX."""
 
     # Get the item qty and its id
@@ -188,14 +187,6 @@ def get_units():
     units = get_all_units_by_supply_type()
     units = jsonify(units)
     return(units)
-
-
-@app.route("/dashboard/colors.json")
-def get_colors():
-    """Fetch all colors in the db by supply type, and return as JSON."""
-    colors = get_all_colors_by_supply_type()
-    colors = jsonify(colors)
-    return(colors)
 
 
 @app.route("/typeahead/colors-by-brand.json")
@@ -310,12 +301,14 @@ def handle_project_creation():
     title = request.form.get("title")
     description = request.form.get("description")
     instr_url = request.form.get("instr-url")
+    img_url = request.form.get("img-url")
 
     #Create and commit project record
     project = Project(user_id=user_id,
                       title=title.title(),
                       description=description,
-                      instr_url=instr_url)
+                      instr_url=instr_url,
+                      img_url=img_url)
 
     db.session.add(project)
     db.session.commit()
@@ -334,11 +327,13 @@ def handle_project_creation():
         supply_type = request.form.get("supplytype"+fieldname_num)
         brand = request.form.get("brand"+fieldname_num)
         color = request.form.get("color"+fieldname_num)
-        units = request.form.get("units"+fieldname_num)
+        # units = request.form.get("units"+fieldname_num)
         qty = request.form.get("qty-required"+fieldname_num)
 
         # Get a supply from the db that matches the entered supply
-        sd = get_matching_sd(supply_type, brand, color, units)
+        sd = get_matching_sd(supply_type, brand, color)
+
+        print sd
 
         # Get the entered supply's id
         sd_id = sd.sd_id
@@ -372,6 +367,13 @@ def get_new_supply_form():
 
     return safe_supply_form
 
+
+@app.route("/add-project/colors-by-brand.json")
+def get_colors():
+    """Fetch a dict of all colors in the db by brand, and return as JSON."""
+    colors = get_all_colors_dict_by_brand()
+    colors = jsonify(colors)
+    return(colors)
 
 @app.route("/projects/search-results.html")
 def get_project_search_results():

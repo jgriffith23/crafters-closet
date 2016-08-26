@@ -17,21 +17,29 @@ Create Project
 
             <div class="panel-body">
               <div class="form-group">
-                <label for="title">Title</label>
+                <label for="title">Title (REQUIRED. How else will you remember what this project is? Trust us on this.)</label>
                 <input type="text" class="form-control" name="title" id="title" placeholder="What is this project called?">
               </div>
 
               <div class="form-group">
-                <label for="description">Description (500 characters or less.)</label>
+                <label for="description">Description * (500 characters or less. Optional.)</label>
                 <textarea type="text" class="form-control" name="description" id="description" placeholder="Notes, general ideas, or anything else you want to say about this project."></textarea>
               </div>
 
               <div class="form-group">
-                <label for="instr-url">Instruction URL</label>
+                <label for="instr-url">Instruction URL (optional)</label>
                 <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want.">
               </div>
+
+              <div class="form-group">
+                <label for="img-url">Image URL (optional) </label>
+                <input type="text" class="form-control" name="img-url" id="img-url" placeholder="Include a link to an image for this project, if you want.">
+              </div>
             </div>
+
         </div>
+
+        <p><i>*Note: If you're linking to a tutorial you didn't write, please credit your source in the description!</i></p>
 
         <!-- Adding Supplies -->
         <div class="panel panel-default">

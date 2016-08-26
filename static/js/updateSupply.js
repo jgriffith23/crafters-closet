@@ -34,7 +34,7 @@ update_buttons.on("click", function(evt) {
     // and the new quantity to the server, hide the text field, update
     // the quantity text in the column.
     else if (updating === true) {
-        if ($.isNumeric($(field).val())) {
+        if ($.isNumeric($(field).val()) || ($(field).val() === "")) {
             updating = false;
             $.post("/update-item", {"qty": $(field).val(), "itemID": buttonID}, function(data) {
                 $(field).toggle();

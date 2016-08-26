@@ -116,13 +116,14 @@ def load_projects():
     # Read u.project file and insert data
     for row in open("seed_data/u.project"):
         row = row.rstrip()
-        project_id, title, user_id, instr_url, description = row.split(",")
+        project_id, title, user_id, instr_url, img_url, description = row.split(",")
         print row
 
         project = Project(project_id=project_id,
                           title=title,
                           user_id=user_id,
                           instr_url=instr_url,
+                          img_url=img_url,
                           description=description)
 
         # We need to add to the session or it won't ever be stored

@@ -2,7 +2,7 @@
 
     <div class="form-group">
     <!-- Supply Type Dropdown -->
-    <label for="supplytype{{ x }}">Supply Type #{{ x }}</label><br>
+    <label for="supplytype{{ x }}">Supply Type #{{ x }} (REQUIRED) </label><br>
         <select class="form-control supplytype" name="supplytype{{ x }}" id="supplytype{{ x }}">
           <option value=""></option>
           {% for type in all_supply_types %}
@@ -14,17 +14,16 @@
 
     <!-- Brand -->
     <div class="form-group">
-        <label for="brand{{ x }}">Brand</label>
+        <label for="brand{{ x }}">Brand (REQUIRED)</label>
             <select class="form-control" name="brand{{ x }}" id="brand{{ x }}"></select>
     </div>
     <br>
 
     <!-- Color -->
     <div class="form-group">
-    <label for="color{{ x }}">Color</label>
-        <input type="text" class="form-control autocomplete" name="color{{ x }}" id="color{{ x }}" placeholder="What color is this supply?">
+    <label for="color{{ x }}">Color (REQUIRED)</label>
+        <select class="form-control" name="color{{ x }}" id="color{{ x }}"></select>
     </div>
-    <script src="/static/js/autocomplete.js"></script>
  
     <br>
 
@@ -53,7 +52,7 @@
     var unitsURL = "/dashboard/units.json";
     var units;
 
-    var colorsURL = "/dashboard/colors.json";
+    var colorsURL = "/add-project/colors-by-brand.json";
     var colors;
 
     // On successfully receiving brands/units data from the server, 
@@ -70,6 +69,7 @@
 
     $.get(colorsURL, function(results) {
         colors = results;
+        console.log(results);
     });
 
 
@@ -87,12 +87,6 @@
         // Clear the old options from the brands dropdown
         $("#brand{{x}}").empty();
 
-        // // Enable the colors dropdown.
-        // $("#color{{x}}").prop("disabled", false);
-
-        // Clear the old options from the colors dropdown
-        $("#color{{x}}").empty();
-
         // Get the supply type from the first dropdown
         var supplyType = $("#supplytype{{x}}").val();
 
@@ -104,13 +98,22 @@
             $("#brand{{x}}").append(brdOptionStr);
         }
 
-        // for (var i = 0; i < colors[supplyType].length; i++){
-        //     var clrOptionStr = "<option value=\""+colors[supplyType][i]+"\">"+colors[supplyType][i]+"</option>";
-        //     $("#color{{x}}").append(clrOptionStr);
-        // }
-
         // Set the value of the units field.
         $("#units{{x}}").val(units[supplyType]);
 
     });
+
+    $("#brand{{x}}").on("click", function() {
+        // Clear the old options from the colors dropdown
+        $("#color{{x}}").empty();
+        var brand = $("#brand{{x}}").val();
+
+        // Populate the dropdown with the correct colors.
+        for (var i = 0; i < colors[brand].length; i++){
+            var clrOptionStr = "<option value=\""+colors[brand][i]+"\">"+colors[brand][i]+"</option>";
+            $("#color{{x}}").append(clrOptionStr);
+        }
+
+    });
+
     </script>

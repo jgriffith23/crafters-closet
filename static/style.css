@@ -33,6 +33,12 @@ ul.ui-autocomplete {
     z-index: 1100;
 }
 
+img .project-photo {
+    height: 50px;
+
+}
+
+
 /* Footer styles */
 .footer {
     background-color: #80dfff;
