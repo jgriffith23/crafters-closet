@@ -12,5 +12,4 @@ $.get("/supply-types.json", function (data) {
                                             data: data,
                                             options: options
                                           });
-    //$('#donutLegend').html(inventoryChart.generateLegend());
 });

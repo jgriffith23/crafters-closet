@@ -8,7 +8,6 @@
             <th>Color</th>
             <th>Quantity Owned</th>
             <th></th>
-            <th>Purchase URL</th>
         </tr>
         </thead>
         <tbody>
@@ -20,20 +19,11 @@
             <td>   
                 <div class="qty-column" id="{{ item_id }}">{{ qty }} {{ units }} </div>
                     <input type="text" class="qty-field" id="{{ item_id }}" hidden name="new-qty" id="new-qty"><br>
-                </div>
             </td>
             <td> 
                 <button type="button" class="btn btn-default update-item" id="{{ item_id }}" style="float: right;">
-                  Update
+                  Update Quantity Owned
                 </button> 
-            </td>
-            </td>
-            <td>
-                {% if purchase_url %}
-                    <a href="{{ purchase_url }}">{{ purchase_url }}</a>
-                {% else %}
-                    None Given
-                {% endif %}
             </td>
         </tr>
         {% endfor %}
