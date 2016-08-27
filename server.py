@@ -12,7 +12,7 @@ from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, 
 from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
 from helpers import get_inventory_chart_dict, get_colors_from_brand, get_all_colors_dict_by_brand
-from helpers import add_item_to_inventory, get_matching_item, update_item
+from helpers import add_item_to_inventory, get_matching_item, update_item_record
 from helpers import add_supply_to_db
 
 app = Flask(__name__)
@@ -168,7 +168,7 @@ def update_item():
 
     # Perform a wholesale overwrite.
     overwrite = True
-    result = update_item(item, new_qty, overwrite)
+    result = update_item_record(item, new_qty, overwrite)
     return result
 
 

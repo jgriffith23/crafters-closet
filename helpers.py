@@ -118,7 +118,7 @@ def add_supply_to_db(supply_type, brand, color, units):
 # Functions that update records in db.
 #################################################################
 
-def update_item(item, qty, overwrite=False):
+def update_item_record(item, qty, overwrite=False):
     """Given an item, change the quantity in the user's inventory. Returns
     a string to be sent back to the server, based on the action taken."""
 
@@ -180,7 +180,6 @@ def get_inventory_chart_dict(user_id):
 
         type_quantities[supply_type] = type_quantities.get(supply_type, 0)
         type_quantities[supply_type] += qty_owned
-
         labels.add(supply_type)
 
     # Put the quantity counts we just made in a list, in the same order as
