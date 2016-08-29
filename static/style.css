@@ -33,8 +33,8 @@ ul.ui-autocomplete {
     z-index: 1100;
 }
 
-img .project-photo {
-    height: 50px;
+img.project-photo{
+    height: 400px;
 
 }
 

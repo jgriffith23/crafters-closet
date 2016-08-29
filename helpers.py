@@ -1,6 +1,6 @@
 """Helper functions specific to Crafter's Closet project."""
 
-from model import SupplyDetail, ProjectSupply, Item, Project, db
+from model import SupplyDetail, ProjectSupply, Item, Project, User, db
 from flask import jsonify
 
 CHART_COLORS = ["#b366ff", "#0059b3", "#00cc99", "#ffd480",
@@ -112,6 +112,16 @@ def add_supply_to_db(supply_type, brand, color, units):
 
     # Return the id of the supply_detail just created.
     return supply_detail
+
+
+def add_user_to_db(email, username, password_hash):
+    """Add a new user record to the users table, with the passed attributes."""
+
+    # Create a user object and add it to the database.
+    user = User(email=email, username=username, password=password_hash)
+    db.session.add(user)
+    db.session.commit()
+
 
 
 #################################################################

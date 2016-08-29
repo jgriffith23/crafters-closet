@@ -3,6 +3,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, redirect, request, flash, session, url_for, jsonify, Markup
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Response
+from flask.ext.bcrypt import Bcrypt
 import json
 
 from model import connect_to_db, db
@@ -13,9 +14,10 @@ from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
 from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
 from helpers import get_inventory_chart_dict, get_colors_from_brand, get_all_colors_dict_by_brand
 from helpers import add_item_to_inventory, get_matching_item, update_item_record
-from helpers import add_supply_to_db
+from helpers import add_supply_to_db, add_user_to_db
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
@@ -431,10 +433,15 @@ def handle_register():
         return redirect("/register")
 
     else:
-        # If the user doesn't exist, create one.
-        user = User(email=email, username=username, password=password)
-        db.session.add(user)
-        db.session.commit()
+        # If the user doesn't exist, hash the password and create the user.
+        pw_hash = bcrypt.generate_password_hash(password)
+        add_user_to_db(email, username, pw_hash)
+        print "############################################"
+        print "############################################"
+        print "User added w/ hash: ", pw_hash
+        print "Given pw: ", password
+        print "############################################"
+        print "############################################"
         flash("Account created.")
 
         #Code 307 preserves the POST request, including form data.
@@ -463,9 +470,18 @@ def handle_login():
     password = request.form.get("password")
 
     user = User.query.filter(User.username == username).first()
+    pw_hash = user.password
+
+    print "############################################"
+    print "############################################"
+    print "Hash from db: ", pw_hash
+    print "typed pw: ", password
+    print "############################################"
+    print "############################################"
 
     if user:
-        if password != user.password:
+        pw_is_correct = bcrypt.check_password_hash(pw_hash, password)
+        if not pw_is_correct:
             flash("Incorrect username or password.")
             return redirect("/login")
         else:
