@@ -436,12 +436,6 @@ def handle_register():
         # If the user doesn't exist, hash the password and create the user.
         pw_hash = bcrypt.generate_password_hash(password)
         add_user_to_db(email, username, pw_hash)
-        print "############################################"
-        print "############################################"
-        print "User added w/ hash: ", pw_hash
-        print "Given pw: ", password
-        print "############################################"
-        print "############################################"
         flash("Account created.")
 
         #Code 307 preserves the POST request, including form data.
@@ -469,32 +463,37 @@ def handle_login():
     username = request.form.get("username")
     password = request.form.get("password")
 
+    # Get the user who's trying to log in, and if possible,
+    # their password hash.
     user = User.query.filter(User.username == username).first()
     pw_hash = user.password
 
-    print "############################################"
-    print "############################################"
-    print "Hash from db: ", pw_hash
-    print "typed pw: ", password
-    print "############################################"
-    print "############################################"
-
+    # If the user exists, try to check their pw hash from the db against
+    # the hash of their entered pw. If the hashes match, log the user in.
     if user:
-        pw_is_correct = bcrypt.check_password_hash(pw_hash, password)
-        if not pw_is_correct:
-            flash("Incorrect username or password.")
-            return redirect("/login")
-        else:
-            # Add their user_id to session
-            session["user_id"] = user.user_id
-            session["username"] = user.username
+        try:
+            pw_correct = bcrypt.check_password_hash(pw_hash, password)
+            if pw_correct:
+                # Add their user_id to session
+                session["user_id"] = user.user_id
+                session["username"] = user.username
 
-            flash("Welcome to Crafter's Closet!")
-            return redirect("/dashboard")
+                flash("Welcome to Crafter's Closet!")
+                return redirect("/dashboard")
 
-    else:
-        flash("Incorrect username or password.")
-        return redirect("/login")
+        except ValueError:
+            # We don't really need to do anything special in userland if there's
+            # an invalid salt in the database; those users don't "exist" outside
+            # this demo. But if we had a server log going, this would be a place
+            # to put that.
+            print "---Invalid salt in db for %s!---" % username
+
+    # If we had any kind of error above, whether the username, password, or stored
+    # hash was incorrect, the only thing the user needs to know is that their
+    # entered information was wrong. Don't tell them which piece, though, in case
+    # someone malicious is looking for real users!
+    flash("Incorrect username or password.")
+    return redirect("/login")
 
 
 @app.route('/logout')
