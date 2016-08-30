@@ -9,6 +9,7 @@ var update_buttons = $(".update-item");
 // State variable; we'll use this to decide whether the user has begun updating
 // or is done updating.
 var updating = false;
+var prevButtonID;
 
 
 // Add an event listener to all the update buttons to get the id and send it
@@ -27,6 +28,7 @@ update_buttons.on("click", function(evt) {
     if (updating === false) {
         $(buttonSelector).html("Done!");
         updating = true;
+        prevButtonID = buttonID;
         $(field).toggle();
     }
 
@@ -34,7 +36,14 @@ update_buttons.on("click", function(evt) {
     // and the new quantity to the server, hide the text field, update
     // the quantity text in the column.
     else if (updating === true) {
-        if ($.isNumeric($(field).val()) || ($(field).val() === "")) {
+
+        if (buttonID != prevButtonID) {
+            evt.preventDefault();
+            var prevCol = "#"+prevButtonID+".qty-column";
+            $(prevCol).html(" <i>Please finish with this update first.</i>");
+        }
+
+        else if ($.isNumeric($(field).val()) || ($(field).val() === "")) {
             updating = false;
             $.post("/update-item", {"qty": $(field).val(), "itemID": buttonID}, function(data) {
                 $(field).toggle();
@@ -55,7 +64,7 @@ update_buttons.on("click", function(evt) {
 
             // Remake the chart in the image of our new data. All hail the database,
             // source of truth.
-            $.get("/supply-types.json", function(newSupplyData) {
+            $.get("/supply-types", function(newSupplyData) {
                 $('#donutChart').remove();
                 $("#donutLegend").remove();
                 $("#supply-type-chart").append('<canvas id="donutChart"></canvas>');
@@ -72,7 +81,7 @@ update_buttons.on("click", function(evt) {
 
         else {
             evt.preventDefault();
-            $(col).append(" Please enter a number.");
+            $(col).append(" <i>Please enter a number.</i>");
         }
     }
 

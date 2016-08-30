@@ -522,7 +522,8 @@ def get_projects_by_search(search_term):
     q = q.filter(Project.title.ilike(sqlfied_st) |
                  Project.description.ilike(sqlfied_st) |
                  SupplyDetail.supply_type.ilike(sqlfied_st) |
-                 SupplyDetail.brand.ilike(sqlfied_st))
+                 SupplyDetail.brand.ilike(sqlfied_st) |
+                 SupplyDetail.color.ilike(sqlfied_st))
 
     # Get the resulting tuples and clean them up (remove dupes & sort).
     search_results = q.all()

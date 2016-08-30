@@ -10,7 +10,7 @@
         {% for title, description, id in projects %}
         <tr>
             <td><a href="/project/{{id}}">{{ title }}</a></td>
-            <td>{{ description[:140] }}...</td>
+            <td>{{ description }}</td>
         </tr>
         {% endfor %}
     </tbody>

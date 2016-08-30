@@ -9,12 +9,27 @@ import json
 from model import connect_to_db, db
 from model import User, SupplyDetail, Project, ProjectSupply, Item
 
-from helpers import get_all_supply_types, get_all_supply_units, get_all_brands, get_all_colors, get_matching_sd
-from helpers import get_all_brands_by_supply_type, get_all_units_by_supply_type
-from helpers import craft_project_supplies_info, get_filtered_inventory, get_inventory_by_search, get_projects_by_search
-from helpers import get_inventory_chart_dict, get_colors_from_brand, get_all_colors_dict_by_brand
-from helpers import add_item_to_inventory, get_matching_item, update_item_record
-from helpers import add_supply_to_db, add_user_to_db
+from helpers import (
+    get_all_supply_types,                   
+    get_all_supply_units, 
+    get_all_brands, 
+    get_all_colors, 
+    get_matching_sd,
+    get_all_brands_by_supply_type, 
+    get_all_units_by_supply_type,
+    craft_project_supplies_info, 
+    get_filtered_inventory, 
+    get_inventory_by_search, 
+    get_projects_by_search,
+    get_inventory_chart_dict, 
+    get_colors_from_brand, 
+    get_all_colors_dict_by_brand,
+    add_item_to_inventory, 
+    get_matching_item, 
+    update_item_record,
+    add_supply_to_db, 
+    add_user_to_db,
+    )
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -33,6 +48,8 @@ def index():
 
     # Check whether the user is logged in. If so, get the user, so we can
     # display user-specific info on the homepage.
+
+    # FIXME: Tweak to reflect current functionality.
     user_id = session.get("user_id")
 
     if user_id:
@@ -92,7 +109,7 @@ def show_dashboard():
         return redirect("/")
 
 
-@app.route("/supply-types.json")
+@app.route("/supply-types")
 def supply_types_data():
     """Return data about supplies in a user's inventory."""
 
@@ -279,6 +296,7 @@ def show_project_creation_form():
     """Displays the project creation form."""
 
     # Get the user info from the session.
+    # FIXME
     user_id = session.get("user_id")
     user = User.query.get(user_id)
 

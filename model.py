@@ -50,9 +50,9 @@ class SupplyDetail(db.Model):
 
     # If a user is going to log a craft supply, at least force them to include
     # the supply type.
-    supply_type = db.Column(db.String(32), nullable=False)
-    brand = db.Column(db.String(64), nullable=True)
-    color = db.Column(db.String(32), nullable=True)
+    supply_type = db.Column(db.String(32), index=True, nullable=False)
+    brand = db.Column(db.String(64), index=True, nullable=True)
+    color = db.Column(db.String(32), index=True, nullable=True)
 
     # Units will be a string representation of how a supply is measured. Examples
     # include ft, in, m, mm, square(s), oz, yd, sq in, lb, g, and so on. This
@@ -84,7 +84,7 @@ class Project(db.Model):
     project_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
     # Enforce titles, for search purposes.
-    title = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(64), index=True, nullable=False)
 
     # Set foreign key into users table
     user_id = db.Column(db.Integer,
@@ -100,16 +100,8 @@ class Project(db.Model):
     # then that's on them.
     instr_url = db.Column(db.String(256), nullable=True)
     img_url = db.Column(db.String(256), nullable=True)
-    description = db.Column(db.String(500), nullable=True)
-
-    # Define relationship between project_supply_details table
-    # and supply_details table. Can't define this on ProjectSupplyDetail
-    # because that table doesn't represent "real" data!
-
-    # # Supplies don't care about projects, but projects do care about supplies.
-    # supply_details = db.relationship("SupplyDetail",
-    #                                  secondary="project_supply_details",
-    #                                  backref=db.backref("projects"))
+    description = db.Column(db.String(500), index=True, nullable=True)
+    
 
     def __repr__(self):
 
