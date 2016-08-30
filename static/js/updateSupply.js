@@ -58,7 +58,8 @@ update_buttons.on("click", function(evt) {
 
                 else {
                     $(buttonSelector).html("Update Quantity Owned");
-                    alert("Supply updated!");
+                    $(col).append('<div id="success" style="color:green"><i>Successfully updated!</i></div>');
+                    $("#success").fadeOut(1000);
                 }
             });
 

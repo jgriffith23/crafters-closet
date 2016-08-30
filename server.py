@@ -29,6 +29,7 @@ from helpers import (
     update_item_record,
     add_supply_to_db, 
     add_user_to_db,
+    #get_inventory_search_ac_tags,
     )
 
 app = Flask(__name__)
@@ -264,6 +265,8 @@ def search_inventory():
     # Render HTML for search results as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
+    # foo = get_inventory_search_ac_tags(user_id, search_term)
+
     return table_body
 
 
@@ -347,7 +350,6 @@ def handle_project_creation():
         supply_type = request.form.get("supplytype"+fieldname_num)
         brand = request.form.get("brand"+fieldname_num)
         color = request.form.get("color"+fieldname_num)
-        # units = request.form.get("units"+fieldname_num)
         qty = request.form.get("qty-required"+fieldname_num)
 
         # Get a supply from the db that matches the entered supply

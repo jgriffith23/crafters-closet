@@ -384,6 +384,41 @@ def get_inventory_by_search(user_id, search_term):
     return inventory
 
 
+# def get_inventory_search_ac_tags(user_id, search_term):
+
+#     # Craft a query to the db for all needed columns.
+#     q = db.session.query(SupplyDetail.supply_type,
+#                          SupplyDetail.brand,
+#                          SupplyDetail.color,
+#                          SupplyDetail.units,
+#                          SupplyDetail.purchase_url,
+#                          Item.qty,
+#                          Item.item_id).outerjoin(Item).filter(Item.user_id == user_id)
+
+#     inventory = sorted(q.all())
+
+#     # Wrap the user's search term in SQL wildcards and use it as a filter
+#     # on the existing query.
+#     sql_like_str = "%" + search_term + "%"
+#     terms = set()
+#     for item in inventory:
+
+#         if search_term.lower() in item.supply_type.lower():
+#             terms.add(item.supply_type)
+#             print "+++++++++++++++++++", item.supply_type
+
+#         if search_term.lower() in item.brand.lower():
+#             terms.add(item.brand)
+
+#         if search_term.lower() in item.color.lower():
+#             terms.add(item.color)
+
+#     terms = sorted(list(terms))
+#     print terms
+
+#     return terms
+
+
 ###########################################################
 # Generate supply info table in project.html
 ###########################################################
@@ -463,8 +498,6 @@ def calc_amt_to_buy(sd_id, qty_specified, user_id=None):
     # specified.
     else:
         amt_to_buy = qty_specified
-
-    print "HERE'S WHAT YOU HAVE TO BUY: ", amt_to_buy
 
     return amt_to_buy
 
