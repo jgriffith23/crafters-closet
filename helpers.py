@@ -384,39 +384,38 @@ def get_inventory_by_search(user_id, search_term):
     return inventory
 
 
-# def get_inventory_search_ac_tags(user_id, search_term):
+def get_inventory_search_ac_tags(user_id, search_term):
 
-#     # Craft a query to the db for all needed columns.
-#     q = db.session.query(SupplyDetail.supply_type,
-#                          SupplyDetail.brand,
-#                          SupplyDetail.color,
-#                          SupplyDetail.units,
-#                          SupplyDetail.purchase_url,
-#                          Item.qty,
-#                          Item.item_id).outerjoin(Item).filter(Item.user_id == user_id)
+    # Craft a query to the db for all needed columns.
+    q = db.session.query(SupplyDetail.supply_type,
+                         SupplyDetail.brand,
+                         SupplyDetail.color,
+                         SupplyDetail.units,
+                         SupplyDetail.purchase_url,
+                         Item.qty,
+                         Item.item_id).outerjoin(Item).filter(Item.user_id == user_id)
 
-#     inventory = sorted(q.all())
+    inventory = sorted(q.all())
 
-#     # Wrap the user's search term in SQL wildcards and use it as a filter
-#     # on the existing query.
-#     sql_like_str = "%" + search_term + "%"
-#     terms = set()
-#     for item in inventory:
+    # Wrap the user's search term in SQL wildcards and use it as a filter
+    # on the existing query.
+    sql_like_str = "%" + search_term + "%"
+    tags = set()
+    for item in inventory:
 
-#         if search_term.lower() in item.supply_type.lower():
-#             terms.add(item.supply_type)
-#             print "+++++++++++++++++++", item.supply_type
+        if search_term.lower() in item.supply_type.lower():
+            tags.add(item.supply_type)
 
-#         if search_term.lower() in item.brand.lower():
-#             terms.add(item.brand)
+        if search_term.lower() in item.brand.lower():
+            tags.add(item.brand)
 
-#         if search_term.lower() in item.color.lower():
-#             terms.add(item.color)
+        if search_term.lower() in item.color.lower():
+            tags.add(item.color)
 
-#     terms = sorted(list(terms))
-#     print terms
+    tags = sorted(list(tags))
+    print "++++++++++++++++++++++++++++++++++++++++", tags
 
-#     return terms
+    return tags
 
 
 ###########################################################

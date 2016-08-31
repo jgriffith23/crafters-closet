@@ -29,7 +29,7 @@ from helpers import (
     update_item_record,
     add_supply_to_db, 
     add_user_to_db,
-    #get_inventory_search_ac_tags,
+    get_inventory_search_ac_tags,
     )
 
 app = Flask(__name__)
@@ -265,10 +265,22 @@ def search_inventory():
     # Render HTML for search results as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))
 
-    # foo = get_inventory_search_ac_tags(user_id, search_term)
-
     return table_body
 
+
+@app.route("/inventory/search-autocomplete-tags")
+def inventory_search_tags():
+    """As the user types in the inventory search box, send the front end a list
+    of autocomplete tags based on the user's search query."""
+
+    search_term = request.args.get("search")
+    user_id = session.get("user_id")
+
+    tags = get_inventory_search_ac_tags(user_id, search_term)
+
+    response = Response(json.dumps(tags), mimetype='application/json')
+
+    return response
 
 ########################################################################
 # Project routes (show project, show project creation form, handle form)
