@@ -20,11 +20,18 @@ $("#search-projects").on("click", function () {
     else{
         encodedSearchTerm = encodeURIComponent(searchTerm);
 
-        $("#search-active-head").html("Projects Relevant to Your Search (Click title links to view supply lists.)");
+        $("#search-active-head").html("Projects Related to \""+searchTerm+"\" (Click title links to view supply lists.)");
 
         $.get("/projects/search-results.html?search=" + encodedSearchTerm,
             function(results) {
-                $("#project-search-results").html(results);
+                if (results.indexOf("td") > -1) {
+                    $("#project-search-results").html(results);
+                }
+
+                else {
+                    $("#project-search-results").html("<i>I'm sorry, I couldn't find any matching projects! Please try again.</i><br>");
+                    $("#project-search-results").append("<img src=\"https://s-media-cache-ak0.pinimg.com/736x/29/d1/1c/29d11cff4795c805abc6010a1690916b.jpg\"></img>");
+                }
         });
     }
 });
