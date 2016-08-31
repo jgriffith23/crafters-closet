@@ -6,7 +6,6 @@
 // Should change the autocomplete options in color textbox.
 function replaceTags(results) {
     var tags = results;
-    console.log(tags);
     $( ".autocomplete" ).autocomplete({
           source: tags
     });
@@ -16,13 +15,11 @@ function replaceTags(results) {
 function updateColors() {
   var brand = encodeURIComponent($("#brand").val());
   $.get("/typeahead/colors-by-brand.json?brand="+brand, replaceTags);
-  console.log("AJAX sent.");
 }
 
 function updateInventorySearch() {
     var searchTerm = encodeURIComponent($("#search-term").val());
     $.get("/inventory/search-autocomplete-tags?search="+searchTerm, replaceTags);
-    console.log("AJAX for inventory search sent.");
 }
 
 // Event listeners for elements tha should cause the colors
