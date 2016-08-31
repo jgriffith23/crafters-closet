@@ -101,7 +101,6 @@ class Project(db.Model):
     instr_url = db.Column(db.String(256), nullable=True)
     img_url = db.Column(db.String(256), nullable=True)
     description = db.Column(db.String(500), index=True, nullable=True)
-    
 
     def __repr__(self):
 
@@ -200,15 +199,16 @@ def example_data():
     # Two test users. IDs should be 1 and 2.
 
     # This user will own the terra cotta bowl project, but won't have the brown paint
-    # to make it.
+    # to make it. Password: tobehashed
     tu1 = User(email="ihave@projects.net",
                username="ihaveprojects",
-               password="tobehashed")
+               password='$2b$12$w/6gclJwoAH5NzqBpYOWj.eruNZUsE.5jU2vtAhN5W0jxVysyewXS')
 
     # This user will own the blue clay bowl project and will have all needed supplies.
+    # Password: notsogood
     tu2 = User(email="ihave@suppliesandprojects.com",
                username="ihaveprojectsnsupplies",
-               password="notsogood")
+               password='$2b$12$3Y3wb0qkhkiuN9dKBp5ihOUFoN3SzITPouwiyX7pJfOVDr2c2wZGW')
 
     # Some test supply details. IDs should be 1, 2, 3, 4.
     sd1 = SupplyDetail(supply_type="oven-bake clay",
@@ -245,19 +245,19 @@ def example_data():
                  description="Shape some white Sculpey clay into a bowl, bake it, and paint it blue.")
 
     # Some test entries for project_supply_details. IDs should be 1, 2, 3, 4
-    psd1 = ProjectSupplyDetail(project_id=1,
+    psd1 = ProjectSupply(project_id=1,
                                sd_id=1,
                                supply_qty=5)
 
-    psd2 = ProjectSupplyDetail(project_id=1,
+    psd2 = ProjectSupply(project_id=1,
                                sd_id=3,
                                supply_qty=2)
 
-    psd3 = ProjectSupplyDetail(project_id=2,
+    psd3 = ProjectSupply(project_id=2,
                                sd_id=2,
                                supply_qty=10)
 
-    psd4 = ProjectSupplyDetail(project_id=2,
+    psd4 = ProjectSupply(project_id=2,
                                sd_id=4,
                                supply_qty=1)
 
@@ -276,11 +276,11 @@ def example_data():
               sd_id=4,
               qty=5)
 
-    db.session.add_all(tu1, tu2,
+    db.session.add_all([tu1, tu2,
                        sd1, sd2, sd3, sd4,
                        p1, p2,
                        psd1, psd2, psd3, psd4,
-                       i1, i2, i3)
+                       i1, i2, i3])
 
     db.session.commit()
 
@@ -289,11 +289,11 @@ def example_data():
 # Helper functions
 ##########################################################
 
-def connect_to_db(app):
+def connect_to_db(app, uri='postgresql:///crafterscloset'):
     """Connect to the database for the Crafter's Closet Flask app."""
 
     # Configure the app to use the database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///crafterscloset'
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
@@ -302,9 +302,7 @@ if __name__ == "__main__":
     # Have the module drop us into the Python console after running, if
     # it is run interactively.
 
-    from flask import Flask
-
-    app = Flask(__name__)
+    from server import app
 
     connect_to_db(app)
     print "Connected to Crafter's Closet DB."

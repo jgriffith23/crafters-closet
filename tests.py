@@ -13,34 +13,24 @@ from server import app
 from model import db, example_data, connect_to_db
 
 
-class CCTests(unittest.TestCase):
+class CCTestsBasic(unittest.TestCase):
     """Tests for Crafter's Closet website."""
 
     def setUp(self):
-        self.client = app.test_client()
         app.config['TESTING'] = True
+        self.client = app.test_client()
 
     def test_login_page(self):
         result = self.client.get("/login")
         self.assertIn("Sign In", result.data)
 
+    def test_register_page(self):
+        result = self.client.get("/register")
+        self.assertIn("Repeat Password:", result.data)
+
     def test_homepage(self):
         result = self.client.get("/")
         self.assertIn("Welcome to Crafter's Closet!", result.data)
-
-    def test_dashboard(self):
-        login("jhacks","")
-        result = self.client.get("/dashboard")
-        self.assertIn("Dashboard", result.data)
-
-    def login(self, username, password):
-        return self.app.post('/login', data=dict(
-            username=username,
-            password=password
-        ), follow_redirects=True)
-
-    def logout(self):
-        return self.app.get('/logout', follow_redirects=True)
 
 
 class CCTestsDatabase(unittest.TestCase):
@@ -52,23 +42,41 @@ class CCTestsDatabase(unittest.TestCase):
         self.client = app.test_client()
         app.config['TESTING'] = True
 
-        # Connect to test database (uncomment when testing database)
         connect_to_db(app, "postgresql:///testdb")
 
-        # Create tables and add sample data (uncomment when testing database)
         db.create_all()
         example_data()
-
-        with self.client as c:
-            with c.session_transaction() as session:
-                session['user_id'] = 3
 
     def tearDown(self):
         """Do at end of every test."""
 
-        # (uncomment when testing database)
         db.session.close()
         db.drop_all()
+
+    def test_login(self):
+        result = self.client.post("/login",
+                                  data={"username": "ihaveprojects", "password": "tobehashed"},
+                                  follow_redirects=True)
+        self.assertIn("Hi, ihaveprojects!", result.data)
+
+    def test_register_user_good_data(self):
+        result = self.client.post("/register",
+                                  data={"email": "joe@schmo.com",
+                                        "username": "joe",
+                                        "password": "abc124",
+                                        "repeat_pw": "abc124"},
+                                  follow_redirects=True)
+        self.assertIn("Hi, joe!", result.data)
+
+    def test_dashboard(self):
+        """Test whether user can view dashboard while logged in."""
+
+        with self.client as c:
+            with c.session_transaction() as session:
+                session['user_id'] = 1
+                session['username'] = 'ihaveprojects'
+        result = self.client.get("/dashboard")
+        self.assertIn("Your Inventory", result.data)
 
 
 if __name__ == "__main__":
