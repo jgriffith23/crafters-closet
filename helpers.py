@@ -385,6 +385,8 @@ def get_inventory_by_search(user_id, search_term):
 
 
 def get_inventory_search_ac_tags(user_id, search_term):
+    """Given a user ID and the user's search term, return a list of possible
+    existing inventory information the user might be trying to type."""
 
     # Craft a query to the db for all needed columns.
     q = db.session.query(SupplyDetail.supply_type,
@@ -400,7 +402,14 @@ def get_inventory_search_ac_tags(user_id, search_term):
     # Wrap the user's search term in SQL wildcards and use it as a filter
     # on the existing query.
     sql_like_str = "%" + search_term + "%"
+
+    # We only want to show a given tag once, so create an empty set to contain
+    # the tags.
     tags = set()
+
+    # For each item in the user's inventory, check whether the search term
+    # is used anywhere in that item's supply details. If so, add it to our set
+    # of tags.
     for item in inventory:
 
         if search_term.lower() in item.supply_type.lower():
@@ -412,8 +421,9 @@ def get_inventory_search_ac_tags(user_id, search_term):
         if search_term.lower() in item.color.lower():
             tags.add(item.color)
 
+    # Convert the set of tags to a list for easy jsonification, and sort it
+    # for the user's sanity.
     tags = sorted(list(tags))
-    print "++++++++++++++++++++++++++++++++++++++++", tags
 
     return tags
 
