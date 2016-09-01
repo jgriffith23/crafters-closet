@@ -211,25 +211,25 @@ def example_data():
                password='$2b$12$3Y3wb0qkhkiuN9dKBp5ihOUFoN3SzITPouwiyX7pJfOVDr2c2wZGW')
 
     # Some test supply details. IDs should be 1, 2, 3, 4.
-    sd1 = SupplyDetail(supply_type="oven-bake clay",
+    sd1 = SupplyDetail(supply_type="Oven-Bake Clay",
                        brand="Sculpey",
                        color="Terra Cotta",
                        units="oz",
                        purchase_url="http://www.michaels.com/original-sculpey-oven-bake-clay-1.75lb/M10083451.html")
 
-    sd2 = SupplyDetail(supply_type="oven-bake clay",
+    sd2 = SupplyDetail(supply_type="Oven-Bake Clay",
                        brand="Sculpey",
                        color="White",
                        units="oz",
                        purchase_url="http://www.michaels.com/original-sculpey-oven-bake-clay-1.75lb/M10083451.html")
 
-    sd3 = SupplyDetail(supply_type="acrylic paint",
+    sd3 = SupplyDetail(supply_type="Acrylic Paint",
                        brand="Americana",
                        color="Bittersweet Chocolate",
                        units="oz",
                        purchase_url="http://www.michaels.com/americana-acrylic-paint-2-oz/M10132000.html")
 
-    sd4 = SupplyDetail(supply_type="acrylic paint",
+    sd4 = SupplyDetail(supply_type="Acrylic PAmericanaaint",
                        brand="Americana",
                        color="Calypso Blue",
                        units="oz",

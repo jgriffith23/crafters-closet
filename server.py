@@ -154,14 +154,14 @@ def add_supply():
         if item_from_db:
 
             # Just update the record.
-            result = update_item(item_from_db, int(qty))
+            result = update_item_record(item_from_db, int(qty))
             flash(result)
 
         # Otherwise, add the item to the user's inventory.
         else:
             add_item_to_inventory(user_id, sd_from_db.sd_id, qty)
-            flash("%s %s of %s %s have been added to your inventory." %
-                 (qty, units, brand, supply_type))
+            flash("%s %s of %s %s %s have been added to your inventory." %
+                 (qty, units, brand, color, supply_type))
 
     # If the detail doesn't exist, create a new supply detail, add it,
     # and add an item to the inventory with those details.

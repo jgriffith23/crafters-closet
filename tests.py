@@ -34,11 +34,28 @@ class CCTestsBasic(unittest.TestCase):
         result = self.client.get("/")
         self.assertIn("Welcome to Crafter's Closet!", result.data)
 
+    def test_prevent_unauthenticated_dashboard_access(self):
+        """Make sure a user can't access the dashboard unless they have an
+        active session."""
+        result = self.client.get("/dashboard", follow_redirects=True)
+        self.assertIn("Please log in.", result.data)
+        self.assertNotIn("Your Inventory", result.data)
+
+
+class CCTestsUsingSession(unittest.TestCase):
+    """These tests require the session to be active but don't interact with
+    the database."""
+
+    # Set up the app for testing and create a client.
+    def setUp(self):
+        app.config['TESTING'] = True
+        app.secret_key = "ABC"
+        self.client = app.test_client()
+
+        add_test_user_to_session(self)
+
     def test_logout(self):
-        with self.client as c:
-            with c.session_transaction() as sess:
-                sess['user_id'] = 1
-                sess['username'] = 'ihaveprojects'
+        add_test_user_to_session(self)
 
         result = self.client.get("/logout", follow_redirects=True)
         self.assertIn("See you later!", result.data)
@@ -48,8 +65,9 @@ class CCTestsBasic(unittest.TestCase):
                 self.assertIsNone(sess.get("username"))
 
 
-class CCTestsDatabase(unittest.TestCase):
-    """Flask tests that use the database."""
+class CCTestsDatabaseQueriesOnly(unittest.TestCase):
+    """These tests are for routes that only query the database, not routes that
+    change the database. These routes may also use the session."""
 
     def setUp(self):
         """Stuff to do before every test. Create a client, configure the
@@ -62,6 +80,8 @@ class CCTestsDatabase(unittest.TestCase):
 
         db.create_all()
         example_data()
+
+        add_test_user_to_session(self)
 
     def tearDown(self):
         """Do at end of every test."""
@@ -89,6 +109,31 @@ class CCTestsDatabase(unittest.TestCase):
         """Search for a term where matching projects should NOT be in db."""
         result = self.client.get("/projects/search-results.html?search=foobar")
         self.assertNotIn("<td>", result.data)
+
+
+class CCTestsDatabaseChanges(unittest.TestCase):
+    """Flask tests that use the database."""
+
+    def setUp(self):
+        """Stuff to do before every test. Create a client, configure the
+        app, connect to a test database, create the tables, and seed the testdb."""
+
+        self.client = app.test_client()
+        app.config['TESTING'] = True
+
+        # We can't change the db without having a user in the session.
+        add_test_user_to_session(self)
+
+        connect_to_db(app, "postgresql:///testdb")
+
+        db.create_all()
+        example_data()
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.close()
+        db.drop_all()
 
     def test_register_user_all_data_okay(self):
         """Test a good registration."""
@@ -127,16 +172,99 @@ class CCTestsDatabase(unittest.TestCase):
         self.assertIn("That username has already been registered.", result.data)
         self.assertNotEqual(result.status_code, 307)
 
-    def test_dashboard(self):
-        """Test whether user can view dashboard while logged in."""
+    def test_add_completely_new_supply(self):
+        """Try to add a supply to user's inventory, where the details are not
+        already in the db."""
 
-        with self.client as c:
-            with c.session_transaction() as session:
-                session['user_id'] = 1
-                session['username'] = 'ihaveprojects'
-        result = self.client.get("/dashboard")
-        self.assertIn("Your Inventory", result.data)
+        data = {"supplytype": "Acrylic Paint",
+                "brand": "Americana",
+                "color": "Electric Purple",
+                "units": "oz",
+                "quantity-owned": "42"}
 
+        result = self.client.post("/add-supply",
+                                  data=data,
+                                  follow_redirects=True)
+
+        self.assertIn("this is new!", result.data)
+        self.assertIn("Electric Purple", result.data)
+
+    def test_add_item_where_supply_exists(self):
+        """Try to add a supply to user's inventory, where the details are
+        already in the db."""
+
+        data = {"supplytype": "Acrylic Paint",
+                "brand": "Americana",
+                "color": "Bittersweet Chocolate",
+                "units": "oz",
+                "quantity-owned": "42"}
+
+        result = self.client.post("/add-supply",
+                                  data=data,
+                                  follow_redirects=True)
+        row_str = '42 oz </div>'
+
+        self.assertIn("of Americana Bittersweet Chocolate", result.data)
+        self.assertIn("Americana", result.data)
+        self.assertIn(row_str, result.data)
+
+    def test_update_inventory_item_on_add(self):
+        """Test whether we can successfully update an existing inventory
+        item record if the user tries to re-add it."""
+
+        # The authenticated user should already own the item whose data matches
+        # the dict below.
+        data = {"supplytype": "Oven-Bake Clay",
+                "brand": "Sculpey",
+                "color": "Terra Cotta",
+                "units": "oz",
+                "quantity-owned": "3"}
+
+        result = self.client.post("/add-supply",
+                                  data=data,
+                                  follow_redirects=True)
+
+        # We're expecting a flash message, so let's look for it.
+        expected_str = "Amount of Sculpey Terra Cotta Oven-Bake Clay updated."
+
+        self.assertIn(expected_str, result.data)
+
+    def test_overwrite_inventory_item(self):
+        """Test whether the we can successfully overwrite an item in the user's
+        inventory with a new qty."""
+
+        # The authenticated user should own the item with ID 1.
+        data = {"qty": "5", "itemID": "1"}
+
+        result = self.client.post("/update-item",
+                                  data=data,
+                                  follow_redirects=True)
+
+        # After this call, the resulting string (to be passed to front end) should
+        # contain the new qty and units.
+        self.assertIn("5 oz", result.data)
+
+    def test_delete_inventory_item(self):
+        """Test whether we can successfully delete an item in the user's inventory
+        if they explicitly ask to update that item with a qty of 0."""
+
+        # The authenticated user should own the item with ID 1.
+        data = {"qty": "0", "itemID": "1"}
+
+        result = self.client.post("/update-item",
+                                  data=data,
+                                  follow_redirects=True)
+
+        # After this call, the resulting string (to be passed to front end) should
+        # be "Deleted!"
+        self.assertIn("Deleted!", result.data)
+
+
+def add_test_user_to_session(test_class_instance):
+    with test_class_instance.client as c:
+        with c.session_transaction() as session:
+            session['user_id'] = 1
+            session['username'] = 'ihaveprojects'
 
 if __name__ == "__main__":
     unittest.main()
