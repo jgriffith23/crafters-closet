@@ -11,6 +11,7 @@ import unittest
 
 from server import app
 from model import db, example_data, connect_to_db
+from flask import json
 
 
 class CCTestsBasic(unittest.TestCase):
@@ -42,7 +43,7 @@ class CCTestsBasic(unittest.TestCase):
         self.assertNotIn("Your Inventory", result.data)
 
 
-class CCTestsUsingSession(unittest.TestCase):
+class CCTestsUsingSessionNoDB(unittest.TestCase):
     """These tests require the session to be active but don't interact with
     the database."""
 
@@ -65,9 +66,37 @@ class CCTestsUsingSession(unittest.TestCase):
                 self.assertIsNone(sess.get("username"))
 
 
-class CCTestsDatabaseQueriesOnly(unittest.TestCase):
-    """These tests are for routes that only query the database, not routes that
-    change the database. These routes may also use the session."""
+class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
+    """These are tests that query the database but don't require a session.
+    These tests should not change the database."""
+
+    def setUp(self):
+        """Stuff to do before every test. Create a client, configure the
+        app, connect to a test database, create the tables, and seed the testdb."""
+
+        self.client = app.test_client()
+        app.config['TESTING'] = True
+
+        connect_to_db(app, "postgresql:///testdb")
+
+        db.create_all()
+        example_data()
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.close()
+        db.drop_all()
+
+    def test_get_brands_by_type(self):
+        result = self.client.get("/dashboard/brands.json")
+        data = json.loads(result.data)
+        self.assertEqual(data["Acrylic Paint"][0], "Americana")
+
+
+class CCTestsDatabaseQueriesOnlyWithSession(unittest.TestCase):
+    """These tests are for routes that only query the database and require
+    a session."""
 
     def setUp(self):
         """Stuff to do before every test. Create a client, configure the
@@ -112,7 +141,7 @@ class CCTestsDatabaseQueriesOnly(unittest.TestCase):
 
 
 class CCTestsDatabaseChanges(unittest.TestCase):
-    """Flask tests that use the database."""
+    """Flask tests that actually change the database."""
 
     def setUp(self):
         """Stuff to do before every test. Create a client, configure the
@@ -121,7 +150,8 @@ class CCTestsDatabaseChanges(unittest.TestCase):
         self.client = app.test_client()
         app.config['TESTING'] = True
 
-        # We can't change the db without having a user in the session.
+        # We can't change the db without having a user in the session, as all
+        # possible changes are associated with users.
         add_test_user_to_session(self)
 
         connect_to_db(app, "postgresql:///testdb")

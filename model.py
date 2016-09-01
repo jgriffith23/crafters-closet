@@ -229,7 +229,7 @@ def example_data():
                        units="oz",
                        purchase_url="http://www.michaels.com/americana-acrylic-paint-2-oz/M10132000.html")
 
-    sd4 = SupplyDetail(supply_type="Acrylic PAmericanaaint",
+    sd4 = SupplyDetail(supply_type="Acrylic Paint",
                        brand="Americana",
                        color="Calypso Blue",
                        units="oz",
@@ -294,7 +294,7 @@ def connect_to_db(app, uri='postgresql:///crafterscloset'):
 
     # Configure the app to use the database.
     app.config['SQLALCHEMY_DATABASE_URI'] = uri
-    app.config['SQLALCHEMY_ECHO'] = True
+    # app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
 
