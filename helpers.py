@@ -2,6 +2,7 @@
 
 from model import SupplyDetail, ProjectSupply, Item, Project, User, db
 from flask import jsonify
+import math
 
 CHART_COLORS = ["#b366ff", "#0059b3", "#00cc99", "#ffd480",
                 "#ff99cc", "#b3e6ff", "#bfff80", "#ffccb3"]
@@ -171,6 +172,12 @@ def get_inventory_chart_dict(user_id):
     """Build a JSON object representing the total numbers of each type of item
     in a user's inventory."""
 
+    weights = {
+        "Fabric": 10, "Felt": 10, "Yarn": 10, "Acrylic Paint": 1,
+        "Oven-Bake Clay": 1, "Conductive Thread": 1, "LEDs": .1,
+        "Color Sensor": 1, "Arduino Board": 1
+    }
+
     # Get all of the passed user's items
     items = Item.query.filter(Item.user_id == user_id)
 
@@ -185,11 +192,13 @@ def get_inventory_chart_dict(user_id):
     # to the labels set.
     for item in items:
 
-        supply_type = item.supply_details.supply_type
+        supply_type = str(item.supply_details.supply_type)
         qty_owned = item.qty
 
+        wtd_qty_owned = math.floor(qty_owned * weights[supply_type])
+
         type_quantities[supply_type] = type_quantities.get(supply_type, 0)
-        type_quantities[supply_type] += qty_owned
+        type_quantities[supply_type] += wtd_qty_owned
         labels.add(supply_type)
 
     # Put the quantity counts we just made in a list, in the same order as

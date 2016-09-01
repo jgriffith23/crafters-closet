@@ -8,11 +8,15 @@
 
 
 import unittest
-
 from server import app
-from model import db, example_data, connect_to_db
 from flask import json
+from selenium import webdriver
+from model import db, example_data, connect_to_db
 
+
+######################################################################
+# Server unit tests
+######################################################################
 
 class CCTestsBasic(unittest.TestCase):
     """Tests for Crafter's Closet pages that don't require the db."""
@@ -288,6 +292,17 @@ class CCTestsDatabaseChanges(unittest.TestCase):
         # After this call, the resulting string (to be passed to front end) should
         # be "Deleted!"
         self.assertIn("Deleted!", result.data)
+
+
+######################################################################
+# Selenium functional tests
+######################################################################
+
+
+
+######################################################################
+# Helpers/code to run the tests
+######################################################################
 
 
 def add_test_user_to_session(test_class_instance):
