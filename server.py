@@ -22,13 +22,12 @@ from helpers import (
     get_all_colors_dict_by_brand,
     get_matching_sd,
     get_matching_item,
-    craft_project_supplies_info,
+    get_craft_project_supplies_info,
     add_item_to_inventory,
     add_project_supply_to_db,
     add_project_to_db,
     add_supply_to_db,
     add_user_to_db,
-    update_item_record,
     )
 
 app = Flask(__name__)
@@ -44,19 +43,9 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route("/")
 def index():
-    """Homepage."""
+    """Render the homepage."""
 
-    # Check whether the user is logged in. If so, get the user, so we can
-    # display user-specific info on the homepage.
-
-    # FIXME: Tweak to reflect current functionality.
-    user_id = session.get("user_id")
-
-    if user_id:
-        user = User.query.get(user_id)
-    else:
-        user = None
-    return render_template("homepage.html", user=user)
+    return render_template("homepage.html")
 
 
 ################################################################
@@ -144,7 +133,7 @@ def add_supply():
         if item_from_db:
 
             # Just update the record.
-            result = update_item_record(item_from_db, int(qty))
+            result = item_from_db.update_item_record(int(qty))
             flash(result)
 
         # Otherwise, add the item to the user's inventory.
@@ -178,7 +167,7 @@ def update_item():
 
     # Perform a wholesale overwrite.
     overwrite = True
-    result = update_item_record(item, new_qty, overwrite)
+    result = item.update_item_record(new_qty, overwrite)
     return result
 
 
@@ -289,7 +278,7 @@ def show_project(project_id):
 
     # Get a dictionary representing all supply info for this project,
     # including the amount of any supplies a user must buy.
-    project_supplies_info = craft_project_supplies_info(project, user_id)
+    project_supplies_info = get_craft_project_supplies_info(project, user_id)
 
     # Render the project page
     return render_template("project.html",

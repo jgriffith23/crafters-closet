@@ -227,6 +227,53 @@ class Project(db.Model):
         return "<Project title=%s, instr_url=%s, description=%s>" % \
             (self.title, self.instr_url, self.description)
 
+    def get_project_supplies_list(self):
+        """Get details about the supplies required to make this project instance
+        project.
+
+        Format of data: {'color': ???, 'brand': ???, 'qty_to_buy': ???, 'sd_id': ???
+                         'units': ???, 'qty_specified': ???, 'supply_type': ???}
+
+        Example:
+        [{'color': u'Petal Pink', 'brand': u'Red Heart', 'qty_to_buy': 0, 'sd_id': 1,
+          'units': u'yds', 'qty_specified': 4, 'supply_type': u'yarn'},
+          {'color': u'blue', 'brand': u'SparkFun', 'qty_to_buy': 0, 'sd_id': 24,
+          'units': u'components', 'qty_specified': 6, 'supply_type': u'LED'},
+          {'color': u'beige', 'brand': u'Sticks n Stuff', 'qty_to_buy': 45, 'sd_id':
+          30, 'units': u'pcs', 'qty_specified': 45, 'supply_type': u'Popsicle Sticks'}]
+        """
+
+        # Craft a query to join the tables defined by the SupplyDetail and
+        # ProjectSupply models, so we can get information from both.
+        q = db.session.query(SupplyDetail.sd_id,
+                             SupplyDetail.supply_type,
+                             SupplyDetail.brand,
+                             SupplyDetail.color,
+                             ProjectSupply.supply_qty,
+                             SupplyDetail.units).join(ProjectSupply,
+                                                      SupplyDetail.sd_id == ProjectSupply.sd_id)
+
+        # Add a filter to the query so that we'll only get details for supplies related
+        # to the passed project
+        q_filtered = q.filter(ProjectSupply.project_id == self.project_id)
+
+        # Fetch the specified details
+        specified_supplies = q_filtered.all()
+
+        # Create an empty list and a list containing the columns for each piece
+        # of info for a supply
+        supplies_list = []
+        columns = ["sd_id", "supply_type", "brand", "color", "qty_specified", "units"]
+
+        # For each set of supply information, create a dictionary using the columns
+        # above as keys and the information itself as values.
+        for supply in specified_supplies:
+            supply_dict = dict(zip(columns, supply))
+            supplies_list.append(supply_dict)
+
+        # Return a list of dictionaries
+        return supplies_list
+
 
 ######################################################################
 # Models for middle tables relating projects/users, projects/supplies
@@ -304,6 +351,39 @@ class Item(db.Model):
 
     supply_details = db.relationship("SupplyDetail",
                                      backref="items")
+
+    def update_item_record(self, qty, overwrite=False):
+        """Given an item, change the quantity in the user's inventory. Returns
+        a string to be sent back to the server, based on the action taken."""
+
+        # If there's no qty, the user probably didn't mean to change anything. To
+        # be save, just return the old values, and make no changes.
+        if qty == "":
+            success_string = str(self.qty) + " " + str(self.supply_details.units)
+
+        # If overwrite is true, then check qty. If the qty is 0, just delete
+        # the record; otherwise, change the old item qty to reflect the new one.
+        elif overwrite:
+            if qty == "0":
+                db.session.delete(self)
+                db.session.commit()
+                success_string = "Deleted!"
+
+            else:
+                self.qty = qty
+                db.session.commit()
+                success_string = str(self.qty) + " " + str(self.supply_details.units)
+
+        # If we're changing but not overwriting, then we must be trying to add
+        # a supply that exists. Just increase the qty in the db.
+        else:
+            self.qty = self.qty + qty
+            db.session.commit()
+            success_string = "Amount of " + self.supply_details.brand + " " + \
+                             self.supply_details.color + " " + \
+                             self.supply_details.supply_type + " updated."
+
+        return success_string
 
     def __repr__(self):
         return "<Item user_id=%s, sd_id=%s, qty=%s>" % \

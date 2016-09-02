@@ -1,5 +1,4 @@
-"""Write code to seed database here."""
-"""Utility file to seed ratings database from MovieLens data in seed_data/"""
+"""Utility file to seed Crafter's Closet database from data in seed_data/"""
 
 from sqlalchemy import func
 from model import User, SupplyDetail, Project, ProjectSupply, Item

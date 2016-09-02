@@ -154,45 +154,6 @@ def add_project_to_db(user_id, title, description, instr_url, img_url):
     return project
 
 
-
-#################################################################
-# Functions that update records in db.
-#################################################################
-
-def update_item_record(item, qty, overwrite=False):
-    """Given an item, change the quantity in the user's inventory. Returns
-    a string to be sent back to the server, based on the action taken."""
-
-    # If there's no qty, the user probably didn't mean to change anything. To
-    # be save, just return the old values, and make no changes.
-    if qty == "":
-        success_string = str(item.qty) + " " + str(item.supply_details.units)
-
-    # If overwrite is true, then check qty. If the qty is 0, just delete
-    # the record; otherwise, change the old item qty to reflect the new one.
-    elif overwrite:
-        if qty == "0":
-            db.session.delete(item)
-            db.session.commit()
-            success_string = "Deleted!"
-
-        else:
-            item.qty = qty
-            db.session.commit()
-            success_string = str(item.qty) + " " + str(item.supply_details.units)
-
-    # If we're changing but not overwriting, then we must be trying to add
-    # a supply that exists. Just increase the qty in the db.
-    else:
-        item.qty = item.qty + qty
-        db.session.commit()
-        success_string = "Amount of " + item.supply_details.brand + " " + \
-                         item.supply_details.color + " " + \
-                         item.supply_details.supply_type + " updated."
-
-    return success_string
-
-
 ###################################################################
 # Get groups of data from the database in dictionary format
 # for easy jsonification.
@@ -357,54 +318,6 @@ def get_colors_from_brand(brand):
 # Generate supply info table in project.html
 ###########################################################
 
-def get_project_supplies_list(project_id):
-    """Given a project id, get details about the supplies required to make that
-    project. These details are NOT user-specific, but rather project-specific.
-
-    Format of data: {'color': ???, 'brand': ???, 'qty_to_buy': ???, 'sd_id': ???
-                     'units': ???, 'qty_specified': ???, 'supply_type': ???}
-
-    Example:
-    [{'color': u'Petal Pink', 'brand': u'Red Heart', 'qty_to_buy': 0, 'sd_id': 1,
-      'units': u'yds', 'qty_specified': 4, 'supply_type': u'yarn'},
-      {'color': u'blue', 'brand': u'SparkFun', 'qty_to_buy': 0, 'sd_id': 24,
-      'units': u'components', 'qty_specified': 6, 'supply_type': u'LED'},
-      {'color': u'beige', 'brand': u'Sticks n Stuff', 'qty_to_buy': 45, 'sd_id':
-      30, 'units': u'pcs', 'qty_specified': 45, 'supply_type': u'Popsicle Sticks'}]
-    """
-
-    # Craft a query to join the tables defined by the SupplyDetail and
-    # ProjectSupply models, so we can get information from both.
-    q = db.session.query(SupplyDetail.sd_id,
-                         SupplyDetail.supply_type,
-                         SupplyDetail.brand,
-                         SupplyDetail.color,
-                         ProjectSupply.supply_qty,
-                         SupplyDetail.units).join(ProjectSupply,
-                                                  SupplyDetail.sd_id == ProjectSupply.sd_id)
-
-    # Add a filter to the query so that we'll only get details for supplies related
-    # to the passed project
-    q_filtered = q.filter(ProjectSupply.project_id == project_id)
-
-    # Fetch the specified details
-    specified_supplies = q_filtered.all()
-
-    # Create an empty list and a list containing the columns for each piece
-    # of info for a supply
-    supplies_list = []
-    columns = ["sd_id", "supply_type", "brand", "color", "qty_specified", "units"]
-
-    # For each set of supply information, create a dictionary using the columns
-    # above as keys and the information itself as values.
-    for supply in specified_supplies:
-        supply_dict = dict(zip(columns, supply))
-        supplies_list.append(supply_dict)
-
-    # Return a list of dictionaries
-    return supplies_list
-
-
 def calc_amt_to_buy(sd_id, qty_specified, user_id=None):
     """Given a supply id from a project, a user id, and the qty of the supply
     needed for a project, calculate how much of that supply a user needs to buy
@@ -436,17 +349,17 @@ def calc_amt_to_buy(sd_id, qty_specified, user_id=None):
     return amt_to_buy
 
 
-def craft_project_supplies_info(project, user_id):
+def get_craft_project_supplies_info(project, user_id):
     """Given a project and a user_id, craft a dictionary containing
     all necessary info to display on a project page, including the amount of
     required supplies a user owns and how  much they'd need to buy."""
 
-    # Get the project's id.
-    project_id = project.project_id
+    # # Get the project's id.
+    # project_id = project.project_id
 
     # Get a list of dictionaries representing the supplies needed for the
     # project.
-    project_supplies_info = get_project_supplies_list(project_id)
+    project_supplies_info = project.get_project_supplies_list()
 
     # For each supply in the list of dictionaries, calculate how many
     # of that supply the user must buy, and add that amount to the dictionary.

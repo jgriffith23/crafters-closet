@@ -15,7 +15,7 @@ from model import db, example_data, connect_to_db
 
 
 ######################################################################
-# Server unit tests
+# Tests that don't require the database or an active session.
 ######################################################################
 
 class CCTestsBasic(unittest.TestCase):
@@ -40,6 +40,9 @@ class CCTestsBasic(unittest.TestCase):
         self.assertIn("Welcome to Crafter's Closet!", result.data)
 
 
+######################################################################
+# Tests that require an active session, but no database access.
+######################################################################
 class CCTestsUsingSessionNoDB(unittest.TestCase):
     """These tests require the session to be active but don't interact with
     the database."""
@@ -63,6 +66,10 @@ class CCTestsUsingSessionNoDB(unittest.TestCase):
                 self.assertIsNone(sess.get("username"))
 
 
+######################################################################
+# Tests that require database access but not an active session. These
+# should not be able to change the database EVER.
+######################################################################
 class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
     """These are tests that query the database but don't require a session.
     These tests should not change the database."""
@@ -98,6 +105,10 @@ class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
         self.assertNotIn("Your Inventory", result.data)
 
 
+######################################################################
+# Tests that require database access and an active session, but don't
+# alter the state of the database.
+######################################################################
 class CCTestsDatabaseQueriesOnlyWithSession(unittest.TestCase):
     """These tests are for routes that only query the database and require
     a session."""
@@ -143,7 +154,19 @@ class CCTestsDatabaseQueriesOnlyWithSession(unittest.TestCase):
         result = self.client.get("/projects/search-results.html?search=foobar")
         self.assertNotIn("<td>", result.data)
 
+    # def test_get_inventory_chart_dict(self):
+    #     """Try to get data about supplies in user's inventory for the donut chart. Should
+    #     give a dictionary back."""
 
+    #     result = self.client.get("/supply-types")
+    #     self.assertIsInstance(result.data, json)
+
+
+
+######################################################################
+# Tests that require database access, need an active session, and
+# can actually change the database.
+######################################################################
 class CCTestsDatabaseChanges(unittest.TestCase):
     """Flask tests that actually change the database."""
 
