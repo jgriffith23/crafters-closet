@@ -238,9 +238,7 @@ class Project(db.Model):
         [{'color': u'Petal Pink', 'brand': u'Red Heart', 'qty_to_buy': 0, 'sd_id': 1,
           'units': u'yds', 'qty_specified': 4, 'supply_type': u'yarn'},
           {'color': u'blue', 'brand': u'SparkFun', 'qty_to_buy': 0, 'sd_id': 24,
-          'units': u'components', 'qty_specified': 6, 'supply_type': u'LED'},
-          {'color': u'beige', 'brand': u'Sticks n Stuff', 'qty_to_buy': 45, 'sd_id':
-          30, 'units': u'pcs', 'qty_specified': 45, 'supply_type': u'Popsicle Sticks'}]
+          'units': u'components', 'qty_specified': 6, 'supply_type': u'LED'}]
         """
 
         # Craft a query to join the tables defined by the SupplyDetail and
@@ -294,7 +292,7 @@ class ProjectSupply(db.Model):
     # Set foreign key into projects table
     project_id = db.Column(db.Integer,
                            db.ForeignKey("projects.project_id"),
-                           nullable=False)
+                           nullable=False, index=True)
 
     # Set foreign key into supply_details table
     sd_id = db.Column(db.Integer,
@@ -446,20 +444,20 @@ def example_data():
 
     # Some test entries for project_supply_details. IDs should be 1, 2, 3, 4
     psd1 = ProjectSupply(project_id=1,
-                               sd_id=1,
-                               supply_qty=5)
+                         sd_id=1,
+                         supply_qty=5)
 
     psd2 = ProjectSupply(project_id=1,
-                               sd_id=3,
-                               supply_qty=2)
+                         sd_id=3,
+                         supply_qty=2)
 
     psd3 = ProjectSupply(project_id=2,
-                               sd_id=2,
-                               supply_qty=10)
+                         sd_id=2,
+                         supply_qty=10)
 
     psd4 = ProjectSupply(project_id=2,
-                               sd_id=4,
-                               supply_qty=1)
+                         sd_id=4,
+                         supply_qty=1)
 
     # Some test items.
     # ihaveprojects has terra cotta clay

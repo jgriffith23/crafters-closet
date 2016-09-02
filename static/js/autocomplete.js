@@ -14,7 +14,7 @@ function replaceTags(results) {
 // Fetch the color data from the server.
 function updateColors() {
   var brand = encodeURIComponent($("#brand").val());
-  $.get("/typeahead/colors-by-brand.json?brand="+brand, replaceTags);
+  $.get("/typeahead/colors-by-brand?brand="+brand, replaceTags);
 }
 
 function updateInventorySearch() {

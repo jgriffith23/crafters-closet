@@ -22,7 +22,7 @@ $("#search-projects").on("click", function () {
 
         $("#search-active-head").html("Projects Related to \""+searchTerm+"\" (Click title links to view supply lists.)");
 
-        $.get("/projects/search-results.html?search=" + encodedSearchTerm,
+        $.get("/projects/search-results?search=" + encodedSearchTerm,
             function(results) {
                 if (results.indexOf("td") > -1) {
                     $("#project-search-results").html(results);

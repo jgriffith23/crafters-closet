@@ -18,7 +18,7 @@ $(filterDrops).on("change", function() {
     var encodedColor = encodeURIComponent(color);
 
     // Craft request URL with filter params.
-    var requestURL = "/inventory/filter.html?brand=" + encodedBrand +
+    var requestURL = "/inventory/filter?brand=" + encodedBrand +
                      "&supplytype=" + encodedType +
                      "&color=" + encodedColor;
 
@@ -42,7 +42,7 @@ $("#search-button").on("click", function() {
     var encodedSearchTerm = encodeURIComponent(searchTerm);
 
     // Craft a request URL.
-    var requestURL = "/inventory/search-results.html?search=" + encodedSearchTerm;
+    var requestURL = "/inventory/search-results?search=" + encodedSearchTerm;
 
     // Make a get request to the crafted URL. Expecting new html for the
     // inventory table in response.
@@ -58,7 +58,7 @@ $("#search-button").on("click", function() {
 
 $("#clear-filters").on("click", function() {
 
-    requestURL = "/inventory/filter.html?brand=&supplytype=&color=";
+    requestURL = "/inventory/filter?brand=&supplytype=&color=";
     $.get(requestURL, function(results) {
         $("#inv-table").html(results);
     });

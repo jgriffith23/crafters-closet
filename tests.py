@@ -8,7 +8,6 @@
 
 
 import unittest
-from selenium import webdriver
 from server import app
 from flask import json
 from model import db, example_data, connect_to_db
@@ -93,7 +92,7 @@ class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
         db.drop_all()
 
     def test_get_brands_by_type(self):
-        result = self.client.get("/dashboard/brands.json")
+        result = self.client.get("/dashboard/brands")
         data = json.loads(result.data)
         self.assertEqual(data["Acrylic Paint"][0], "Americana")
 
@@ -103,6 +102,32 @@ class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
         result = self.client.get("/dashboard", follow_redirects=True)
         self.assertIn("Please log in.", result.data)
         self.assertNotIn("Your Inventory", result.data)
+
+    def test_get_units_json(self):
+        """Try to get all units in the db by supply type. Should be json."""
+
+        result = self.client.get("/dashboard/units")
+        self.assertEqual(result.mimetype, 'application/json')
+
+    def test_get_colors_for_typeahead(self):
+        """Try to get the colors by brand for typeahead fields."""
+
+        result = self.client.get("/typeahead/colors-by-brand?brand=Americana")
+        self.assertEqual(result.mimetype, 'application/json')
+
+    def test_show_project(self):
+        """Try to show a project page with no user logged in."""
+
+        # Get the second project in the db
+        result = self.client.get("/project/2")
+
+        # We should see a sign in button and details for this project
+        self.assertIn("Sign In", result.data)
+        self.assertIn("Blue", result.data)
+
+        # We should not see the word dashboard.
+        self.assertNotIn("Dashboard", result.data)
+
 
 
 ######################################################################
@@ -145,22 +170,59 @@ class CCTestsDatabaseQueriesOnlyWithSession(unittest.TestCase):
 
     def test_project_search_projects_exist(self):
         """Search for a term where matching projects should be in db."""
-        result = self.client.get("/projects/search-results.html?search=clay")
+        result = self.client.get("/projects/search-results?search=clay")
         self.assertIn("clay", result.data)
         self.assertNotIn("sorry", result.data)
 
     def test_project_search_no_projects(self):
         """Search for a term where matching projects should NOT be in db."""
-        result = self.client.get("/projects/search-results.html?search=foobar")
+        result = self.client.get("/projects/search-results?search=foobar")
         self.assertNotIn("<td>", result.data)
 
-    # def test_get_inventory_chart_dict(self):
-    #     """Try to get data about supplies in user's inventory for the donut chart. Should
-    #     give a dictionary back."""
+    def test_get_inventory_chart_dict(self):
+        """Try to get data about supplies in user's inventory for the donut chart. Should
+        give a dictionary back."""
 
-    #     result = self.client.get("/supply-types")
-    #     self.assertIsInstance(result.data, json)
+        result = self.client.get("/supply-types")
+        self.assertEqual(result.mimetype, 'application/json')
 
+    def test_get_filtered_inventory(self):
+        """Try to get the user's filtered inventory when the users picks a filter
+        dropdown on the dashboard."""
+
+        result = self.client.get("/inventory/filter?brand=Sculpey&supplytype=&color=")
+        self.assertIn("Sculpey", result.data)
+        self.assertNotIn("Americana", result.data)
+
+    def test_get_searched_inventory(self):
+        """Try to get the user's inventory search results."""
+
+        result = self.client.get("inventory/search-results?search=paint")
+        self.assertIn("Paint", result.data)
+        self.assertNotIn("Clay", result.data)
+
+    def test_get_inventory_search_ac_tags(self):
+        """Try to get autocomplete tags for the inventory search box. Note:
+        if the example users' data is ever changed in model.py, this may
+        need to change."""
+
+        result = self.client.get("/inventory/search-autocomplete-tags?search=pa")
+        self.assertIn("Acrylic Paint", result.data)
+
+    def test_show_project_authenticated(self):
+        """Try to show a project page with a user logged in."""
+
+        # Get the second project in the db
+        result = self.client.get("/project/1")
+
+        # We should see a dashboard button, details about supplies for
+        # project, and the number this user owns.
+        self.assertIn("Dashboard", result.data)
+        self.assertIn("Terra", result.data)
+        self.assertIn("10 oz", result.data)
+
+        # We should not see the sign in button.
+        self.assertNotIn("Sign In", result.data)
 
 
 ######################################################################
@@ -315,6 +377,27 @@ class CCTestsDatabaseChanges(unittest.TestCase):
         # After this call, the resulting string (to be passed to front end) should
         # be "Deleted!"
         self.assertIn("Deleted!", result.data)
+
+    def test_add_project(self):
+        """Try to add a project to the db."""
+
+        data = {
+            "title": "A Test of the Emergency Crafting System",
+            "description": "Do not be afraid, this is only a test.",
+            "instr-url": "We don't need any URLs.",
+            "img-url": "We don't really need image URLs either.",
+            "num-supplies": "1",
+            "supplytype0": "Acrylic Paint",
+            "brand0": "Americana",
+            "color0": "Calypso Blue",
+            "qty-required0": 23,
+        }
+
+        result = self.client.post("/create-project", data=data, follow_redirects=True)
+
+        # Check both the flash message and the actual project html.
+        self.assertIn("Hooray!", result.data)
+        self.assertIn("Emergency Crafting System", result.data)
 
 
 ######################################################################

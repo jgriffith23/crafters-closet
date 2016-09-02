@@ -4,7 +4,7 @@ formCounter = 0;
 
 $("#supply-form-gen").on("click", function() {
 
-    $.get("/create-project/new-supply-form.html?counter="+formCounter, function(results) {
+    $.get("/create-project/new-supply-form?counter="+formCounter, function(results) {
         $("#supplies-to-add").append(results);
     });
 

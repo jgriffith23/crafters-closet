@@ -6,8 +6,7 @@ from flask import Response
 from flask.ext.bcrypt import Bcrypt
 import json
 
-from model import connect_to_db, db
-from model import User, SupplyDetail, Project, ProjectSupply, Item
+from model import connect_to_db, User, Project, Item
 
 from helpers import (
     get_all_supply_types,
@@ -172,7 +171,7 @@ def update_item():
 
 
 # The next four routes fetch data that we need to add supplies.
-@app.route("/dashboard/brands.json")
+@app.route("/dashboard/brands")
 def get_brands():
     """Fetch all brands in the db by supply type, and return as JSON."""
     brands = get_all_brands_by_supply_type()
@@ -180,7 +179,7 @@ def get_brands():
     return(brands)
 
 
-@app.route("/dashboard/units.json")
+@app.route("/dashboard/units")
 def get_units():
     """Fetch all units in the db by supply type, and return as JSON."""
     units = get_all_units_by_supply_type()
@@ -188,7 +187,7 @@ def get_units():
     return(units)
 
 
-@app.route("/typeahead/colors-by-brand.json")
+@app.route("/typeahead/colors-by-brand")
 def typeahead_colors():
     """Fetch tags for colors autocomplete feature in adding supplies."""
 
@@ -207,7 +206,7 @@ def typeahead_colors():
 # Inventory filter/search routes
 ##########################################################
 
-@app.route("/inventory/filter.html")
+@app.route("/inventory/filter")
 def filter_inventory():
     """Gives AJAX a filtered version of the HTML for the user's inventory, based on
     brand, supply type, or color."""
@@ -229,7 +228,7 @@ def filter_inventory():
     return table_body
 
 
-@app.route("/inventory/search-results.html")
+@app.route("/inventory/search-results")
 def search_inventory():
     """Returns only the rows in the user's inventory relevant to the passed
     search term."""
@@ -271,7 +270,6 @@ def show_project(project_id):
     """Displays a page with all information about a project."""
 
     user_id = session.get("user_id")
-    print "I'm the user ID", user_id
 
     # Get an object representing the project whose id was passed
     project = Project.query.get(project_id)
@@ -308,45 +306,54 @@ def handle_project_creation():
 
     # Fetch basic project data from form
     title = request.form.get("title")
+
+    if not title:
+        flash("Please enter a title.")
+        return redirect("/create-project")
+
     description = request.form.get("description")
     instr_url = request.form.get("instr-url")
     img_url = request.form.get("img-url")
 
-    #Create and commit project record
-    project = add_project_to_db(user_id,
-                                title.title(),
-                                description,
-                                instr_url,
-                                img_url)
-
-    # Get supply info from form. First, we need the number of supplies from
-    # the hidden field num-supplies.
+    # Get number of supplies, so we know how many forms we have to process later.
     num_supplies = int(request.form.get("num-supplies"))
 
-    # Given num-supplies, we can iterate over the number of supplies to add
-    # records to the db.
-    for supply_num in range(num_supplies):
-        fieldname_num = str(supply_num)
-        supply_type = request.form.get("supplytype"+fieldname_num)
-        brand = request.form.get("brand"+fieldname_num)
-        color = request.form.get("color"+fieldname_num)
-        qty = request.form.get("qty-required"+fieldname_num)
+    if num_supplies <= 0:
+        flash("Hey, you can't make a project with no supplies! Please try again.")
+        return redirect("/create-project")
 
-        # Get a supply from the db that matches the entered supply
-        try:
-            sd = get_matching_sd(supply_type, brand, color)
+    else:
+        #Create and commit project record
+        project = add_project_to_db(user_id,
+                                    title.title(),
+                                    description,
+                                    instr_url,
+                                    img_url)
 
-            add_project_supply_to_db(project, sd, qty)
+        # Given num-supplies, we can iterate over the number of supplies to add
+        # records to the db.
+        for supply_num in range(num_supplies):
+            fieldname_num = str(supply_num)
+            supply_type = request.form.get("supplytype"+fieldname_num)
+            brand = request.form.get("brand"+fieldname_num)
+            color = request.form.get("color"+fieldname_num)
+            qty = request.form.get("qty-required"+fieldname_num)
 
-        except TypeError:
-            flash("It looks like you left out some details. Please try again!")
-            return redirect("/create-project")
+            # Get a supply from the db that matches the entered supply
+            try:
+                sd = get_matching_sd(supply_type, brand, color)
 
-    flash("%s added to your projects. Hooray!" % (title))
-    return redirect(url_for('.show_project', project_id=project.project_id))
+                add_project_supply_to_db(project, sd, qty)
+
+            except TypeError:
+                flash("Some required supply fields are blank. Please try again!")
+                return redirect("/create-project")
+
+        flash("%s added to your projects. Hooray!" % (title))
+        return redirect(url_for('.show_project', project_id=project.project_id))
 
 
-@app.route("/create-project/new-supply-form.html")
+@app.route("/create-project/new-supply-form")
 def get_new_supply_form():
     """Generates a form for adding a new supply to a project."""
 
@@ -362,14 +369,15 @@ def get_new_supply_form():
     return safe_supply_form
 
 
-@app.route("/add-project/colors-by-brand.json")
+@app.route("/add-project/colors-by-brand")
 def get_colors():
     """Fetch a dict of all colors in the db by brand, and return as JSON."""
     colors = get_all_colors_dict_by_brand()
     colors = jsonify(colors)
     return(colors)
 
-@app.route("/projects/search-results.html")
+
+@app.route("/projects/search-results")
 def get_project_search_results():
     """Return HTML representing a table of projects that match the user's
     search query."""

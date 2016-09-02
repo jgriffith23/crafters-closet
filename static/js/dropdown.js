@@ -2,12 +2,12 @@
 
 // Craft a URL to send a get request for brands and make a variable to hold
 // the response.
-var brandsURL = "/dashboard/brands.json";
+var brandsURL = "/dashboard/brands";
 var brands;
 
 // Craft a URL to send a get request for units and make a variable to hold
 // the response.
-var unitsURL = "/dashboard/units.json";
+var unitsURL = "/dashboard/units";
 var units;
 
 // On successfully receiving brands/units data from the server, 

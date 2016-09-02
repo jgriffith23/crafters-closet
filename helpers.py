@@ -74,7 +74,6 @@ def get_matching_item(user_id, sd_id):
     return item_from_db
 
 
-
 #################################################
 # Add records to database
 #################################################
