@@ -8,9 +8,9 @@
 
 
 import unittest
+from selenium import webdriver
 from server import app
 from flask import json
-from selenium import webdriver
 from model import db, example_data, connect_to_db
 
 
@@ -38,13 +38,6 @@ class CCTestsBasic(unittest.TestCase):
     def test_homepage(self):
         result = self.client.get("/")
         self.assertIn("Welcome to Crafter's Closet!", result.data)
-
-    def test_prevent_unauthenticated_dashboard_access(self):
-        """Make sure a user can't access the dashboard unless they have an
-        active session."""
-        result = self.client.get("/dashboard", follow_redirects=True)
-        self.assertIn("Please log in.", result.data)
-        self.assertNotIn("Your Inventory", result.data)
 
 
 class CCTestsUsingSessionNoDB(unittest.TestCase):
@@ -96,6 +89,13 @@ class CCTestsDatabaseQueriesNoSession(unittest.TestCase):
         result = self.client.get("/dashboard/brands.json")
         data = json.loads(result.data)
         self.assertEqual(data["Acrylic Paint"][0], "Americana")
+
+    def test_prevent_unauthenticated_dashboard_access(self):
+        """Make sure a user can't access the dashboard unless they have an
+        active session."""
+        result = self.client.get("/dashboard", follow_redirects=True)
+        self.assertIn("Please log in.", result.data)
+        self.assertNotIn("Your Inventory", result.data)
 
 
 class CCTestsDatabaseQueriesOnlyWithSession(unittest.TestCase):
@@ -292,12 +292,6 @@ class CCTestsDatabaseChanges(unittest.TestCase):
         # After this call, the resulting string (to be passed to front end) should
         # be "Deleted!"
         self.assertIn("Deleted!", result.data)
-
-
-######################################################################
-# Selenium functional tests
-######################################################################
-
 
 
 ######################################################################

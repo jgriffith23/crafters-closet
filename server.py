@@ -14,22 +14,24 @@ from helpers import (
     get_all_supply_units,
     get_all_brands,
     get_all_colors,
-    get_matching_sd,
     get_all_brands_by_supply_type,
     get_all_units_by_supply_type,
-    craft_project_supplies_info,
     get_filtered_inventory,
     get_inventory_by_search,
     get_projects_by_search,
     get_inventory_chart_dict,
     get_colors_from_brand,
     get_all_colors_dict_by_brand,
-    add_item_to_inventory,
+    get_matching_sd,
     get_matching_item,
-    update_item_record,
+    get_inventory_search_ac_tags,
+    craft_project_supplies_info,
+    add_item_to_inventory,
+    add_project_supply_to_db,
+    add_project_to_db,
     add_supply_to_db,
     add_user_to_db,
-    get_inventory_search_ac_tags,
+    update_item_record,
     )
 
 app = Flask(__name__)
@@ -69,23 +71,16 @@ def show_dashboard():
     """Show a user's dashboard."""
 
     # Get the user's id from the session, if possible.
+
     user_id = session.get("user_id")
 
     if user_id:
-        # Get the current user's inventory details as a list of tuples of the
-        # format: (type, brand, color, units, url, qty)
-        inventory = db.session.query(SupplyDetail.supply_type,
-                                     SupplyDetail.brand,
-                                     SupplyDetail.color,
-                                     SupplyDetail.units,
-                                     SupplyDetail.purchase_url,
-                                     Item.qty,
-                                     Item.item_id).outerjoin(Item).filter_by(user_id=user_id).all()
+        user = User.query.get(user_id)
 
-        inventory = sorted(inventory)
+        inventory = user.get_inventory()
 
         # Get the user's projects.
-        projects = Project.query.filter(Project.user_id == user_id).all()
+        projects = user.get_projects()
 
         # Prepare data for the "Add a Supply", "Filter Inventory View", and
         # "Search Your Inventory" features.
@@ -141,8 +136,6 @@ def add_supply():
     qty = request.form.get("quantity-owned")
 
     sd_from_db = get_matching_sd(supply_type, brand, color)
-
-    # FIXME: Move more logic into helper functions!
 
     # If the supply detail exists...
     if sd_from_db:
@@ -238,10 +231,10 @@ def filter_inventory():
     brand = request.args.get("brand")
     supply_type = request.args.get("supplytype")
     color = request.args.get("color")
-    user_id = session.get("user_id")
+    user = User.query.get(session.get("user_id"))
 
     # Fetch the filtered inventory as a list of tuples.
-    inventory = get_filtered_inventory(user_id, brand, supply_type, color)
+    inventory = user.get_filtered_inventory(brand, supply_type, color)
 
     # Render the HTML for the filtered inventory as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))
@@ -257,10 +250,10 @@ def search_inventory():
 
     # Get the string the user wanted to search for.
     search_term = request.args.get("search")
-    user_id = session.get("user_id")
+    user = User.query.get(session.get("user_id"))
 
     # Get the user's inventory filtered by the search term, as a list of tuples.
-    inventory = get_inventory_by_search(user_id, search_term)
+    inventory = user.get_inventory_by_search(search_term)
 
     # Render HTML for search results as a safe-to-use Markup object.
     table_body = Markup(render_template("supply_table.html", inventory=inventory))
@@ -274,13 +267,14 @@ def inventory_search_tags():
     of autocomplete tags based on the user's search query."""
 
     search_term = request.args.get("search")
-    user_id = session.get("user_id")
+    user = User.query.get(session.get("user_id"))
 
-    tags = get_inventory_search_ac_tags(user_id, search_term)
+    tags = user.get_inventory_search_ac_tags(search_term)
 
     response = Response(json.dumps(tags), mimetype='application/json')
 
     return response
+
 
 ########################################################################
 # Project routes (show project, show project creation form, handle form)
@@ -310,17 +304,11 @@ def show_project(project_id):
 def show_project_creation_form():
     """Displays the project creation form."""
 
-    # Get the user info from the session.
-    # FIXME
-    user_id = session.get("user_id")
-    user = User.query.get(user_id)
-
     # Get the available supply types and units from db
     all_supply_types = get_all_supply_types()
     all_units = get_all_supply_units()
 
     return render_template("project_form.html",
-                           user=user,
                            all_supply_types=all_supply_types,
                            all_units=all_units)
 
@@ -339,25 +327,19 @@ def handle_project_creation():
     img_url = request.form.get("img-url")
 
     #Create and commit project record
-    project = Project(user_id=user_id,
-                      title=title.title(),
-                      description=description,
-                      instr_url=instr_url,
-                      img_url=img_url)
-
-    db.session.add(project)
-    db.session.commit()
+    project = add_project_to_db(user_id,
+                                title.title(),
+                                description,
+                                instr_url,
+                                img_url)
 
     # Get supply info from form. First, we need the number of supplies from
     # the hidden field num-supplies.
-    num_supplies = request.form.get("num-supplies")
+    num_supplies = int(request.form.get("num-supplies"))
 
     # Given num-supplies, we can iterate over the number of supplies to add
     # records to the db.
-
-    # FIXME: Move project supply creation into a helper function.
-    # Need to take the range of num_supplies + 1 or we won't get all supplies.
-    for supply_num in range(int(num_supplies)+1):
+    for supply_num in range(num_supplies):
         fieldname_num = str(supply_num)
         supply_type = request.form.get("supplytype"+fieldname_num)
         brand = request.form.get("brand"+fieldname_num)
@@ -365,22 +347,14 @@ def handle_project_creation():
         qty = request.form.get("qty-required"+fieldname_num)
 
         # Get a supply from the db that matches the entered supply
-        sd = get_matching_sd(supply_type, brand, color)
+        try:
+            sd = get_matching_sd(supply_type, brand, color)
 
-        print sd
+            add_project_supply_to_db(project, sd, qty)
 
-        # Get the entered supply's id
-        sd_id = sd.sd_id
-
-        # Create and commit project supply record to db, so the entered
-        # supply is associated with this project.
-
-        project_supply = ProjectSupply(project_id=project.project_id,
-                                       sd_id=sd_id,
-                                       supply_qty=qty)
-
-        db.session.add(project_supply)
-        db.session.commit()
+        except TypeError:
+            flash("It looks like you left out some details. Please try again!")
+            return redirect("/create-project")
 
     flash("%s added to your projects. Hooray!" % (title))
     return redirect(url_for('.show_project', project_id=project.project_id))

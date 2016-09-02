@@ -33,11 +33,11 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if "user_id" not in session %}
-            <li><a href="/login">Sign In</a></li>
-            <li><a href="/register">Register</a></li>
+            <li><a href="/login" id="signin">Sign In</a></li>
+            <li><a href="/register" id="register">Register</a></li>
             {% else %}
-            <li><a href="/dashboard"><span id="greeting">Hi, {{ session["username"]}}!</span><br> Your Dashboard</a></li>
-            <li><a href="/logout">Sign Out</a></li>
+            <li><a href="/dashboard" id="go-to-dash"><span id="greeting">Hi, {{ session["username"]}}!</span><br> Your Dashboard</a></li>
+            <li><a href="/logout" id="logout">Sign Out</a></li>
             {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->

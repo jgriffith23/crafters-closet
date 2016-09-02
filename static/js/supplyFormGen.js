@@ -8,6 +8,6 @@ $("#supply-form-gen").on("click", function() {
         $("#supplies-to-add").append(results);
     });
 
-    $("#num-supplies").val(formCounter);
+    $("#num-supplies").val(formCounter+1);
     formCounter++;
 });

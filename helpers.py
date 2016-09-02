@@ -1,7 +1,7 @@
 """Helper functions specific to Crafter's Closet project."""
 
 from model import SupplyDetail, ProjectSupply, Item, Project, User, db
-from flask import jsonify
+from flask import jsonify, request
 import math
 
 CHART_COLORS = ["#b366ff", "#0059b3", "#00cc99", "#ffd480",
@@ -50,7 +50,7 @@ def get_all_supply_units():
 
 
 ###################################################
-# Fetch complete existing records
+# Fetch individual, complete existing records
 ###################################################
 
 def get_matching_sd(supply_type, brand, color):
@@ -122,6 +122,36 @@ def add_user_to_db(email, username, password_hash):
     user = User(email=email, username=username, password=password_hash)
     db.session.add(user)
     db.session.commit()
+
+
+def add_project_supply_to_db(project, sd, qty):
+
+        # Get the entered supply's id
+        sd_id = sd.sd_id
+
+        # Create and commit project supply record to db, so the entered
+        # supply is associated with this project.
+
+        project_supply = ProjectSupply(project_id=project.project_id,
+                                       sd_id=sd_id,
+                                       supply_qty=qty)
+
+        db.session.add(project_supply)
+        db.session.commit()
+
+
+def add_project_to_db(user_id, title, description, instr_url, img_url):
+    #Create and commit project record
+    project = Project(user_id=user_id,
+                      title=title.title(),
+                      description=description,
+                      instr_url=instr_url,
+                      img_url=img_url)
+
+    db.session.add(project)
+    db.session.commit()
+
+    return project
 
 
 
@@ -318,7 +348,6 @@ def get_all_colors_dict_by_brand():
 
 
 def get_colors_from_brand(brand):
-    """"""
     colors = set(db.session.query(SupplyDetail.color).filter(SupplyDetail.brand.ilike("%"+brand+"%")).all())
     colors = [color for (color,) in colors if color is not None]
     return colors
@@ -329,8 +358,8 @@ def get_colors_from_brand(brand):
 ############################################################
 
 def get_filtered_inventory(user_id=None, brand="", supply_type="", color=""):
-    """Given a user and a supply brand, fetches inventory table HTML to only
-    display supplies from that brand. Returns list of tuples."""
+    """Given a user and filter parameters, fetches inventory table HTML to only
+    display supplies matching those parameters. Returns list of tuples."""
 
     # Craft a query to the db for all needed columns.
     q = db.session.query(SupplyDetail.supply_type,

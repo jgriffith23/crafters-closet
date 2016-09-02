@@ -1,8 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql import func
 
 # Create an object representing the idea of the Crafter's Closet database.
 db = SQLAlchemy()
+
 
 ##############################################################
 # Primary table models. Users, supplies, and projects.
@@ -27,6 +27,126 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     username = db.Column(db.String(64), nullable=False, unique=True)
     password = db.Column(db.String(64), nullable=True)
+
+    def get_inventory(self):
+        """Get the current user's inventory details as a list of tuples of the
+        format: (type, brand, color, units, url, qty)"""
+        inventory = db.session.query(SupplyDetail.supply_type,
+                                     SupplyDetail.brand,
+                                     SupplyDetail.color,
+                                     SupplyDetail.units,
+                                     SupplyDetail.purchase_url,
+                                     Item.qty,
+                                     Item.item_id).outerjoin(Item).filter_by(user_id=self.user_id).all()
+
+        inventory = sorted(inventory)
+        return inventory
+
+    def get_projects(self):
+        """Get all of the user's projects as objects."""
+        return Project.query.filter(Project.user_id == self.user_id).all()
+
+    def get_filtered_inventory(self, brand="", supply_type="", color=""):
+        """Given a user and filter parameters, fetches inventory table HTML to only
+        display supplies matching those parameters. Returns list of tuples."""
+
+        # Craft a query to the db for all needed columns.
+        q = db.session.query(SupplyDetail.supply_type,
+                             SupplyDetail.brand,
+                             SupplyDetail.color,
+                             SupplyDetail.units,
+                             SupplyDetail.purchase_url,
+                             Item.qty,
+                             Item.item_id).outerjoin(Item).filter(Item.user_id == self.user_id)
+
+        # If the brand actually came with a filter selected, fetch the inventory
+        # filtered by brand.
+        if brand != "":
+
+            q = q.filter(SupplyDetail.brand == brand)
+
+        # If we aren't filtering by brand, then check the supply type argument
+        # to see if it's not empty.
+        if supply_type != "":
+
+            # Craft a query to the db for all needed columns.
+            q = q.filter(SupplyDetail.supply_type == supply_type)
+
+        # If we aren't filtering by brand or type, then check the color argument
+        # to see if it's not empty.
+        if color != "":
+
+            q = q.filter(SupplyDetail.color == color)
+
+        # Fetch the inventory, filtered by the passed parameters. (If the user
+        # didn't enter any, then we'll get the whole inventory.)
+        inventory = sorted(q.all())
+
+        return inventory
+
+    def get_inventory_by_search(self, search_term):
+        """Given a user id and search parameter, get a list of tuples representing
+        all items owned by that user with the relevant strings."""
+
+        # Craft a query to the db for all needed columns.
+        q = db.session.query(SupplyDetail.supply_type,
+                             SupplyDetail.brand,
+                             SupplyDetail.color,
+                             SupplyDetail.units,
+                             SupplyDetail.purchase_url,
+                             Item.qty,
+                             Item.item_id).outerjoin(Item).filter(Item.user_id == self.user_id)
+
+        # Wrap the user's search term in SQL wildcards and use it as a filter
+        # on the existing query.
+        sql_like_str = "%" + search_term + "%"
+        q = q.filter(SupplyDetail.supply_type.ilike(sql_like_str) |
+                     SupplyDetail.brand.ilike(sql_like_str) |
+                     SupplyDetail.color.ilike(sql_like_str))
+
+        # Fetch the inventory, filtered by the search parameter.
+        inventory = sorted(q.all())
+
+        return inventory
+
+    def get_inventory_search_ac_tags(self, search_term):
+        """Given a user ID and the user's search term, return a list of possible
+        existing inventory information the user might be trying to type."""
+
+        # Craft a query to the db for all needed columns.
+        q = db.session.query(SupplyDetail.supply_type,
+                             SupplyDetail.brand,
+                             SupplyDetail.color,
+                             SupplyDetail.units,
+                             SupplyDetail.purchase_url,
+                             Item.qty,
+                             Item.item_id).outerjoin(Item).filter(Item.user_id == self.user_id)
+
+        inventory = sorted(q.all())
+
+        # We only want to show a given tag once, so create an empty set to contain
+        # the tags.
+        tags = set()
+
+        # For each item in the user's inventory, check whether the search term
+        # is used anywhere in that item's supply details. If so, add it to our set
+        # of tags.
+        for item in inventory:
+
+            if search_term.lower() in item.supply_type.lower():
+                tags.add(item.supply_type)
+
+            if search_term.lower() in item.brand.lower():
+                tags.add(item.brand)
+
+            if search_term.lower() in item.color.lower():
+                tags.add(item.color)
+
+        # Convert the set of tags to a list for easy jsonification, and sort it
+        # for the user's sanity.
+        tags = sorted(list(tags))
+
+        return tags
 
     def __repr__(self):
         """Provide a human-readable representation of an instance of the

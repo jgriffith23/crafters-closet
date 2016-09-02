@@ -3,7 +3,9 @@
 // Filter inventory code
 //////////////////////////////////////////////
 
-$("#apply-filter").on("click", function() {
+var filterDrops = $(".filter");
+
+$(filterDrops).on("change", function() {
     // Get the values to craft our request URL from the DOM.
     var brand = $("#filter-brand").val();
     var type = $("#filter-type").val();
