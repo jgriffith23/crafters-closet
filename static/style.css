@@ -1,16 +1,24 @@
+/* Import Fonts */
+/*@font-face {
+    font-family: "Rancho", cursive;
+    src: url("/fonts/Rancho/Rancho-Regular.ttf") format("truetype");
+}*/
+
 /* Body styles */
 body {
     margin: 8px;
     background-color: #e6f9ff;
     height: 100%;
+    font-family: 'Amaranth', sans-serif;
+
 }
 
+/* Global Heading Styles */
 
-
-.inventory {
-
-    background-color:  #ccf2ff;
+h1, h2, h3, h4 {
+    font-family: 'Rancho', cursive;
 }
+
 
 /* Navbar styles */
 .navbar {
@@ -19,6 +27,9 @@ body {
     font-size: 1.5em;
     top:50%;
     bottom:50%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #0086b3;
 }
 
 .navbar-default .navbar-nav li a {
@@ -34,20 +45,39 @@ body {
     color: black;
 }
 
+#page-head {
+    border-style:solid;
+    border-width: 0 0 1px 0;
+    border-color: #ddd;
+    padding: 1em;
+}
+
 /* Panel Styling */
 
 .panel {
     border: 1px solid;
+    border-color:#0086b3;
 }
 
 .panel-primary .panel-heading {
     background: #80dfff;
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    border-color:#0086b3;
 }
 
 .panel-title {
     font-family: 'Rancho', cursive;
     font-size: 2em;
 }
+
+#filter-options, #inv-table {
+    border-style:solid;
+    border-width: 0 0 1px 0;
+    border-color: #ddd;
+    padding: 1em;
+}
+
 
 /* Autocomplete Styling */
 

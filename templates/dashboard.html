@@ -5,26 +5,23 @@
 
 {% block body %}
 
-<h1>Dashboard</h1>
+<h1 class="page-head">Dashboard</h1>
 
 <br>
 
 {{ inventory_chart }}
 
-<br>
-
 <!-- Begin Inventory Panel -->
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-      <h3 class="panel-title">Search Inventory</h3>
+      <h3 class="panel-title">Your Inventory</h3>
     </div>
 
   <div class="panel-body" id="filter-search">
       <!-- Buttons for Filter functionality -->
-      <h4>Choose your filter options...</h4>
-      <div id="filter-options">
-          <div class="btn-group-horizontal" role="group" aria-label="filter-options">
+        <h2>Choose your filter options...</h2>
+          <div class="btn-group-vertical" role="group" aria-label="filter-options">
 
               <label for="filter-type">Filter by Type:</label>
               <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-type" id="filter-type">
@@ -50,47 +47,28 @@
                 {% endfor %}
               </select>
 
-             <!--  <button type="button" id="apply-filter" class="btn btn-default btn-sm" data-target="">Apply Filter</button> -->
-          </div>
-
-          <br>
-          <br>
-
-          <h4>...Or search your inventory by an arbitrary string.</h4>
+          <h2>...Or search your inventory by an arbitrary string.</h2>
           <div id="search-field">
               <input class="autocomplete" type="text" name="search-term" id="search-term" placeholder="Enter search term.">
               <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
           </div>
 
-          <br>
-          <br>
-
           <div id="reset-inventory">
-          <h4>Done with specifics?</h4>
+          <h2>Done with specifics?</h2>
               <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
           </div>   
       </div>
-  </div>
-</div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">Your Inventory</h3>
-    </div>
-
-    <div class="panel-body">
-
-      <!-- Display inventory with safe HTML obtained from server. -->
-      <div id="inv-table">
+      <div class"panel-body"  id="inv-table">
+        <!-- Display inventory with safe HTML obtained from server. -->
         {{ table_body }}
       </div>
-
+      <br>
       <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
-
-    </div>
-    <!-- Import the search JavaScript. -->
-    <script src="/static/js/inventorySearch.js"></script>
+  </div>
 </div>
+<script src="/static/js/inventorySearch.js"></script>
+
 
 <!-- Modal Code for "Add a Supply" button -->
 <div class="modal fade" id="add-supply">
