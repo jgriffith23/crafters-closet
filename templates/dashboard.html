@@ -18,7 +18,8 @@
       <h3 class="panel-title">Your Inventory</h3>
     </div>
 
-  <div class="panel-body" id="filter-search">
+  <div class="row">
+    <div class="panel-body col-xs-offset-3 col-xs-6" id="filter-search">
       <!-- Buttons for Filter functionality -->
         <h2>Choose your filter options...</h2>
           <div class="btn-group-vertical" role="group" aria-label="filter-options">
@@ -58,14 +59,17 @@
               <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
           </div>   
       </div>
-
-      <div class"panel-body"  id="inv-table">
+    </div>
+  </div>
+    <div class="row">
+      <div class="panel-body col-xs-offset-1 col-xs-10"  id="inv-table">
         <!-- Display inventory with safe HTML obtained from server. -->
         {{ table_body }}
+
+          <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
       </div>
+    </div>
       <br>
-      <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
-  </div>
 </div>
 <script src="/static/js/inventorySearch.js"></script>
 
@@ -145,29 +149,31 @@
       <h3 class="panel-title">Your Projects (Click title link to view supply list.)</h3>
     </div>
 
-    <div class="panel-body">
-        <!-- Display Projects -->
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for project in projects %}
-            <tr>
-                <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
-                <td>{{ project.description }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
+    <div class="row">
+      <div class="panel-body col-xs-offset-1 col-xs-10">
+          <!-- Display Projects -->
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for project in projects %}
+              <tr>
+                  <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
+                  <td>{{ project.description }}</td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
-        <!-- Add Project Button -->
-        <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project</button>
+          <!-- Add Project Button -->
+          <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project</button>
+    </div>
   </div>
 
 </div>

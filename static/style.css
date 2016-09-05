@@ -1,29 +1,40 @@
 /* Import Fonts */
-/*@font-face {
-    font-family: "Rancho", cursive;
-    src: url("/fonts/Rancho/Rancho-Regular.ttf") format("truetype");
-}*/
+@font-face {
+    font-family: "Text Me One";
+    src: url("fonts/Text_Me_One/TextMeOne-Regular.ttf"); 
+}
+
+@font-face {
+    font-family: "Fredericka the Great";
+    src: url("fonts/Fredericka_the_Great/FrederickatheGreat-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Raleway Medium";
+    src: url("fonts/Raleway/Raleway-Medium.ttf");
+}
+
 
 /* Body styles */
 body {
     margin: 8px;
     background-color: #e6f9ff;
     height: 100%;
-    font-family: 'Amaranth', sans-serif;
+    font-family: 'Raleway Medium', sans-serif;
 
 }
 
 /* Global Heading Styles */
 
 h1, h2, h3, h4 {
-    font-family: 'Rancho', cursive;
+    font-family: 'Text Me One', monospace;
 }
 
 
 /* Navbar styles */
 .navbar {
     background-color: #80dfff;
-    font-family: 'Rancho', cursive;
+    font-family: 'Text Me One', monospace;
     font-size: 1.5em;
     top:50%;
     bottom:50%;
@@ -45,13 +56,6 @@ h1, h2, h3, h4 {
     color: black;
 }
 
-#page-head {
-    border-style:solid;
-    border-width: 0 0 1px 0;
-    border-color: #ddd;
-    padding: 1em;
-}
-
 /* Panel Styling */
 
 .panel {
@@ -67,9 +71,20 @@ h1, h2, h3, h4 {
 }
 
 .panel-title {
-    font-family: 'Rancho', cursive;
+    font-family: 'Text Me One', monospace;
     font-size: 2em;
 }
+
+.modal-header {
+    background: #80dfff;
+}
+
+.modal-title {
+    font-family: 'Text Me One', monospace;
+    font-size: 2em;
+    color: white;
+}
+
 
 #filter-options, #inv-table {
     border-style:solid;
