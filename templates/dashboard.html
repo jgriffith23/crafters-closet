@@ -169,22 +169,24 @@
 
     <div class="panel-body">
         <!-- Display Projects -->
-        <table class="table table-striped">
-          <thead>
-          <tr>
-              <th>Title</th>
-              <th>Description</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for project in projects %}
-          <tr>
-              <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
-              <td>{{ project.description }}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for project in projects %}
+            <tr>
+                <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
+                <td>{{ project.description }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
 
         <!-- Add Project Button -->
         <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project</button>

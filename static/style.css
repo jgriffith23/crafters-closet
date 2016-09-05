@@ -5,6 +5,8 @@ body {
     height: 100%;
 }
 
+
+
 .inventory {
 
     background-color:  #ccf2ff;
@@ -13,6 +15,10 @@ body {
 /* Navbar styles */
 .navbar {
     background-color: #80dfff;
+    font-family: 'Rancho', cursive;
+    font-size: 1.5em;
+    top:50%;
+    bottom:50%;
 }
 
 .navbar-default .navbar-nav li a {
@@ -20,11 +26,27 @@ body {
 }
 
 .navbar-default .navbar-brand {
-   color: black;
+    color: black;
+    font-size: 1.25em;
 }
 
 #greeting {
-    color: #777;
+    color: black;
+}
+
+/* Panel Styling */
+
+.panel {
+    border: 1px solid;
+}
+
+.panel-primary .panel-heading {
+    background: #80dfff;
+}
+
+.panel-title {
+    font-family: 'Rancho', cursive;
+    font-size: 2em;
 }
 
 /* Autocomplete Styling */

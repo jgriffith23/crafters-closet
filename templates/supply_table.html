@@ -1,33 +1,35 @@
 <!-- Template for the inventory table in dashboard.html. -->
 
-<table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Brand</th>
-            <th>Color</th>
-            <th>Quantity Owned</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for supply_type, brand, color, units, purchase_url, qty, item_id in inventory %}
-        <tr>
-            <td>{{ supply_type }}</td>
-            <td>{{ brand }}</td>
-            <td>{{ color }}</td>
-            <td>   
-                <div class="qty-column" id="{{ item_id }}">{{ qty }} {{ units }} </div>
-                    <input type="text" class="qty-field" id="{{ item_id }}" hidden name="new-qty" id="new-qty"><br>
-            </td>
-            <td> 
-                <button type="button" class="btn btn-default update-item" id="{{ item_id }}" style="float: right;">
-                  Update Quantity Owned
-                </button> 
-            </td>
-        </tr>
-        {% endfor %}
-        </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Brand</th>
+                <th>Color</th>
+                <th>Quantity Owned</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for supply_type, brand, color, units, purchase_url, qty, item_id in inventory %}
+            <tr>
+                <td>{{ supply_type }}</td>
+                <td>{{ brand }}</td>
+                <td>{{ color }}</td>
+                <td>   
+                    <div class="qty-column" id="{{ item_id }}">{{ qty }} {{ units }} </div>
+                        <input type="text" class="qty-field" id="{{ item_id }}" hidden name="new-qty" id="new-qty"><br>
+                </td>
+                <td> 
+                    <button type="button" class="btn btn-default update-item" id="{{ item_id }}" style="float: right;">
+                      Update Quantity Owned
+                    </button> 
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+    </table>
+</div>
 
 <script src="/static/js/updateSupply.js"></script>
