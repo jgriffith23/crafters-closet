@@ -20,14 +20,23 @@ body {
     background-position: center center;
     height: 100%;
     font-family: 'Raleway Medium', sans-serif;
-    font-size: 2.5em;
+    font-size: 2em;
 }
+
+.body-div {
+    background: rgba(255, 210, 0, 0.65);
+}
+
+label#title-label, label#desc-label, label#instr-label, label#img-url-label, label#form-label{
+    font-size: .8em;
+}
+
 
 /* Global Heading Styles */
 
 h1, h2, h3, h4 {
     font-family: 'Text Me One', monospace;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 #proj-search-head {
@@ -37,6 +46,7 @@ h1, h2, h3, h4 {
 
 .page-head {
     font-weight: bold;
+    font-size: 2em;
 }
 
 /* Navbar styles */
@@ -115,6 +125,8 @@ img.project-photo{
 
 }
 
+/* Front page */
+
 .welcome {
     background: rgba(255, 255, 255, 0.65);
     height: 100%;
@@ -141,6 +153,20 @@ img.project-photo{
     border-width: 1px 1px 0 1px;
     border-radius: 5px;
     border-color: #0086b3;
+}
+
+#unregistered-msg {
+    background: rgba(255, 255, 255, 0.65);
+    height: 100%;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #0086b3;
+    display: block;
+    overflow: auto;
+    margin-bottom: .5em;
+    padding: 1em;
+    color:#ff6666;
 }
 
 .register-area, .signin-area {

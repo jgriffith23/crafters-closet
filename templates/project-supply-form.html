@@ -1,9 +1,9 @@
 <!-- An HTML template for generating supply forms on the "Add a Project" page. -->
 
-    <div class="form-group">
+    <div class="form-group btn-group-vertical" role="group" aria-label="supply-details">
     <!-- Supply Type Dropdown -->
-    <label for="supplytype{{ x }}">Supply Type #{{ x }} (REQUIRED) </label><br>
-        <select class="form-control supplytype" name="supplytype{{ x }}" id="supplytype{{ x }}">
+    <label id="form-label" for="supplytype{{ x }}">Supply Type #{{ x }} (REQUIRED) </label><br>
+        <select class="form-control form-control-lg supplytype" name="supplytype{{ x }}" id="supplytype{{ x }}">
           <option value=""></option>
           {% for type in all_supply_types %}
             <option value="{{ type[0] }}">{{ type[0] }}</option> 
@@ -14,28 +14,28 @@
 
     <!-- Brand -->
     <div class="form-group">
-        <label for="brand{{ x }}">Brand (REQUIRED)</label>
-            <select class="form-control" name="brand{{ x }}" id="brand{{ x }}"></select>
+        <label id="form-label" for="brand{{ x }}">Brand (REQUIRED)</label>
+            <select class="form-control form-control-lg" name="brand{{ x }}" id="brand{{ x }}"></select>
     </div>
     <br>
 
     <!-- Color -->
     <div class="form-group">
-    <label for="color{{ x }}">Color (REQUIRED)</label>
-        <select class="form-control" name="color{{ x }}" id="color{{ x }}"></select>
+    <label id="form-label" for="color{{ x }}">Color (REQUIRED)</label>
+        <select class="form-control form-control-lg" name="color{{ x }}" id="color{{ x }}"></select>
     </div>
  
     <br>
 
     <!-- Qty Owned -->
     <div class="form-group">
-        <label for="qty-required{{ x }}">Quantity Needed (REQUIRED) </label>
+        <label id="form-label" for="qty-required{{ x }}">Quantity Needed (REQUIRED) </label>
             <input type="number" class="form-control" name="qty-required{{ x }}" id="qty-required{{ x }}" min=0>
     </div>
 
     <!-- Units -->
     <div class="form-group">
-        <label for="units{{ x }}">Units</label><br>
+        <label id="form-label" for="units{{ x }}">Units</label><br>
             <input class="form-control" type=text name="units{{ x }}" id="units{{ x }}" readonly="readonly">
     </div>
 

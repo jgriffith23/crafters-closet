@@ -34,7 +34,7 @@
                   <div class="btn-group-vertical" role="group" aria-label="filter-options">
 
                       <label for="filter-type">Filter by Type:</label>
-                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-type" id="filter-type">
+                      <select type="button" class="btn btn-default btn-lg filter" data-target="" name="filter-type" id="filter-type">
                         <option value=""></option>
                         {% for type in all_supply_types %}
                             <option value="{{ type[0] }}">{{ type[0] }}</option> 
@@ -42,7 +42,7 @@
                       </select>
 
                       <label for="filter-brand">Filter by Brand:</label>
-                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-brand" id="filter-brand">
+                      <select type="button" class="btn btn-default btn-lg filter" data-target="" name="filter-brand" id="filter-brand">
                         <option value=""></option>
                         {% for brand in all_brands %}
                             <option value="{{ brand[0] }}">{{ brand[0] }}</option> 
@@ -50,7 +50,7 @@
                       </select>
 
                       <label for="filter-color">Filter by Color:</label>
-                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-color" id="filter-color">
+                      <select type="button" class="btn btn-default btn-lg filter" data-target="" name="filter-color" id="filter-color">
                         <option value=""></option>
                         {% for color in all_colors %}
                             <option value="{{ color[0] }}">{{ color[0] }}</option> 
@@ -60,17 +60,17 @@
                   <h2>...Or search your inventory by an arbitrary string.</h2>
                   <div id="search-field">
                       <input class="autocomplete" type="text" name="search-term" id="search-term" placeholder="Enter search term.">
-                      <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
+                      <button type="button" class="btn btn-default btn-lg" id="search-button">Search!</button>
                   </div>
 
                   <div id="reset-inventory">
                   <h2>Done with specifics?</h2>
-                      <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
+                      <button type="button" class="btn btn-default btn-lg" id="clear-filters">Reset Inventory View</button>
                   </div>   
 
                   <div id="supply-button">
                     <h2>Add some supplies!</h2>
-                    <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add-supply">Create New Inventory Item</button>
+                    <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Create New Inventory Item</button>
                   </div>
               </div>
             </div>
@@ -166,9 +166,9 @@
             </div>
 
             <div class="row">
-              <div class="panel-body col-xs-offset-3 col-xs-7">
-                <h2>Have something to make?</h2>
-                <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-sm">Create a New Project Page</button>
+              <div class="panel-body col-xs-offset-4 col-xs-4">
+                <h2>Have a new project?</h2>
+                <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project Page</button>
               </div>
             </div>
 

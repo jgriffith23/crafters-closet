@@ -26,7 +26,7 @@ update_buttons.on("click", function(evt) {
     // the user knows to press it agani when finished. Show a text field
     // for the user to type in.
     if (updating === false) {
-        $(buttonSelector).html("Done Updating!");
+        $(buttonSelector).html("Done!");
         updating = true;
         prevButtonID = buttonID;
         $(field).toggle();
