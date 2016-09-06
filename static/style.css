@@ -58,6 +58,7 @@ h1, h2, h3, h4 {
 .navbar-default .navbar-brand {
     color: black;
     font-size: 1em;
+    font-weight:bold;
 }
 
 #greeting {
@@ -114,20 +115,32 @@ img.project-photo{
 
 }
 
-.left {
+.welcome {
     background: rgba(255, 255, 255, 0.65);
-    height: 75%;
-    position: fixed;
+    height: 100%;
     border-style: solid;
     border-radius: 5px;
     border-width: 1px;
     border-color: #0086b3;
     display: block;
     overflow: auto;
+    margin-bottom: 2em;
 }
 
 .intro {
     font-size:.9em;
+}
+
+#user-greet {
+    font-size: 1em;
+    font-family: 'Text Me One', monospace;
+    font-weight: bold;
+    text-align:right;
+    background: rgba(255,255,255,0.65);
+    border-style:solid;
+    border-width: 1px 1px 0 1px;
+    border-radius: 5px;
+    border-color: #0086b3;
 }
 
 .register-area, .signin-area {
