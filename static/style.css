@@ -114,13 +114,27 @@ img.project-photo{
 
 }
 
-
-/* Footer styles */
-.footer {
-    background-color: #80dfff;
-    height: 10%;
+.left {
+    background: rgba(255, 255, 255, 0.65);
+    height: 75%;
+    position: fixed;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #0086b3;
+    display: block;
+    overflow: auto;
 }
 
-.push {
-    height: 100px;
+.intro {
+    font-size:.9em;
+}
+
+.register-area, .signin-area {
+    background: rgba(255, 255, 255, 0.8);
+    height: 100%;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #0086b3;
 }

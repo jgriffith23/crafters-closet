@@ -436,7 +436,7 @@ def handle_register():
         # If the user doesn't exist, hash the password and create the user.
         pw_hash = bcrypt.generate_password_hash(password)
         add_user_to_db(email, username, pw_hash)
-        flash("Account created.")
+        flash("Account created. This is your personal inventory page. Start adding stuff!")
 
         #Code 307 preserves the POST request, including form data.
         return redirect("/login", code=307)
@@ -477,8 +477,6 @@ def handle_login():
                 # Add their user_id to session
                 session["user_id"] = user.user_id
                 session["username"] = user.username
-
-                flash("Welcome to Crafter's Closet!")
                 return redirect("/dashboard")
 
         except ValueError:

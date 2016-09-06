@@ -5,25 +5,20 @@
 
 {% block body %}
 
-<h1 class="page-head">Sign In</h1>
-
-<div class="container">
+<div class="row">
+    <div class="col-xs-offset-3 col-xs-6 signin-area">
     <form action="/login" method="POST">
-        <div class="form-group">
+        <div class="col-xs-offset-3 col-xs-6 form-group">
+            <h2 class="page-head">Sign Into Your Inventory</h2>
             <label for="username">Username: </label>
             <input type="text" name="username" id="username" value="wonderwoman"><br>
-        </div>
 
-        <div class="form-group">
             <label for="password">Password: </label>
             <input type="password" name="password" id="password" value="justice"><br>
-        </div>
 
-        <div class="form-group">
-            <button type="submit" class="btn btn-default" id="signin-btn">Sign In</button>
-        </div>
-
+            <button type="submit" class="btn btn-default btn-md" id="signin-btn">Sign In</button>
     </form>
+    </div>
 </div>
 
 {% endblock %}

@@ -1,17 +1,19 @@
 <!-- Display Projects -->
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Project Title</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for title, description, id in projects %}
-        <tr>
-            <td><a href="/project/{{id}}">{{ title }}</a></td>
-            <td>{{ description }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Project Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for title, description, id in projects %}
+            <tr>
+                <td><a href="/project/{{id}}">{{ title }}</a></td>
+                <td>{{ description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </table>

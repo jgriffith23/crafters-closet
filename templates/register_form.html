@@ -5,15 +5,19 @@
 
 {% block body %}
 
-<h1 class="page-head">Register</h1>
-
-<div class="navbar-form navbar-left">
-    <form action="/register" method="POST">
-        <label for="email">Email: </label><input type="text" name="email" id="email" value="cats@rule.com"><br>
-        <label for="username">Username: </label><input type="text" name="username" id="username" value="ilikecats"><br>
-        <label for="password">Password: </label><input type="password" name="password" id="password" "cats"><br>
-        <label for="repeat-pw">Repeat Password:</label><input type="password" name="repeat-pw" id="repeat-pw" value="cats"><br>
-        <input type="submit" value="Register">
-    </form>
+<div class="row">
+    <div class="col-xs-offset-3 col-xs-6 register-area">
+            <form action="/register" method="POST">
+                <div class="col-xs-offset-3 col-xs-2 form-group">
+                    <h2 class="page-head">Register</h2>
+                    <label for="email">Email: </label><input type="text" name="email" id="email" value="cats@rule.com"><br>
+                    <label for="username">Username: </label><input type="text" name="username" id="username" value="ilikecats"><br>
+                    <label for="password">Password: </label><input type="password" name="password" id="password" value="cats"><br>
+                    <label for="repeat-pw">Repeat Password:</label><input type="password" name="repeat-pw" id="repeat-pw" value="cats"><br>
+                    <input class="btn btn-default btn-md" type="submit" value="Complete Registration">
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

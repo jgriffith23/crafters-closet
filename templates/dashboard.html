@@ -58,6 +58,11 @@
           <h2>Done with specifics?</h2>
               <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
           </div>   
+
+          <div id="supply-button">
+            <h2>Add some supplies!</h2>
+            <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add-supply">Create New Inventory Item</button>
+          </div>
       </div>
     </div>
   </div>
@@ -66,7 +71,6 @@
         <!-- Display inventory with safe HTML obtained from server. -->
         {{ table_body }}
 
-          <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-lg" data-toggle="modal" data-target="#add-supply">Add a Supply!</button>
       </div>
     </div>
       <br>
@@ -150,7 +154,15 @@
     </div>
 
     <div class="row">
+      <div class="panel-body col-xs-offset-3 col-xs-7">
+        <h2>Have something to make?</h2>
+        <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-sm">Create a New Project Page</button>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="panel-body col-xs-offset-1 col-xs-10">
+          
           <!-- Display Projects -->
           <div class="table-responsive">
             <table class="table table-striped">
@@ -171,8 +183,6 @@
             </table>
           </div>
 
-          <!-- Add Project Button -->
-          <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-lg">Create a New Project</button>
     </div>
   </div>
 
