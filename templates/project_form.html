@@ -5,66 +5,72 @@ Create Project
 {% endblock %}
 
 {% block body %}
-<h1 class="page-head"> Create a New Project </h1>
-    
-    
-    <form action="/create-project" method="POST">
-        <!-- Basic Project info -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Basic Project Information</h3>
-            </div>
 
-            <div class="panel-body">
-              <div class="form-group">
-                <label for="title">Title (REQUIRED. How else will you remember what this project is? Trust us on this.)</label>
-                <input type="text" class="form-control" name="title" id="title" placeholder="What is this project called?" value="Chameleon Scarf (sourced from Adafruit)">
-              </div>
+<div class="row">
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+            <h1 class="page-head"> Create a New Project </h1>
+                
+                
+                <form action="/create-project" method="POST">
+                    <!-- Basic Project info -->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Basic Project Information</h3>
+                        </div>
 
-              <div class="form-group">
-                <label for="description">Description * (500 characters or less. Optional.)</label>
-                <textarea type="text" class="form-control" name="description" id="description" placeholder="Notes, general ideas, or anything else you want to say about this project.">To quote the original project author, Adafruit engineer Becky Stern: "Ever wish your clothes could change color to match each other? Make a chameleon scarf to match every outfit using the Flora color sensor and 12 color-changing LED pixels diffused by a ruffly knit scarf."</textarea>
-              </div>
+                        <div class="panel-body">
+                          <div class="form-group">
+                            <label for="title">Title (REQUIRED. How else will you remember what this project is? Trust us on this.)</label>
+                            <input type="text" class="form-control" name="title" id="title" placeholder="What is this project called?" value="Chameleon Scarf (sourced from Adafruit)">
+                          </div>
 
-              <div class="form-group">
-                <label for="instr-url">Instruction URL (optional)</label>
-                <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want." value="https://learn.adafruit.com/chameleon-scarf/overview">
-              </div>
+                          <div class="form-group">
+                            <label for="description">Description * (500 characters or less. Optional.)</label>
+                            <textarea type="text" class="form-control" name="description" id="description" placeholder="Notes, general ideas, or anything else you want to say about this project.">To quote the original project author, Adafruit engineer Becky Stern: "Ever wish your clothes could change color to match each other? Make a chameleon scarf to match every outfit using the Flora color sensor and 12 color-changing LED pixels diffused by a ruffly knit scarf."</textarea>
+                          </div>
 
-              <div class="form-group">
-                <label for="img-url">Image URL (optional) </label>
-                <input type="text" class="form-control" name="img-url" id="img-url" placeholder="Include a link to an image for this project, if you want." value="/static/assets/chameleon-scarf-adafruit-thumb.jpg">
-              </div>
-            </div>
+                          <div class="form-group">
+                            <label for="instr-url">Instruction URL (optional)</label>
+                            <input type="text" class="form-control" name="instr-url" id="instr-url" placeholder="Include a link to a tutorial, if you want." value="https://learn.adafruit.com/chameleon-scarf/overview">
+                          </div>
 
-        </div>
+                          <div class="form-group">
+                            <label for="img-url">Image URL (optional) </label>
+                            <input type="text" class="form-control" name="img-url" id="img-url" placeholder="Include a link to an image for this project, if you want." value="/static/assets/chameleon-scarf-adafruit-thumb.jpg">
+                          </div>
+                        </div>
 
-        <p><i>*Note: If you're linking to a tutorial you didn't write, please credit your source in the description!</i></p>
+                     <p><i>*Note: If you're linking to a tutorial you didn't write, please credit your source in the description!</i></p>
 
-        <!-- Adding Supplies -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Supplies Required (Don't refresh the page unless you want to start over!)</h3>
-            </div>
-            <div class="panel-body">
-                <div id="supplies-to-add">
-                    <!-- Supply forms will appear here. -->
+                    </div>
+
+
+                <!-- Adding Supplies -->
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Supplies Required (Don't refresh the page unless you want to start over!)</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="supplies-to-add">
+                            <!-- Supply forms will appear here. -->
+                        </div>
+                        <button type="button" class="btn btn-default btn-sm" id="supply-form-gen">
+                            <span class="glyphicon glyphicon-plus"></span> Add a Supply to This Project
+                        </button>
+                    </div>
+
+                    <input type="hidden" id="num-supplies" name="num-supplies" value="0">
                 </div>
-                <button type="button" class="btn btn-default btn-sm" id="supply-form-gen">
-                    <span class="glyphicon glyphicon-plus"></span> Add a Supply to This Project
-                </button>
-            </div>
 
-            <input type="hidden" id="num-supplies" name="num-supplies" value="0">
-        </div>
+                <button type="submit" class="btn btn-primary">Create Project</button>
+            </form>
 
-        <button type="submit" class="btn btn-primary">Create Project</button>
-    </form>
+        <br>
 
-<br>
-
-    <!-- // <script src="http://code.jquery.com/jquery.js"></script> -->
-    <script src="/static/js/supplyFormGen.js"></script> 
+        <!-- // <script src="http://code.jquery.com/jquery.js"></script> -->
+        <script src="/static/js/supplyFormGen.js"></script>
+    </div>
+</div> 
 
 
 {% endblock %}

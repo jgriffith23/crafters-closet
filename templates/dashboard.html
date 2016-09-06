@@ -5,77 +5,88 @@
 
 {% block body %}
 
-<h1 class="page-head">Dashboard</h1>
 
-<br>
+<div class="row">
+    <div class="col-xs-12 col-md-offset-2 col-md-8">
+        <h1 class="page-head">Dashboard</h1>
 
-{{ inventory_chart }}
+        <br>
+
+        {{ inventory_chart }}
+
+      </div>
+</div>
 
 <!-- Begin Inventory Panel -->
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">Your Inventory</h3>
-    </div>
 
-  <div class="row">
-    <div class="panel-body col-xs-offset-3 col-xs-6" id="filter-search">
-      <!-- Buttons for Filter functionality -->
-        <h2>Choose your filter options...</h2>
-          <div class="btn-group-vertical" role="group" aria-label="filter-options">
+<div class="row">
+    <div class="col-xs-12 col-md-offset-2 col-md-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Your Inventory</h3>
+            </div>
 
-              <label for="filter-type">Filter by Type:</label>
-              <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-type" id="filter-type">
-                <option value=""></option>
-                {% for type in all_supply_types %}
-                    <option value="{{ type[0] }}">{{ type[0] }}</option> 
-                {% endfor %}
-              </select>
+          <div class="row">
+            <div class="panel-body col-xs-offset-3 col-xs-6" id="filter-search">
+              <!-- Buttons for Filter functionality -->
+                <h2>Choose your filter options...</h2>
+                  <div class="btn-group-vertical" role="group" aria-label="filter-options">
 
-              <label for="filter-brand">Filter by Brand:</label>
-              <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-brand" id="filter-brand">
-                <option value=""></option>
-                {% for brand in all_brands %}
-                    <option value="{{ brand[0] }}">{{ brand[0] }}</option> 
-                {% endfor %}
-              </select>
+                      <label for="filter-type">Filter by Type:</label>
+                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-type" id="filter-type">
+                        <option value=""></option>
+                        {% for type in all_supply_types %}
+                            <option value="{{ type[0] }}">{{ type[0] }}</option> 
+                        {% endfor %}
+                      </select>
 
-              <label for="filter-color">Filter by Color:</label>
-              <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-color" id="filter-color">
-                <option value=""></option>
-                {% for color in all_colors %}
-                    <option value="{{ color[0] }}">{{ color[0] }}</option> 
-                {% endfor %}
-              </select>
+                      <label for="filter-brand">Filter by Brand:</label>
+                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-brand" id="filter-brand">
+                        <option value=""></option>
+                        {% for brand in all_brands %}
+                            <option value="{{ brand[0] }}">{{ brand[0] }}</option> 
+                        {% endfor %}
+                      </select>
 
-          <h2>...Or search your inventory by an arbitrary string.</h2>
-          <div id="search-field">
-              <input class="autocomplete" type="text" name="search-term" id="search-term" placeholder="Enter search term.">
-              <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
+                      <label for="filter-color">Filter by Color:</label>
+                      <select type="button" class="btn btn-default btn-sm filter" data-target="" name="filter-color" id="filter-color">
+                        <option value=""></option>
+                        {% for color in all_colors %}
+                            <option value="{{ color[0] }}">{{ color[0] }}</option> 
+                        {% endfor %}
+                      </select>
+
+                  <h2>...Or search your inventory by an arbitrary string.</h2>
+                  <div id="search-field">
+                      <input class="autocomplete" type="text" name="search-term" id="search-term" placeholder="Enter search term.">
+                      <button type="button" class="btn btn-default btn-sm" id="search-button">Search!</button>
+                  </div>
+
+                  <div id="reset-inventory">
+                  <h2>Done with specifics?</h2>
+                      <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
+                  </div>   
+
+                  <div id="supply-button">
+                    <h2>Add some supplies!</h2>
+                    <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add-supply">Create New Inventory Item</button>
+                  </div>
+              </div>
+            </div>
           </div>
+            <div class="row">
+              <div class="panel-body col-xs-offset-1 col-xs-10"  id="inv-table">
+                <!-- Display inventory with safe HTML obtained from server. -->
+                {{ table_body }}
 
-          <div id="reset-inventory">
-          <h2>Done with specifics?</h2>
-              <button type="button" class="btn btn-default btn-sm" id="clear-filters">Reset Inventory View</button>
-          </div>   
-
-          <div id="supply-button">
-            <h2>Add some supplies!</h2>
-            <button type="button col-xs-offset-1 col-xs-1" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add-supply">Create New Inventory Item</button>
-          </div>
-      </div>
-    </div>
+              </div>
+            </div>
+              <br>
+        </div>
+        <script src="/static/js/inventorySearch.js"></script>
   </div>
-    <div class="row">
-      <div class="panel-body col-xs-offset-1 col-xs-10"  id="inv-table">
-        <!-- Display inventory with safe HTML obtained from server. -->
-        {{ table_body }}
-
-      </div>
-    </div>
-      <br>
 </div>
-<script src="/static/js/inventorySearch.js"></script>
 
 
 <!-- Modal Code for "Add a Supply" button -->
@@ -88,7 +99,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Add a Supply to Your Inventory</h4>
+        <h4 class="modal-title">New Supply Details</h4>
       </div>
 
       <!-- Begin Modal Body -->
@@ -146,46 +157,49 @@
 
 </div><!-- /.modal -->
 
+<div class="row">
+    <div class="col-xs-12 col-md-offset-2 col-md-8">
+        <!-- Begin Project Panel -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Your Projects (Click title link to view supply list.)</h3>
+            </div>
 
-<!-- Begin Project Panel -->
-<div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">Your Projects (Click title link to view supply list.)</h3>
-    </div>
+            <div class="row">
+              <div class="panel-body col-xs-offset-3 col-xs-7">
+                <h2>Have something to make?</h2>
+                <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-sm">Create a New Project Page</button>
+              </div>
+            </div>
 
-    <div class="row">
-      <div class="panel-body col-xs-offset-3 col-xs-7">
-        <h2>Have something to make?</h2>
-        <button onclick="window.location.href='/create-project'" type="button" class="btn btn-default btn-sm">Create a New Project Page</button>
-      </div>
-    </div>
+            <div class="row">
+              <div class="panel-body col-xs-offset-1 col-xs-10">
+                  
+                  <!-- Display Projects -->
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                      <tr>
+                          <th>Title</th>
+                          <th>Description</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {% for project in projects %}
+                      <tr>
+                          <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
+                          <td>{{ project.description }}</td>
+                      </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
 
-    <div class="row">
-      <div class="panel-body col-xs-offset-1 col-xs-10">
-          
-          <!-- Display Projects -->
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-              <tr>
-                  <th>Title</th>
-                  <th>Description</th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for project in projects %}
-              <tr>
-                  <td><a href="/project/{{project.project_id}}">{{ project.title.title() }}</a></td>
-                  <td>{{ project.description }}</td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
+            </div>
           </div>
 
+        </div>
     </div>
-  </div>
-
 </div>
 
 {% endblock %}

@@ -6,68 +6,74 @@
 
 {% block body %}
 
-{% if "user_id" not in session %}
+<div class="row">
+    <div class="col-xs-12 col-md-offset-2 col-md-8">
+        {% if "user_id" not in session %}
 
-You aren't registered, so we can't show you how many supplies you need to 
-buy! Sadness! Click "Register" to take charge of your craft supply inventory
-now.
+        <p>You aren't registered, so we can't show you how many supplies you need to 
+        buy! Sadness! Click "Register" to take charge of your craft supply inventory
+        now.</p>
 
-{% endif %}
+        {% endif %}
 
-<h1 class="page-head">{{ project.title }}</h1>
-<i>A project {{project.user.username}} plans to make.</i>
+        <h1 class="page-head">{{ project.title }}</h1>
+        <i>A project {{project.user.username}} plans to make.</i>
 
-<br>
-<br>
+        <br>
+        <br>
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
-    <h3 class="panel-title">Project Overview</h3>
-  </div>
-  <div class="panel-body">
-    <h3>Description</h3>
-    <p>{{ project.description }}</p>
-    <h3>Tutorial Source</h3>
-    <p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
-    <h3>Photo</h3>
-        <img class="project-photo" src="{{ project.img_url }}">
-  </div>
-</div>
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Project Overview</h3>
+          </div>
+          <div class="panel-body">
+            <h3>Description</h3>
+            <p>{{ project.description }}</p>
+            <h3>Tutorial Source</h3>
+            <p><a href="{{project.instr_url}}">Here's a Tutorial!</a></p>
+            <h3>Photo</h3>
+                <div class="row">
+                    <img class="col-xs-12 project-photo" src="{{ project.img_url }}">
+                </div>
+          </div>
+        </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-      <h3 class="panel-title">Supply Information</h3>
-    </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Supply Information</h3>
+            </div>
 
-    <div class="panel-body">
+            <div class="panel-body">
 
-        <table class="table table-striped">
-              <thead>
-              <tr>
-                  <th>Supply Type</th>
-                  <th>Brand</th>
-                  <th>Color</th>
-                  <th>Quantity Required</th>
-                  <th>Quantity Owned</th>
-                  <th>Quantity to Buy</th>
-              </tr>
-              </thead>
-              <tbody>
+                <table class="table table-striped">
+                      <thead>
+                      <tr>
+                          <th>Supply Type</th>
+                          <th>Brand</th>
+                          <th>Color</th>
+                          <th>Quantity Required</th>
+                          <th>Quantity Owned</th>
+                          <th>Quantity to Buy</th>
+                      </tr>
+                      </thead>
+                      <tbody>
 
-              {% for info_grp in project_supplies_info %}
-              <tr>
-                  <td>{{ info_grp["supply_type"] }}</td>
-                  <td>{{ info_grp["brand"] }}</td>
-                  <td>{{ info_grp["color"] }}</td>
-                  <td>{{ info_grp["qty_specified"] }} {{ info_grp["units"] }}</td>
-                  <td>{{ info_grp["qty_owned"] }} {{ info_grp["units"] }}</td>
-                  <td>{{ info_grp["qty_to_buy"] }} {{ info_grp["units"] }}</td>
-              </tr>
-              {% endfor %}
+                      {% for info_grp in project_supplies_info %}
+                      <tr>
+                          <td>{{ info_grp["supply_type"] }}</td>
+                          <td>{{ info_grp["brand"] }}</td>
+                          <td>{{ info_grp["color"] }}</td>
+                          <td>{{ info_grp["qty_specified"] }} {{ info_grp["units"] }}</td>
+                          <td>{{ info_grp["qty_owned"] }} {{ info_grp["units"] }}</td>
+                          <td>{{ info_grp["qty_to_buy"] }} {{ info_grp["units"] }}</td>
+                      </tr>
+                      {% endfor %}
 
-              </tbody>
-        </table>
+                      </tbody>
+                </table>
+              </div>
+            </div>
       </div>
-    </div>
+</div>
 
 {% endblock %}

@@ -54,10 +54,11 @@ update_buttons.on("click", function(evt) {
                 // again.
                 if (data === "Deleted!") {
                     $(buttonSelector).hide();
+                    $(col).html("<div id='deleted' style='color:red'><i>Deleted!</i></div>");
                 }
 
                 else {
-                    $(buttonSelector).html("Update Quantity Owned");
+                    $(buttonSelector).html("Update Stock");
                     $(col).append('<div id="success" style="color:green"><i>Successfully updated!</i></div>');
                     $("#success").fadeOut(1000);
                 }
