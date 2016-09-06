@@ -18,10 +18,14 @@
 /* Body styles */
 body {
     margin: 8px;
-    background-color: #e6f9ff;
+    background-image: url(assets/photo-1471666875520-c75081f42081-half-blue.jpg);
+    /*background-color: #e6f9ff;*/
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
     height: 100%;
     font-family: 'Raleway Medium', sans-serif;
-
 }
 
 /* Global Heading Styles */
@@ -30,6 +34,13 @@ h1, h2, h3, h4 {
     font-family: 'Text Me One', monospace;
 }
 
+#proj-search-head {
+    font-family: 'Raleway Medium', sans-serif;
+}
+
+.page-head {
+    font-weight: bold;
+}
 
 /* Navbar styles */
 .navbar {
