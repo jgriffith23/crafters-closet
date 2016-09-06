@@ -27,10 +27,12 @@ body {
 
 h1, h2, h3, h4 {
     font-family: 'Text Me One', monospace;
+    font-size: 2em;
 }
 
 #proj-search-head {
     font-family: 'Raleway Medium', sans-serif;
+    font-size: 1em;
 }
 
 .page-head {
@@ -41,7 +43,7 @@ h1, h2, h3, h4 {
 .navbar {
     background-color: #80dfff;
     font-family: 'Text Me One', monospace;
-    font-size: 1.5em;
+    font-size: 1em;
     top:50%;
     bottom:50%;
     border-style: solid;
@@ -55,11 +57,12 @@ h1, h2, h3, h4 {
 
 .navbar-default .navbar-brand {
     color: black;
-    font-size: 1.25em;
+    font-size: 1em;
 }
 
 #greeting {
     color: black;
+    font-size: 1em;
 }
 
 /* Panel Styling */

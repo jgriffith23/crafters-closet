@@ -9,29 +9,30 @@ Home
 
 <h1 class="page-head">Welcome to Crafter's Closet!</h1>
 
-<!-- <img src="https://pbs.twimg.com/media/BGJ3WBDCIAAiG4b.jpg"> -->
-<br>
 <br>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h1 class="panel-title">Feeling Crafty?</h1>
     </div>
-    <div class="panel-body">
-        <h4 id="proj-search-head">Search for a project!</h4>
+    <div class="row">
+        <div class="panel-body col-xs-offset-1 col-xs-10">
+            <h4 id="proj-search-head">Search for a project!</h4>
 
-        <div id="search-field">
-            <input type="text" name="search-term" id="search-term" placeholder="Enter search term." value="dragon">
-            <button type="button" class="btn btn-default btn-sm" id="search-projects">Search</button>
-        </div>
+            <div id="search-field">
+                <input type="text" name="search-term" id="search-term" placeholder="Enter search term." value="dragon">
+                <button type="button" class="btn btn-default btn-sm" id="search-projects">Search</button>
+            </div>
 
-        <hr>
-
-        <h4 id="search-active-head"></h4>
-        <br>
-        <div id="project-search-results">
-            <!-- We'll append project search results here. -->
+            <hr>
+            <br>
+            <h4 id="search-active-head"></h4>
+            <br>
+                <div class="col-xs-offset-1 col-xs-10" id="project-search-results">
+                    <!-- Search results appended here. -->
+                </div>
         </div>
     </div>
+</div>
 
 <script src="/static/js/projectSearch.js"></script>
 
