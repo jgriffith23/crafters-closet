@@ -6,26 +6,27 @@
            {% block subtitle %} SUBTITLE HERE {% endblock %}
     </title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/style.css">
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"> -->
+    <link rel="stylesheet" href="/static/jquery-ui.css">
+    <script src="static/js/jquery-1.12.4.js"></script>
+    <!-- // <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
+    <script src="/static/js/jquery-ui.js"></script>
 </head>
-
-{% if "user_id" in session %}
-<div class="container-fluid">
-    <div class="row">
-        <span class="col-xs-12" id="user-greet">
-            Hi, {{ session["username"] }}!
-        </span>
-    </div>
-</div>
-{% endif %}
 
 <body>
     <nav class="navbar navbar-default">
+        {% if "user_id" in session %}
+        <div class="container-fluid">
+            <div class="row">
+                <span class="col-xs-12" id="user-greet">
+                    Hi, {{ session["username"] }}!
+                </span>
+            </div>
+        </div>
+        {% endif %}
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -70,7 +71,7 @@
         {% block body %}CONTENT GOES HERE{% endblock %}
     </div>
 
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
 </body>
 
