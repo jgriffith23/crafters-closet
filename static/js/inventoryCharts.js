@@ -5,8 +5,7 @@ var options = { responsive: true,
                 mode: 'single',
                 callbacks: {
                     label: function(tooltipItems, data) {
-                                // debugger;
-                                return data.labels[tooltipItems.index] + ": " + data.datasets[0].data[tooltipItems.index] + '%';
+                                return data.labels[tooltipItems.index];
                            }
                 }
               }

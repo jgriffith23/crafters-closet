@@ -1,7 +1,7 @@
 ##Welcome to Crafter's Closet!
 Crafter's Closet is an personal inventory tool for DIY/hobby/art supplies of all kinds. Once you tell Crafter's Closet how many pieces of a craft supply you own, the app figures out exactly how much of that supply you should buy to build a new project.
 
-If you're authenticated, you'll have access to a dashboard where you can filter and search your inventory, add new supplies, update existing supplies, view a chart of the supply types you own, and view a list of your projects. When creating a project page, you can give general project details (title, description, and so on) as well as a list of supplies needed to build the project. When you views a project page while authenticated, Crafter's Closet shows you how many of each required supply you would need to buy. Any user (authenticated or not) can also search the Crafter's Closet project pages to find fun crafts to make.
+If you're authenticated, you'll have access to a dashboard where you can filter and search your inventory, add new supplies, update existing supplies, view a chart of the supply types you own, and view a list of your projects. When creating a project page, you can give general project details (title, description, and so on) as well as a list of supplies needed to build the project. When you view a project page while authenticated, Crafter's Closet shows how many of each required supply you would need to buy. Any user (authenticated or not) can also search the Crafter's Closet project pages to find fun crafts to make.
 
 ## Tech Stack
 Crafter's Closet uses the following technologies:

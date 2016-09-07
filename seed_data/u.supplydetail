@@ -500,14 +500,47 @@
 499,Conductive Thread,Adafruit,Silver,ft,https://www.adafruit.com/products/641
 500,LEDs,Adafruit Flora Neopixel,RGB,pcs,https://www.adafruit.com/products/1260
 501,Felt,Michaels,Fuchsia,yds,http://www.michaels.com/fuchsia-felt/MD004923S.html
-502,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid White,yds
-503,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Blue,yds
-504,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Yelow,yds
-505,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Red,yds
-506,Color Sensor,Adafruit Flora,,pcs
-507,Arduino Board,Adafruit Flora,,pcs
-508,Arduino Board,Adafruit Gemma,,pcs
-509,Arduino Board,LilyPad,,pcs
-510,LEDs,LilyPad,White,pcs
-511,LEDs,LilyPad,Blue,pcs
-
+502,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid White,yds,
+503,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Blue,yds,
+504,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Yelow,yds,
+505,Fabric,Glitterbug Special Occasion Fabrics Chiffon,Solid Red,yds,
+506,Color Sensor,Adafruit Flora,,pcs,
+507,Arduino Board,Adafruit Flora,,pcs,
+508,Arduino Board,Adafruit Gemma,,pcs,
+509,Arduino Board,LilyPad,,pcs,
+510,LEDs,LilyPad,White,pcs,
+511,LEDs,LilyPad,Blue,pcs,
+513,Acrylic Paint,Craft Smart,White,oz,
+514,Acrylic Paint,Craft Smart,Apple Tart,oz,
+515,Acrylic Paint,Craft Smart,Aqua,oz,
+516,Acrylic Paint,Craft Smart,Brown,oz,
+517,Acrylic Paint,Craft Smart,Burgundy,oz,
+518,Acrylic Paint,Craft Smart,Butter Cream,oz,
+519,Acrylic Paint,Craft Smart,Campground,oz,
+520,Acrylic Paint,Craft Smart,Cherry Cobbler,oz,
+521,Acrylic Paint,Craft Smart,Citron,oz,
+522,Acrylic Paint,Craft Smart,Coral,oz,
+523,Acrylic Paint,Craft Smart,Black,oz,
+524,Acrylic Paint,Craft Smart,Blue Jean,oz,
+525,Acrylic Paint,Craft Smart,Brick Red,oz,
+526,Acrylic Paint,Craft Smart,Bright Blue,oz,
+527,Acrylic Paint,Craft Smart,Bright Fuchsia,oz,
+528,Acrylic Paint,Craft Smart,Bright Magenta,oz,
+529,Acrylic Paint,Craft Smart,Bright Pink,oz,
+530,Acrylic Paint,Craft Smart,Bright Red,oz,
+531,Acrylic Paint,Craft Smart,Bright Yellow,oz,
+532,Felt,Joann,Antique White,yds,
+533,Felt,Joann,Baby Pink,yds,
+534,Felt,Joann,Yellow,yds,
+535,Felt,Joann,Peacock,yds,
+536,Felt,Joann,Neon Blue,yds,
+537,Felt,Michaels,Turquoise,yds,
+538,Felt,Michaels,White,yds,
+539,Felt,Michaels,Black,yds,
+540,Felt,Michaels,Pistachio,yds,
+541,Felt,Michaels,Brilliant Blue,yds,
+542,Felt,Michaels,Orange,yds,
+543,Felt,Michaels,Camel Brown,yds,
+544,Felt,Michaels,Olive Green,yds,
+545,Felt,Michaels,Light Purple,yds,
+546,Felt,Michaels,Bright Red,yds,

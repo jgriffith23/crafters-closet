@@ -163,8 +163,8 @@ def get_inventory_chart_dict(user_id):
     in a user's inventory."""
 
     weights = {
-        "Fabric": 10, "Felt": 10, "Yarn": 10, "Acrylic Paint": 1,
-        "Oven-Bake Clay": 1, "Conductive Thread": 1, "LEDs": .1,
+        "Fabric": .8, "Felt": .5, "Yarn": .5, "Acrylic Paint": .5,
+        "Oven-Bake Clay": .5, "Conductive Thread": .09, "LEDs": .1,
         "Color Sensor": 1, "Arduino Board": 1
     }
 

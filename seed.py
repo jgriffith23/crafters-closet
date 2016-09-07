@@ -116,7 +116,6 @@ def load_projects():
     for row in open("seed_data/u.project"):
         row = row.rstrip()
         project_id, title, user_id, instr_url, img_url, description = row.split(",")
-        print row
 
         project = Project(project_id=project_id,
                           title=title,

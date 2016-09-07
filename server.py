@@ -6,7 +6,7 @@ from flask import Response
 from flask.ext.bcrypt import Bcrypt
 import json
 
-from model import connect_to_db, User, Project, Item
+from model import connect_to_db, User, Project, Item, db
 
 from helpers import (
     get_all_supply_types,
@@ -347,6 +347,8 @@ def handle_project_creation():
 
             except TypeError:
                 flash("Some required supply fields are blank. Please try again!")
+                db.session.delete(project)
+                db.session.commit()
                 return redirect("/create-project")
 
         flash("%s added to your projects. Hooray!" % (title))
@@ -466,12 +468,12 @@ def handle_login():
     # Get the user who's trying to log in, and if possible,
     # their password hash.
     user = User.query.filter(User.username == username).first()
-    pw_hash = user.password
 
     # If the user exists, try to check their pw hash from the db against
     # the hash of their entered pw. If the hashes match, log the user in.
     if user:
         try:
+            pw_hash = user.password
             pw_correct = bcrypt.check_password_hash(pw_hash, password)
             if pw_correct:
                 # Add their user_id to session
