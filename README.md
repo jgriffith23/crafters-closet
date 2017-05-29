@@ -16,6 +16,7 @@ shows how many of each required supply you would need to buy. Any user
 find fun crafts to make.
 
 ## Tech Stack
+
 Crafter's Closet uses the following technologies:
 
 * PostgreSQL
