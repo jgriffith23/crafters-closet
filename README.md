@@ -15,6 +15,8 @@ shows how many of each required supply you would need to buy. Any user
 (authenticated or not) can also search the Crafter's Closet project pages to 
 find fun crafts to make.
 
+Want to try it yourself? Head to [www.crafterscloset.net](www.crafterscloset.net)!
+
 ## Tech Stack
 
 Crafter's Closet uses the following technologies:
