@@ -2,3 +2,5 @@ env/
 *.pyc
 htmlcov/
 .coverage
+nginx.conf
+log
